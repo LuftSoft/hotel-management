@@ -7,6 +7,7 @@ namespace hotel_management_api.APIs.User
     [Route("/api/v{version:apiVersion}/user")]
     public class UserController : ControllerBase
     {
+        [MapToApiVersion("1.0")]
         [HttpGet]
         public IActionResult Get() 
         {
