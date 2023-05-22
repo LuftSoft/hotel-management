@@ -49,6 +49,10 @@ namespace hotel_management_api.Utils
             {
                 return null;
             }
-            }
+        }
+        //public Task<IEnumerable<string>> MultiUploadAsync(IFormFile[] files)
+        //{
+        //    //return new IEnumerable<string>();
+        //}
     }
 }
