@@ -12,12 +12,16 @@ namespace hotel_management_api.Business.Boudaries.User
             }
         }
         public class Response { 
+            public string? AccessToken { set; get; }
+            public string? RefreshToken { set; get; }
             public string? Message { get; set; }
             public bool? Success { get; set; }
-            public Response(string message, bool success)
+            public Response(string? accessToken,string? refreshToken, string message, bool success)
             {
                 Message = message;
                 Success = success;
+                AccessToken = accessToken;
+                RefreshToken = refreshToken;
             }
         }
         Task<Response> Login(Request request);

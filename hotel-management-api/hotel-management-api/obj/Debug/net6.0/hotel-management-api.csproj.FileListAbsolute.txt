@@ -156,3 +156,11 @@ D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\obj\
 D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\obj\Debug\net6.0\hotel-management-api.csproj.CopyComplete
 D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\obj\Debug\net6.0\hotel-management-api.genruntimeconfig.cache
 D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\obj\Debug\net6.0\ref\hotel-management-api.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\BouncyCastle.Cryptography.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\MailKit.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\MimeKit.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\System.Security.Cryptography.Pkcs.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\CloudinaryDotNet.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\Newtonsoft.Json.dll
+D:\visual_studio\hotel-management\hotel-management-api\hotel-management-api\bin\Debug\net6.0\hotel-management-api.staticwebassets.runtime.json

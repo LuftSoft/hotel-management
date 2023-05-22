@@ -1,11 +1,54 @@
 {
   "Version": 1,
-  "Hash": "aQgbYM28T+mvEUHbjLQSEI9ggh/x5ae1hhKnWskD0rI=",
+  "Hash": "OUkJO5wox4bL4l7Xb11sb7HY36Oz9Wyk6NDSZsqVJX0=",
   "Source": "hotel-management-api",
   "BasePath": "_content/hotel-management-api",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "hotel-management-api\\wwwroot",
+      "Source": "hotel-management-api",
+      "ContentRoot": "D:\\visual_studio\\hotel-management\\hotel-management-api\\hotel-management-api\\wwwroot\\",
+      "BasePath": "_content/hotel-management-api",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\visual_studio\\hotel-management\\hotel-management-api\\hotel-management-api\\wwwroot\\upload\\123.jpg",
+      "SourceId": "hotel-management-api",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\visual_studio\\hotel-management\\hotel-management-api\\hotel-management-api\\wwwroot\\",
+      "BasePath": "_content/hotel-management-api",
+      "RelativePath": "upload/123.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\upload\\123.jpg"
+    },
+    {
+      "Identity": "D:\\visual_studio\\hotel-management\\hotel-management-api\\hotel-management-api\\wwwroot\\upload\\tran thien thien1 - Copy.jpg",
+      "SourceId": "hotel-management-api",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\visual_studio\\hotel-management\\hotel-management-api\\hotel-management-api\\wwwroot\\",
+      "BasePath": "_content/hotel-management-api",
+      "RelativePath": "upload/tran thien thien1 - Copy.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\upload\\tran thien thien1 - Copy.jpg"
+    }
+  ]
 }

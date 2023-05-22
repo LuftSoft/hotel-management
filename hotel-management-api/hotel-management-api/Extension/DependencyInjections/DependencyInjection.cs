@@ -2,6 +2,7 @@
 using hotel_management_api.Business.Interactor.User;
 using hotel_management_api.Business.Services;
 using hotel_management_api.Database.Repository;
+using hotel_management_api.Utils;
 
 namespace hotel_management_api.Extension.DependencyInjections
 {
@@ -17,9 +18,19 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IUserService, UserService>();
             return services;
         }
+        public static IServiceCollection UtilServiceDependencyInjection(this IServiceCollection services)
+        {
+            services.AddScoped<IJwtUtil, JwtUtil>();
+            services.AddScoped<ISendMailUtil, SendMailUtil>();
+            services.AddScoped<IUploadFileUtil, UploadFileUtil>();
+            return services;
+        }
         public static IServiceCollection UserInteractorDependencyInjection( this IServiceCollection services)
         {
             services.AddScoped<IUserLoginInteractor, UserLoginInteractor>();
+            services.AddScoped<IUserSignupInteractor, UserSignupInteractor>();
+            services.AddScoped<IFogotPasswordInteractor, FogotPasswordInteractor>();
+            services.AddScoped<IResetPasswordInteractor, ResetPasswordInteractor>();
             return services;
         }
     }

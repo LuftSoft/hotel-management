@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,11 +38,31 @@ builder.Services.AddAuthentication(options =>
      {
          ValidateIssuer = true,
          ValidateAudience = true,
-         ValidAudience = builder.Configuration["JWT:ValidAudience"],
-         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+         ValidAudience = builder.Configuration["JWTConfig:ValidAudience"],
+         ValidIssuer = builder.Configuration["JWTConfig:ValidIssuer"],
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTConfig:AccessSecret"]))
      };
  });
+
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("owner", p =>
+    {
+        p.RequireRole("owner");
+        p.RequireClaim("AccessToken","true");
+    });
+    opt.AddPolicy("admin", p =>
+    {
+        p.RequireRole("admin");
+        p.RequireClaim("AccessToken", "true");
+    });
+    opt.AddPolicy("user", p =>
+    {
+        p.RequireRole("user");
+        p.RequireClaim("AccessToken", "true");
+    });
+});
+
 builder.Services.AddApiVersioning(opt =>
 {
     opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
@@ -57,7 +78,15 @@ builder.Services.AddApiVersioning(opt =>
 builder.Services
     .RepositoryDependencyInjection()
     .ServiceDependencyInjection()
+    .UtilServiceDependencyInjection()
     .UserInteractorDependencyInjection();
+builder.Services.AddCors(builder =>
+{
+    builder.AddPolicy(
+        "all",
+        opt => opt.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
+    );
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -72,6 +101,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
