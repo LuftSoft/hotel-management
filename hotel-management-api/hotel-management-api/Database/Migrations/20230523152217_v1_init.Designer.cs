@@ -9,11 +9,11 @@ using hotel_management_api.Database;
 
 #nullable disable
 
-namespace hotel_management_api.Database.Migrations
+namespace hotel_management_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230515153650_v3_add_resetpasswordtoken_to_user")]
-    partial class v3_add_resetpasswordtoken_to_user
+    [Migration("20230523152217_v1_init")]
+    partial class v1_init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,12 @@ namespace hotel_management_api.Database.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<int?>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -169,20 +175,17 @@ namespace hotel_management_api.Database.Migrations
 
             modelBuilder.Entity("hotel_management_api.Database.Model.District", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
-
-                    b.Property<string>("DistrictCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(150)");
 
-                    b.Property<int?>("ProvineId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProvineId")
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -193,20 +196,17 @@ namespace hotel_management_api.Database.Migrations
 
             modelBuilder.Entity("hotel_management_api.Database.Model.Homelet", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(5)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
-
-                    b.Property<int?>("DistrictId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("HomeletCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("DistrictId")
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -235,8 +235,8 @@ namespace hotel_management_api.Database.Migrations
                     b.Property<string>("GoogleLocation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HomeletId")
-                        .HasColumnType("int");
+                    b.Property<string>("HomeletId")
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<int>("HotelBenefitId")
                         .HasColumnType("int");
@@ -271,8 +271,7 @@ namespace hotel_management_api.Database.Migrations
 
                     b.HasIndex("HotelCategoryId");
 
-                    b.HasIndex("USerId")
-                        .IsUnique();
+                    b.HasIndex("USerId");
 
                     b.ToTable("Hotel");
                 });
@@ -285,10 +284,13 @@ namespace hotel_management_api.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<bool>("AirConditioner")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("AllTimeFrontDesk")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("BBQParty")
+                    b.Property<bool>("AllowPet")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CarBorow")
@@ -298,6 +300,9 @@ namespace hotel_management_api.Database.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("FreeBreakfast")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Parking")
                         .HasColumnType("bit");
 
                     b.Property<bool>("Pool")
@@ -332,17 +337,14 @@ namespace hotel_management_api.Database.Migrations
 
             modelBuilder.Entity("hotel_management_api.Database.Model.Provine", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("ProvineCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -617,7 +619,6 @@ namespace hotel_management_api.Database.Migrations
                         .WithMany("Hotels")
                         .HasForeignKey("HomeletId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("FK_Homelet_Hotel");
 
                     b.HasOne("hotel_management_api.Database.Model.HotelBenefit", "HotelBenefit")
@@ -635,8 +636,8 @@ namespace hotel_management_api.Database.Migrations
                         .HasConstraintName("FK_HotelCategory_Hotel");
 
                     b.HasOne("hotel_management_api.Database.Model.AppUser", "User")
-                        .WithOne("Hotel")
-                        .HasForeignKey("hotel_management_api.Database.Model.Hotel", "USerId")
+                        .WithMany("Hotels")
+                        .HasForeignKey("USerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_User_Hotel");
@@ -728,7 +729,7 @@ namespace hotel_management_api.Database.Migrations
                 {
                     b.Navigation("Bookings");
 
-                    b.Navigation("Hotel");
+                    b.Navigation("Hotels");
                 });
 
             modelBuilder.Entity("hotel_management_api.Database.Model.Booking", b =>

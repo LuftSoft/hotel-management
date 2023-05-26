@@ -1,6 +1,10 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using hotel_management_api.APIs.Hotel.DTOs;
+using hotel_management_api.Business.Interactor.Hotel;
 using hotel_management_api.Utils;
+using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,48 +15,58 @@ namespace hotel_management_api.APIs.Hotel
     public class HotelController : ControllerBase
     {
         private readonly IUploadFileUtil uploadFileUtil;
-        public HotelController(IUploadFileUtil uploadFileUtil) 
+        private readonly IJwtUtil jwtUtil;
+        private readonly ICreateHotelInteractor createHotelInteractor;
+        private readonly IUpdateHotelInteractor updateHotelInteractor;
+        public HotelController(
+            IUploadFileUtil uploadFileUtil,
+            IJwtUtil jwtUtil,
+            ICreateHotelInteractor createHotelInteractor,
+            IUpdateHotelInteractor updateHotelInteractor
+            ) 
         { 
             this.uploadFileUtil = uploadFileUtil;
+            this.jwtUtil = jwtUtil;
+            this.createHotelInteractor = createHotelInteractor;
+            this.updateHotelInteractor = updateHotelInteractor;
         }
-        [HttpGet]
-        public IActionResult get()
+        [HttpGet()]
+        public IActionResult get(int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
         {   
             return Ok(Directory.GetCurrentDirectory());
         }
-        [HttpPost]
-        public IActionResult post()
+        public IActionResult getSuggestHotelPosition(string? provine)
         {
-            return Ok();
+            return Ok(Directory.GetCurrentDirectory());
+        }
+        [HttpPost("filter")]
+        public IActionResult postFilter(int pageIndex, int pageSize, [FromQuery] HotelFilterDto? hotelFilterDto)
+        {
+            return Ok(Directory.GetCurrentDirectory());
+        }
+        [HttpPost]
+        [Authorize("admin")]
+        public async Task<IActionResult> post([FromForm] HotelUpdateDto dto)
+        {
+            try
+            {
+                string token = jwtUtil.getTokenFromHeader(HttpContext);
+                var result = await createHotelInteractor.Create(new ICreateHotelInteractor.Request(dto, token));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPost("upload")]
-        public async Task<IActionResult> testFile(IFormFile ufile)
+        public async Task<IActionResult> testFile(IFormFile[] ufile)
         {
             try
             {
                 if (ufile != null && ufile.Length > 0)
                 {
-                    //var fileName = Path.GetFileName(ufile.FileName);
-                    //var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload", "image_upload"+DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")+".jpg");
-                    //using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    //{
-                    //    await ufile.CopyToAsync(fileStream);
-                    //}
-                    //Cloudinary cloud = new Cloudinary("cloudinary://278276873974371:uA82HjnDFeTVYnLLtdshkwouFcE@dnshdled2");
-                    //cloud.Api.Secure = true;
-                    //var uploadparam = new ImageUploadParams()
-                    //{   
-                    //    File = new FileDescription(filePath),
-                    //    UseFilename = true,
-                    //    Folder = "hotel_management",
-                    //    UniqueFilename = true,
-                    //    Overwrite = true
-                    //};
-                    //var result = cloud.Upload(uploadparam);
-                    //if(System.IO.File.Exists(filePath))
-                    //    System.IO.File.Delete(filePath); 
-                    //return Ok(result.Url);
-                    var result = await uploadFileUtil.Upload(ufile);
+                    var result = await uploadFileUtil.MultiUploadAsync(ufile);
                     return Ok(result);
                 }
                 return BadRequest(false);
@@ -63,9 +77,19 @@ namespace hotel_management_api.APIs.Hotel
             }
         }
         [HttpPut]
-        public IActionResult put() 
+        [Authorize("admin")]
+        public async Task<IActionResult> put([FromForm] HotelUpdateDto hotelUpdateDto) 
         {
-            return BadRequest();
+            try
+            {
+                string token = jwtUtil.getTokenFromHeader(HttpContext);
+                var result = await updateHotelInteractor.Update(new IUpdateHotelInteractor.Request(hotelUpdateDto, token));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete]
         public IActionResult delete(int id)

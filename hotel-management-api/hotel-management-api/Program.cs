@@ -79,7 +79,8 @@ builder.Services
     .RepositoryDependencyInjection()
     .ServiceDependencyInjection()
     .UtilServiceDependencyInjection()
-    .UserInteractorDependencyInjection();
+    .UserInteractorDependencyInjection()
+    .HotelInteractorDependencyInjection();
 builder.Services.AddCors(builder =>
 {
     builder.AddPolicy(

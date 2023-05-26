@@ -12,9 +12,11 @@ namespace hotel_management_api.Database.Model
         public bool? Elevator { get; set; }
         public bool Pool { get; set; }
         public bool FreeBreakfast { get; set; }
-        public bool BBQParty { get; set; }
+        public bool AirConditioner { get; set; }
         public bool CarBorow { get; set; }
-        public bool WifiFree { get; set; }  
-        public ICollection<Hotel> Hotels { get; set; }
+        public bool WifiFree { get; set; }
+        public bool Parking { get; set; }
+        public bool AllowPet { get; set; }
+        public Hotel Hotel { get; set; }
     }
 }

@@ -9,9 +9,10 @@ namespace hotel_management_api.Utils
     {
         JwtSecurityToken GenerateAccessToken(List<Claim> authClaims, string u);
         JwtSecurityToken GenerateRefreshToken(List<Claim> authClaims, string u);
-        string? getUserIdFromToken(string token);
+        string? getUserNameFromToken(string token);
         bool isTokenExpired(string token);
         JwtSecurityToken GenerateResetPasswordApiToken(string username);
+        string? getTokenFromHeader(HttpContext context);
     }
     public class JwtUtil : IJwtUtil
     {   
@@ -69,14 +70,14 @@ namespace hotel_management_api.Utils
 
             return token;
         }
-        public string? getUserIdFromToken(string token) 
+        public string? getUserNameFromToken(string token) 
         {   
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
             if (jwt == null)
                 return "jwt is null";
             var userId = jwt.Claims.FirstOrDefault(c => c.Type == "UserName");
             if (userId == null) 
-                return "userid is null";
+                return "username is null";
             return userId.Value;
         }
         public bool isTokenExpired(string? token)

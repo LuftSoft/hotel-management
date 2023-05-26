@@ -1,26 +1,14 @@
-﻿using hotel_management_api.APIs.User.UserDTOs;
+﻿using hotel_management_api.APIs.User.DTOs;
+using hotel_management_api.APIs.User.UserDTOs;
 using hotel_management_api.Business.Boudaries.User;
 using hotel_management_api.Database.Model;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace hotel_management_api.Database.Repository
 {   
-    public interface IUserRepository
-    {
-        Task<IEnumerable<Claim>?> LoginRepository(LoginDto dto);
-        Task<AppUser> userExist(string name);
-        Task<AppUser> findUserByEmailAsync(string email);
-        Task<IdentityResult> createUserAsync(AppUser user, string password);
-        Task<IdentityResult> addUserRoleAsync(AppUser user, string role);
-        //role
-        Task<bool> roleExist(string name);
-        Task<IdentityResult> createRoleAsync(IdentityRole role);
-        Task<bool> updateResetPasswordTokenAsync(string username, string token);
-    }
-
-
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<AppUser> userManager;
@@ -44,6 +32,10 @@ namespace hotel_management_api.Database.Repository
         public async Task<AppUser> findUserByEmailAsync(string email) 
         {
             return await userManager.FindByEmailAsync(email);
+        }
+        public async Task<AppUser?> FindByIdAsync(string id)
+        {
+            return await userManager.FindByIdAsync(id);
         }
         public async Task<IdentityResult> createUserAsync(AppUser user, string password)
         {
@@ -76,28 +68,58 @@ namespace hotel_management_api.Database.Repository
         //
         public async Task<IEnumerable<Claim>?> LoginRepository(LoginDto dto)
         {
-            var user = await userManager.FindByNameAsync(dto.UserName);
-            if (user != null && await userManager.CheckPasswordAsync(user, dto.Password))
+            try
             {
-                var userRoles = await userManager.GetRolesAsync(user);
+                var user = await userManager.FindByNameAsync(dto.UserName);
+                if (user != null && await userManager.CheckPasswordAsync(user, dto.Password))
+                {
+                    var userRoles = await userManager.GetRolesAsync(user);
 
-                var authClaims = new List<Claim>
+                    var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
+                    foreach (var userRole in userRoles)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    }
 
-                return authClaims;
+                    return authClaims;
+                }
+                return null;
             }
-            return null;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"error when create user repository: {ex.Message}");
+                return null;
+            }
         }
         public async Task<bool> updateUser()
         {
+            return true;
+        }
+        public async Task<bool> updatePassword(string userName, string newpassword)
+        {
+            var user = await appDbContext.Users.Where(u => u.Email.Equals(userName)).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return false;
+            }
+            string newpass = userManager.PasswordHasher.HashPassword(user,newpassword);
+            user.PasswordHash = newpass;
+            await appDbContext.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> DeleteAsync(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);   
+            if(user == null)
+            {
+                return false;
+            }
+            appDbContext.Users.Remove(user);
             return true;
         }
     }

@@ -15,7 +15,7 @@ namespace hotel_management_api.Database
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<HotelBenefit> HotelBenefits { get; set; }
         public DbSet<HotelCategory> HotelCategories { get; set; }
-        public DbSet<Provine> Provinces { get; set; }
+        public DbSet<Provine> Provines { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomGallery> RoomGalleries { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -66,18 +66,18 @@ namespace hotel_management_api.Database
             });
             builder.Entity<HotelBenefit>(opt =>
             {
-                opt.HasMany(hb => hb.Hotels)
+                opt.HasOne(hb => hb.Hotel)
                     .WithOne(h => h.HotelBenefit)
-                    .HasForeignKey(h => h.HotelBenefitId)
+                    .HasForeignKey<Hotel>(h => h.HotelBenefitId)
                     .HasConstraintName("FK_HotelBenefit_Hotel")
                     .OnDelete(DeleteBehavior.Restrict);
             });
             builder.Entity<AppUser>(opt =>
             {
                 opt.HasIndex(u => u.Email).IsUnique(true);
-                opt.HasOne(u => u.Hotel)
+                opt.HasMany(u => u.Hotels)
                 .WithOne(h => h.User)
-                .HasForeignKey<Hotel>(h => h.USerId)
+                .HasForeignKey(h => h.USerId)
                 .HasConstraintName("FK_User_Hotel")
                 .IsRequired();
                 opt.HasMany(u => u.Bookings)

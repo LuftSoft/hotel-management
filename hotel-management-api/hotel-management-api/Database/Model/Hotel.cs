@@ -21,9 +21,9 @@ namespace hotel_management_api.Database.Model
         public AppUser? User { get; set; }
         public int HotelCategoryId { set; get; }
         public HotelCategory? HotelCategory { set; get; } 
-        public int HotelBenefitId { set; get; }
+        public int? HotelBenefitId { set; get; }
         public HotelBenefit? HotelBenefit { set; get; }
-        public int HomeletId { set; get; }
+        public string? HomeletId { set; get; }
         public Homelet? Homelet { set; get; }
         public ICollection<Room>? Rooms { get; set; }
     }

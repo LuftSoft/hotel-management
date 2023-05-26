@@ -5,7 +5,8 @@ namespace hotel_management_api.Utils
 {
     public interface IUploadFileUtil
     {
-        Task<string?> Upload(IFormFile uploadFile);
+        Task<string?> UploadAsync(IFormFile uploadFile);
+        Task<IEnumerable<string>> MultiUploadAsync(IFormFile[] files);
     }
     public class UploadFileUtil : IUploadFileUtil
     {
@@ -14,7 +15,7 @@ namespace hotel_management_api.Utils
         {
             this.configuration = configuration;
         }
-        public async Task<string?> Upload(IFormFile uploadFile)
+        public async Task<string?> UploadAsync(IFormFile uploadFile)
         {
             try
             {
@@ -50,9 +51,46 @@ namespace hotel_management_api.Utils
                 return null;
             }
         }
-        //public Task<IEnumerable<string>> MultiUploadAsync(IFormFile[] files)
-        //{
-        //    //return new IEnumerable<string>();
-        //}
+        public async Task<IEnumerable<string>> MultiUploadAsync(IFormFile[] files)
+        {
+            try
+            {
+                var cloudinary = new Cloudinary(this.configuration["CLOUDINARY_URL"].ToString());
+                cloudinary.Api.Secure = true;
+                var basePath = Directory.GetCurrentDirectory() + @"wwwroot/upload";
+                if (!Directory.Exists(basePath))
+                {
+                    Directory.CreateDirectory(basePath);
+                }
+                var result = new List<string>();
+                foreach(var file in files)
+                {
+                    var filepath = basePath + @$"/image-upload-{DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")}.jpg";
+                    using (var stream = new FileStream(filepath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    var uploadParam = new ImageUploadParams()
+                    {
+                        File = new FileDescription(filepath),
+                        UseFilename = true,
+                        Folder = "hotel_management",
+                        UniqueFilename = true,
+                        Overwrite = true
+                    };
+                    var uploadResult = await cloudinary.UploadAsync(uploadParam);
+                    if (File.Exists(filepath))
+                    {
+                        File.Delete(filepath);
+                    }
+                    result.Add(uploadResult.Url.ToString());
+                }
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -10,6 +10,6 @@ namespace hotel_management_api.Database.Model
         public string? Avatar { get; set; }
         public string? ResetPasswordToken { get; set; }
         public ICollection<Booking>? Bookings { get; set; }
-        public Hotel? Hotel { get; set; }
+        public ICollection<Hotel> Hotels { get; set; }
     }
 }

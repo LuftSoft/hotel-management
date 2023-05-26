@@ -22,6 +22,7 @@ namespace hotel_management_api.APIs.User
         private readonly IUserLoginInteractor userLoginInteractor;
         private readonly IUserSignupInteractor userSignupInteractor;
         private readonly IFogotPasswordInteractor fogotPasswordInteractor;
+        private readonly IGetDetailUserInteractor getDetailUserInteractor;
         private readonly UserManager<AppUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IJwtUtil jwtUtil;
@@ -32,14 +33,15 @@ namespace hotel_management_api.APIs.User
             IUserLoginInteractor _userLoginInteractor,
             IUserSignupInteractor _userSignupInteractor,
             IFogotPasswordInteractor _fogotPasswordInteractor,
+            IGetDetailUserInteractor getDetailUserInteractor,
             IConfiguration configuration,
             IJwtUtil jwtUtil
-            
             ) 
         {
             this.userLoginInteractor = _userLoginInteractor;
             this.userSignupInteractor = _userSignupInteractor;
             this.fogotPasswordInteractor = _fogotPasswordInteractor;
+            this.getDetailUserInteractor = getDetailUserInteractor;
             this.configuration = configuration;
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -47,26 +49,27 @@ namespace hotel_management_api.APIs.User
         }
         //GET
         [MapToApiVersion("1.0")]
-        [HttpGet]
-        [Authorize("admin")]
-        public IActionResult Get() 
+        [HttpGet("detail")]
+        [Authorize]
+        public async Task<IActionResult> Get() 
         {
-            return Ok("Get method");
+            var result = await getDetailUserInteractor.Get(HttpContext);
+            return Ok(result);
         }
         [HttpGet("reset-password")]
         public IActionResult ResetPassword([FromQuery] string token)
         {
-            if (jwtUtil.getUserIdFromToken(token) == null)
+            if (jwtUtil.getUserNameFromToken(token) == null)
                 return BadRequest("bad trip");
-            return Ok(jwtUtil.getUserIdFromToken(token));
+            return Ok(jwtUtil.getUserNameFromToken(token));
         }
         [HttpGet("refresh_token")]
         [Authorize(Roles = "admin")]
         public IActionResult testJwt([FromQuery]string token)
         {
-            if (jwtUtil.getUserIdFromToken(token) == null)
+            if (jwtUtil.getUserNameFromToken(token) == null)
                 return BadRequest("bad trip");
-            return Ok(jwtUtil.getUserIdFromToken(token));
+            return Ok(jwtUtil.getUserNameFromToken(token));
         }
         //POST
         [HttpPost("login")]
@@ -115,7 +118,7 @@ namespace hotel_management_api.APIs.User
         //DELETE
         [Authorize("owner")]
         [HttpDelete]
-        public IActionResult Delete()
+        public IActionResult Delete(string userId)
         {
             return Ok("dedlete method");
         }
