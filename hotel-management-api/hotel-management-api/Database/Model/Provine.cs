@@ -7,9 +7,12 @@ namespace hotel_management_api.Database.Model
     public class Provine
     {
         [Key]
-        public int? Id { get; set; }
-        public string? ProvineCode { get; set; }
+        [Column(TypeName = "nvarchar(5)")]
+        public string? Id { get; set; }
+        [Column(TypeName = "nvarchar(150)")]
         public string? Name { get; set; }
+        [Column(TypeName = "nvarchar(50)")]
+        public string? Type { get; set; }
         public ICollection<District>? Districts { get; set; }
     }
 }

@@ -3,14 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace hotel_management_api.Database.Repository
 {
-    public interface IHotelRepository
-    {
-        Task<Hotel> getOne(int id);
-        Task<IEnumerable<Hotel>> findAllAsync();
-        Task<bool> createAsync(Hotel hotel);
-        Task<bool> updateAsync(Hotel hotel);
-        Task<bool> deleteAsync(int id);
-    }
     public class HotelRepository : IHotelRepository
     {
         private readonly AppDbContext _appDbContext;
@@ -18,12 +10,15 @@ namespace hotel_management_api.Database.Repository
         {
             _appDbContext = appDbContext;
         }
-
-        public async Task<bool> createAsync(Hotel hotel)
+        public async Task<Hotel?> FindByIdAsync(int id)
+        {
+            return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
+        }
+        public async Task<Hotel?> createAsync(Hotel hotel)
         {
             _appDbContext.Hotels.Add(hotel);
             int isSuccess = await _appDbContext.SaveChangesAsync();
-            return isSuccess > 0;
+            return hotel;
         }
 
         public async Task<bool> deleteAsync(int id)
@@ -41,11 +36,6 @@ namespace hotel_management_api.Database.Repository
         public async Task<IEnumerable<Hotel>> findAllAsync()
         {
             return await _appDbContext.Hotels.ToListAsync();
-        }
-
-        public async Task<Hotel> getOne(int id)
-        {
-            return await _appDbContext.Hotels.FirstOrDefaultAsync(h =>h.Id == id);
         }
 
         public async Task<bool> updateAsync(Hotel hotel)
