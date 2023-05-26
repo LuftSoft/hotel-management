@@ -35,6 +35,7 @@ namespace hotel_management_api.APIs.Hotel
         {   
             return Ok(Directory.GetCurrentDirectory());
         }
+        [HttpGet("getsuggest")]
         public IActionResult getSuggestHotelPosition(string? provine)
         {
             return Ok(Directory.GetCurrentDirectory());

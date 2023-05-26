@@ -14,7 +14,7 @@ namespace hotel_management_api.Database.Repository
         {
             return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
         }
-        public async Task<Hotel?> createAsync(Hotel hotel)
+        async Task<Hotel?> IHotelRepository.createAsync(Hotel hotel)
         {
             _appDbContext.Hotels.Add(hotel);
             int isSuccess = await _appDbContext.SaveChangesAsync();
@@ -44,6 +44,11 @@ namespace hotel_management_api.Database.Repository
             int isSuccess = await _appDbContext.SaveChangesAsync();
             return isSuccess > 0;
 
+        }
+
+        public Task<Hotel> getOne(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
