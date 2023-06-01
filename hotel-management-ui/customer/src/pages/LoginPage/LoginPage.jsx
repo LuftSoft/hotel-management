@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { routes } from "../../routes";
+
 export default function LoginPage() {
 	return (
 		<div className="container-xxl bg-white d-flex p-0">
@@ -7,9 +10,9 @@ export default function LoginPage() {
 						{/* should use form tag */}
 						<div className="bg-light bg-gradient rounded p-4 p-sm-5 my-4 mx-3">
 							<div className="d-flex align-items-center justify-content-between mb-3">
-								<a href="/">
+								<Link to={routes.home}>
 									<h3 className="text-primary text-uppercase">Home</h3>
-								</a>
+								</Link>
 								<h3>Sign In</h3>
 							</div>
 							<div className="form-floating mb-3">

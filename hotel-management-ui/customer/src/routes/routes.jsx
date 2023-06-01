@@ -4,10 +4,10 @@ import LoginPage from "../pages/LoginPage";
 
 export const routes = {
 	home: "/",
-	login: "/login",
+	signIn: "/sign-in",
 };
 
 export const publicRoutes = [
 	{ path: routes.home, page: HomePage, layout: null },
-	{ path: routes.login, page: LoginPage, layout: NonLayout },
+	{ path: routes.signIn, page: LoginPage, layout: NonLayout },
 ];
