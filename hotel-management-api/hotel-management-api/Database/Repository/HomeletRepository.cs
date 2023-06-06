@@ -16,7 +16,7 @@ namespace hotel_management_api.Database.Repository
         }
         public async Task<IEnumerable<Homelet>?> FindByNameAsync(string? key)
         {
-            return await appDbContext.Homelets.Where(h => h.Name.ToLower().Equals(key.ToLower())).ToListAsync();
+            return await appDbContext.Homelets.AsNoTracking().Where(h => h.Name.ToLower().Equals(key.ToLower())).ToListAsync();
         }
         public async Task<IEnumerable<Homelet>?> FindByDistrictIdAsync(string? id)
         {

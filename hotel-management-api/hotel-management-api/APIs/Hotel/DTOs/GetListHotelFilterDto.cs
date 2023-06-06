@@ -3,10 +3,12 @@
     public class GetListHotelFilterDto
     {
         public string? ProvineId { get; set; }
-        public string? DítrictId { get; set; }
+        public string? DistrictId { get; set; }
         public string? HomeletId { get; set; }
-        public int? RoomSize { get; set; }
-        public DateTime? FromDate { get; set; }
-        public DateTime? ToDate { get; set;}
+        public double Price { get; set; } = 0;
+        public int RoonCount { get; set; } = 1;
+        public int RoomSize { get; set; } = 1;
+        public DateTime FromDate { get; set; } = DateTime.Now;
+        public DateTime ToDate { get; set; } = DateTime.Now.AddDays(1);
     }
 }

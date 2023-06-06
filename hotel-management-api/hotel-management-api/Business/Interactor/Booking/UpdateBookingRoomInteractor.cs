@@ -1,6 +1,10 @@
 ﻿namespace hotel_management_api.Business.Interactor.Booking
 {
-    public class UpdateBookingRoomInteractor
+    public interface IUpdateBookingRoomInteractor 
+    {
+
+    }
+    public class UpdateBookingRoomInteractor : IUpdateBookingRoomInteractor
     {
     }
 }

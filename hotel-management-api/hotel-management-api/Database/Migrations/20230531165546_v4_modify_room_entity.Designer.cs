@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using hotel_management_api.Database;
 
@@ -11,9 +12,10 @@ using hotel_management_api.Database;
 namespace hotel_management_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230531165546_v4_modify_room_entity")]
+    partial class v4_modify_room_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,9 +165,6 @@ namespace hotel_management_api.Migrations
 
                     b.Property<DateTime?>("LastChange")
                         .HasColumnType("datetime2");
-
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -368,11 +367,10 @@ namespace hotel_management_api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HotelId")
+                    b.Property<int?>("HotelId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumOfBed")
@@ -381,23 +379,19 @@ namespace hotel_management_api.Migrations
                     b.Property<int>("NumOfPeope")
                         .HasColumnType("int");
 
-                    b.Property<double>("Price")
+                    b.Property<double?>("Price")
                         .HasColumnType("float");
 
-                    b.Property<bool>("Refund")
+                    b.Property<bool?>("Refund")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Reschedule")
+                    b.Property<bool?>("Reschedule")
                         .HasColumnType("bit");
-
-                    b.Property<double?>("Square")
-                        .HasColumnType("float");
 
                     b.Property<int>("TotalRoom")
                         .HasColumnType("int");
 
                     b.Property<string>("TypeOfBed")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -661,7 +655,6 @@ namespace hotel_management_api.Migrations
                         .WithMany("Rooms")
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("FK_Hotel_Room");
 
                     b.Navigation("Hotel");

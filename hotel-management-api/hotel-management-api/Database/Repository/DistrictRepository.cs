@@ -17,11 +17,11 @@ namespace hotel_management_api.Database.Repository
         }
         public async Task<IEnumerable<District>?> FindByNameAsync(string? key)
         {
-            return await appDbContext.Districts.Where(h => h.Name.ToLower().Equals(key.ToLower())).ToListAsync();
+            return await appDbContext.Districts.AsNoTracking().Where(h => h.Name.ToLower().Equals(key.ToLower())).ToListAsync();
         }
         public async Task<IEnumerable<District>?> FindByProvineIdAsync(string? id)
         {
-            return await appDbContext.Districts.Where(h => h.ProvineId.Equals(id)).ToListAsync();
+            return await appDbContext.Districts.AsNoTracking().Where(h => h.ProvineId.Equals(id)).ToListAsync();
         }
     }
 }

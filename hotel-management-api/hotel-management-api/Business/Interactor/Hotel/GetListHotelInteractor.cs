@@ -1,4 +1,6 @@
 ﻿using hotel_management_api.APIs.Hotel.DTOs;
+using hotel_management_api.Business.Services;
+using hotel_management_api.Database.Model;
 
 namespace hotel_management_api.Business.Interactor.Hotel
 {   
@@ -6,33 +8,31 @@ namespace hotel_management_api.Business.Interactor.Hotel
     {
         public class Request
         {   
-            int pageIndex { set; get; }
-            int pageSize { set; get; }
+            public int pageIndex { set; get; }
+            public int pageSize { set; get; }
             public GetListHotelFilterDto? dto { set; get; }
-            public Request(GetListHotelFilterDto dto, int pageIndex, int pageSize)
-            {
-                this.dto = dto;
-                this.pageIndex = pageIndex;
-                this.pageSize = pageSize;
-            }
         }
         public class Response
         {
+            public List<Database.Model.Hotel>? Hotels { set; get; }
             public string? Message { get; set; }
             public bool? Success { get; set; }
-            public Response(string message, bool success)
-            {
-                Message = message;
-                Success = success;
-            }
+            public int TotalPage { get; set; }
+            public int PageIndex { get; set; }
         }
-        Task<IGetListHotelInteractor.Response> Update(IGetListHotelInteractor.Request request);
+        Task<IGetListHotelInteractor.Response> GetAsync(IGetListHotelInteractor.Request request);
     }
     public class GetListHotelInteractor : IGetListHotelInteractor
     {
-        public Task<IGetListHotelInteractor.Response> Update(IGetListHotelInteractor.Request request)
+        private readonly IHotelService hotelService;
+        public GetListHotelInteractor(IHotelService hotelService)
         {
-            throw new NotImplementedException();
+            this.hotelService = hotelService;
+        }
+
+        public async Task<IGetListHotelInteractor.Response> GetAsync(IGetListHotelInteractor.Request request)
+        {
+            return await hotelService.GetPaging(request);
         }
     }
 }

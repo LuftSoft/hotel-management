@@ -18,23 +18,40 @@ namespace hotel_management_api.APIs.Hotel
         private readonly IJwtUtil jwtUtil;
         private readonly ICreateHotelInteractor createHotelInteractor;
         private readonly IUpdateHotelInteractor updateHotelInteractor;
+        private readonly IDeleteHotelInteractor deleteHotelInteractor;
+        private readonly IGetListHotelInteractor getListHotelInteractor;
         public HotelController(
-            IUploadFileUtil uploadFileUtil,
             IJwtUtil jwtUtil,
+            IUploadFileUtil uploadFileUtil,
             ICreateHotelInteractor createHotelInteractor,
-            IUpdateHotelInteractor updateHotelInteractor
+            IUpdateHotelInteractor updateHotelInteractor,
+            IDeleteHotelInteractor deleteHotelInteractor,
+            IGetListHotelInteractor getListHotelInteractor
             ) 
         { 
-            this.uploadFileUtil = uploadFileUtil;
             this.jwtUtil = jwtUtil;
+            this.uploadFileUtil = uploadFileUtil;
             this.createHotelInteractor = createHotelInteractor;
             this.updateHotelInteractor = updateHotelInteractor;
+            this.deleteHotelInteractor = deleteHotelInteractor;
+            this.getListHotelInteractor = getListHotelInteractor;
         }
         [HttpGet()]
-        public IActionResult get(int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
+        public async Task<IActionResult> get(  int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
         {   
-            return Ok(Directory.GetCurrentDirectory());
+            //if(hotelFilterDto.RoonCount < 0 || hotelFilterDto.FromDate < )
+            Console.WriteLine($"{pageIndex}{pageSize}");
+            var result = await getListHotelInteractor.GetAsync(new IGetListHotelInteractor.Request()
+            {
+                dto = hotelFilterDto,
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            });
+            if (result.Success == true)
+                return Ok(result);
+            return BadRequest(result);
         }
+        [HttpGet("getsuggest")]
         public IActionResult getSuggestHotelPosition(string? provine)
         {
             return Ok(Directory.GetCurrentDirectory());
@@ -59,6 +76,7 @@ namespace hotel_management_api.APIs.Hotel
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize("admin")]
         [HttpPost("upload")]
         public async Task<IActionResult> testFile(IFormFile[] ufile)
         {
@@ -92,9 +110,22 @@ namespace hotel_management_api.APIs.Hotel
             }
         }
         [HttpDelete]
-        public IActionResult delete(int id)
+        [Authorize("admin")]
+        public async Task<IActionResult> delete(int id)
         {
-            return Ok(0);
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+                return BadRequest();
+            var result = await deleteHotelInteractor.Delete(new IDeleteHotelInteractor.Request()
+            {
+                id = id,
+                token = token
+            });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
