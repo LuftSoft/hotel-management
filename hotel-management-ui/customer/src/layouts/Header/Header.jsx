@@ -45,7 +45,7 @@ export default function Header() {
 			{/* end top bar */}
 			{/* nav bar */}
 			<div className="container-fluid px-0">
-				<nav className="navbar navbar-expand-lg navbar-light px-2 px-lg-5">
+				<nav className="navbar navbar-expand-lg navbar-light px-2 px-lg-5 py-lg-4">
 					<a href={routes.home}>
 						<img src={logo} alt="logo" />
 					</a>

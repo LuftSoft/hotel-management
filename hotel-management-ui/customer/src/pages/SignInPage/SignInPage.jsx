@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { routes } from "../../routes";
 
-export default function LoginPage() {
+export default function SignInPage() {
 	return (
 		<div className="container-xxl bg-white d-flex p-0">
 			<div className="container-fluid">
@@ -16,7 +16,7 @@ export default function LoginPage() {
 								<h3>Sign In</h3>
 							</div>
 							<div className="form-floating mb-3">
-								<input className="form-control" id="Username" placeholder="username" />
+								<input className="form-control" id="Username" type="email" placeholder="username" />
 								<label htmlFor="Username">Username</label>
 							</div>
 							<div className="form-floating mb-4">
@@ -37,7 +37,7 @@ export default function LoginPage() {
 							</button>
 							<p className="text-center mb-0">
 								{"Don't have an Account? "}
-								<a href="#">Sign Up</a>
+								<Link to={routes.signUp}>Sign Up</Link>
 							</p>
 						</div>
 					</div>
