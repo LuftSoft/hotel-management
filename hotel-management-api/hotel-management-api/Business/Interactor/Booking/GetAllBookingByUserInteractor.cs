@@ -4,32 +4,30 @@ using hotel_management_api.Business.Services;
 
 namespace hotel_management_api.Business.Interactor.Booking
 {
-    public interface ICreateBookingRoomInteractor
+    public interface IGetAllBookingByUserInteractor
     {
         public class Request
         {
-            public BookingDto? Booking { set; get; }
             public string token { set; get; }
         }
         public class Response
         {
             public string? Message { get; set; }
             public bool? Success { get; set; }
-            public BookingDto? Booking { set; get; }
+            public List<BookingListDto>? BookingList { set; get; }
         }
-        Task<ICreateBookingRoomInteractor.Response> Create(ICreateBookingRoomInteractor.Request request);
+        Task<IGetAllBookingByUserInteractor.Response> GetAsync(IGetAllBookingByUserInteractor.Request request);
     }
-    public class CreateBookingRoomInteractor: ICreateBookingRoomInteractor
+    public class GetAllBookingByUserInteractor: IGetAllBookingByUserInteractor
     {
         private readonly IBookingService bookingService;
-        public CreateBookingRoomInteractor(IBookingService bookingService)
+        public GetAllBookingByUserInteractor(IBookingService bookingService)
         {
             this.bookingService = bookingService;
         }
-
-        public async Task<ICreateBookingRoomInteractor.Response> Create(ICreateBookingRoomInteractor.Request request)
+        public async Task<IGetAllBookingByUserInteractor.Response> GetAsync(IGetAllBookingByUserInteractor.Request request)
         {
-            return await bookingService.Create(request);
+            return await bookingService.GetByUserId(request);
         }
     }
 }

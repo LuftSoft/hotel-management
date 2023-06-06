@@ -1,4 +1,5 @@
 ﻿using hotel_management_api.APIs.Hotel.DTOs;
+using hotel_management_api.Business.Services;
 
 namespace hotel_management_api.Business.Interactor.Hotel
 {   
@@ -6,29 +7,26 @@ namespace hotel_management_api.Business.Interactor.Hotel
     {
         public class Request
         {
-            public HotelDto? dto { set; get; }
-            public Request(HotelDto dto)
-            {
-                this.dto = dto;
-            }
+            public int id { set; get; }
+            public string token { set; get; }
         }
         public class Response
         {
             public string? Message { get; set; }
             public bool? Success { get; set; }
-            public Response(string message, bool success)
-            {
-                Message = message;
-                Success = success;
-            }
         }
         Task<IDeleteHotelInteractor.Response> Delete(IDeleteHotelInteractor.Request request);
     }
     public class DeleteHotelInteractor : IDeleteHotelInteractor
     {
-        public Task<IDeleteHotelInteractor.Response> Delete(IDeleteHotelInteractor.Request request)
+        private readonly IHotelService hotelService;
+        public DeleteHotelInteractor(IHotelService hotelService)
         {
-            throw new NotImplementedException();
+            this.hotelService = hotelService;
+        }
+        public async Task<IDeleteHotelInteractor.Response> Delete(IDeleteHotelInteractor.Request request)
+        {
+            return await hotelService.Delete(request);
         }
     }
 }

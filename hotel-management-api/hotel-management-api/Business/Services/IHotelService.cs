@@ -7,6 +7,8 @@ namespace hotel_management_api.Business.Services
     {
         Task<ICreateHotelInteractor.Response> Create(ICreateHotelInteractor.Request request);
         Task<IUpdateHotelInteractor.Response> Update(IUpdateHotelInteractor.Request request);
+        Task<IDeleteHotelInteractor.Response> Delete(IDeleteHotelInteractor.Request request);
+        Task<IGetListHotelInteractor.Response> GetPaging(IGetListHotelInteractor.Request request);
         public class HotelResponseModel
         {
             public int Id { get; set; }

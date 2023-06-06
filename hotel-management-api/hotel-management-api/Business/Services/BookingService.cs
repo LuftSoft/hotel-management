@@ -1,6 +1,130 @@
-﻿namespace hotel_management_api.Business.Services
+﻿using hotel_management_api.APIs.Booking.DTOs;
+using hotel_management_api.Business.Interactor.Booking;
+using hotel_management_api.Database.Model;
+using hotel_management_api.Database.Repository;
+using hotel_management_api.Utils;
+
+namespace hotel_management_api.Business.Services
 {
     public class BookingService : IBookingService
     {
+        private readonly IJwtUtil jwtUtil;
+        private readonly IUserService userService;
+        private readonly IRoomRepository roomRepository;
+        private readonly IHotelRepository hotelRepository;
+        private readonly IBookingRepository bookingRepository;
+
+        public BookingService(
+            IJwtUtil jwtUtil,
+            IUserService userService,
+            IHotelRepository hotelRepository,
+            IBookingRepository bookingRepository,
+            IRoomRepository roomRepository
+            )
+        {
+            this.jwtUtil = jwtUtil;
+            this.userService = userService;
+            this.hotelRepository = hotelRepository;
+            this.roomRepository = roomRepository;
+            this.bookingRepository = bookingRepository;
+        }
+        public async Task<ICreateBookingRoomInteractor.Response> Create(ICreateBookingRoomInteractor.Request request)
+        {
+            try
+            {
+                string userId = await userService.GetUserIdFromToken(request.token);
+                if (userId == null)
+                {
+                    return new ICreateBookingRoomInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "Booking failed"
+                    };
+                }
+                var bookingDto = request.Booking;
+                Booking booking = new Booking();
+                booking.UserId = userId;
+                booking.FromDate = bookingDto.FromDate;
+                booking.ToDate = bookingDto.ToDate;
+                booking.RoomId = bookingDto.RoomId;
+                booking.Status = bookingDto.Status;
+                booking.CreateDate = DateTime.Now;
+                booking.CreateDate = DateTime.Now;
+                booking.IsReturned = true;
+                var isSuccess = await bookingRepository.Create(booking);
+                if (isSuccess)
+                {
+                    return new ICreateBookingRoomInteractor.Response()
+                    {
+                        Success = true,
+                        Message = "Booking success"
+                    };
+                }
+                return new ICreateBookingRoomInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Booking failed"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ICreateBookingRoomInteractor.Response()
+                {
+                    Success = false,
+                    Message = $"Error occur when booking. Error: {ex}"
+                };
+            }
+        }
+        public async Task<IGetAllBookingByUserInteractor.Response> GetByUserId(IGetAllBookingByUserInteractor.Request request)
+        {
+            try
+            {
+                string userId = await userService.GetUserIdFromToken(request.token);
+                if (userId == null)
+                {
+                    return new IGetAllBookingByUserInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "Get list failed"
+                    };
+                }
+                List<BookingListDto> bookingListDtos = new List<BookingListDto>();
+                var bookings = await bookingRepository.GetByUserId(userId);
+                foreach (var booking in bookings)
+                {
+                    var room = await roomRepository.GetByIdAsync(booking.RoomId);
+                    var hotel = await hotelRepository.getOne(room.HotelId);
+                    if(room == null || hotel == null) continue;
+                    bookingListDtos.Add(new BookingListDto()
+                    {
+                        Id = booking.Id,
+                        RoomId = booking.RoomId,
+                        RoomSize = room.NumOfPeope,
+                        RoomName = room.Name,
+                        Status = booking.Status,
+                        IsReturned = booking.IsReturned,
+                        HotelId = hotel.Id,
+                        HotelName = hotel.Name,
+                        HotelImage = hotel.LogoLink,
+                        FromDate = booking.FromDate,
+                        ToDate = booking.ToDate
+                    });
+                }
+                return new IGetAllBookingByUserInteractor.Response()
+                {
+                    Success = true,
+                    Message = "Get list success",
+                    BookingList = bookingListDtos
+                };
+            }
+            catch (Exception ex)
+            {
+                return new IGetAllBookingByUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = $"Get list failed. Error: {ex}"
+                };
+            }
+        }
     }
 }
