@@ -90,7 +90,6 @@ namespace hotel_management_api.Database.Repository
             return isSuccess > 0;
 
         }
-
         public async Task<Hotel> getOne(int id)
         {
             return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
