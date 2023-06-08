@@ -39,6 +39,9 @@ export default function Header() {
 						<Link to={routes.signIn} className="btn btn-primary ms-3">
 							Sign In
 						</Link>
+						<Link to={routes.signUp} className="btn btn-primary ms-3">
+							Sign Up
+						</Link>
 					</div>
 				</div>
 			</div>
