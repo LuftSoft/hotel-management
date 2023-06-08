@@ -10,6 +10,7 @@ namespace hotel_management_api.Business.Services
         Task<IUserSignupInteractor.Response> SignupService(IUserSignupInteractor.Request request);
         Task<IFogotPasswordInteractor.Response> fogotPasswordService(IFogotPasswordInteractor.Request request);
         Task<UserDto?> getDetailAsync(string userId);
+        Task<string?> GetUserIdFromToken(string token);
         Task<IResetPasswordInteractor.Response> resetPasswordService(string username, string newpass);
         Task<IDeleteUserInteractor.Response> DeleteAsync(string userId);
     }

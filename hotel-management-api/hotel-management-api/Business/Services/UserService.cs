@@ -29,6 +29,16 @@ namespace hotel_management_api.Business.Services
             this.sendMailUtil = _sendMailUtil;
             this.configuration = configuration;
         }
+        public async Task<string?> GetUserIdFromToken(string token)
+        {
+            string userName = jwtUtil.getUserNameFromToken(token);
+            if(userName == null)
+            {
+                return null;
+            }
+            return (await userRepository.findUserByEmailAsync(userName)).Id;
+
+        }
         public async Task<IUserLoginInteractor.Response> LoginService(IUserLoginInteractor.Request request)
         {
             var result = (await userRepository.LoginRepository(request.loginDto)).ToList();

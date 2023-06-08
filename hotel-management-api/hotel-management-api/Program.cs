@@ -80,7 +80,10 @@ builder.Services
     .ServiceDependencyInjection()
     .UtilServiceDependencyInjection()
     .UserInteractorDependencyInjection()
-    .HotelInteractorDependencyInjection();
+    .HotelInteractorDependencyInjection()
+    .RoomInteractorDependencyInjection()
+    .RoomGalleryInteractorDependencyInjection()
+    .BookingInteractorDependencyInjection();
 builder.Services.AddCors(builder =>
 {
     builder.AddPolicy(
@@ -89,7 +92,18 @@ builder.Services.AddCors(builder =>
     );
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.AddSecurityDefinition("Bearer",
+        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            Description = "Please enter into field the word 'Bearer' following by space and JWT",
+            Name = "Authorization",
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+        });
+    opt.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement());
+});
 
 var app = builder.Build();
 
@@ -98,6 +112,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
