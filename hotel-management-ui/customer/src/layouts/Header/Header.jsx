@@ -6,7 +6,7 @@ export default function Header() {
 	return (
 		<>
 			{/* top bar */}
-			<div className="container-fluid border-top border-bottom border-secondary px-5 d-none d-lg-block">
+			<div className="container-fluid border-top border-bottom px-5 d-none d-lg-block">
 				<div className="row">
 					<div className="col-lg-6">
 						<div className="d-inline-flex">
@@ -14,7 +14,7 @@ export default function Header() {
 								<i className="fa fa-phone text-primary"></i>
 								{" (12) 345 67890"}
 							</span>
-							<span className="mx-3 border-end border-secondary"></span>
+							<span className="mx-3 border-end"></span>
 							<span className="py-3">
 								<i className="fa fa-envelope text-primary"></i>
 								{" info.colorlib@gmail.com"}
@@ -37,10 +37,10 @@ export default function Header() {
 							Booking Now
 						</a>
 						<Link to={routes.signIn} className="btn btn-primary ms-3">
-							Sign In
+							Đăng nhập
 						</Link>
 						<Link to={routes.signUp} className="btn btn-primary ms-3">
-							Sign Up
+							Đăng ký
 						</Link>
 					</div>
 				</div>
@@ -83,11 +83,11 @@ export default function Header() {
 							</li>
 							<li className="nav-item">
 								<NavLink
-									to={routes.aboutUs}
+									to={routes.hotel}
 									className={({ isActive }) => {
 										return `nav-link position-relative p-0 ms-4 ${isActive ? "active" : ""}`;
 									}}>
-									About Us
+									Hotel
 								</NavLink>
 							</li>
 							<li className="nav-item">

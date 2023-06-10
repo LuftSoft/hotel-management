@@ -1,4 +1,5 @@
 import Header from "../Header";
+import Footer from "../Footer";
 
 export default function DefaultLayout({ children }) {
 	return (
@@ -9,6 +10,7 @@ export default function DefaultLayout({ children }) {
 			<Header />
 			{children}
 			{/* Footer */}
+			<Footer />
 			{/* Search Modal */}
 		</>
 	);

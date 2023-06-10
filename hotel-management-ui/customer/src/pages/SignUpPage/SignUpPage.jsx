@@ -1,62 +1,230 @@
 import { Link } from "react-router-dom";
 import { routes } from "../../routes";
+import { useRef, useState } from "react";
+import { axiosPost, url } from "../../utils/httpRequest";
+import { toast } from "react-toastify";
 
 export default function SignUpPage() {
+	const firstNameRef = useRef();
+	const lastNameRef = useRef();
+	const emailRef = useRef();
+	const passwordRef = useRef();
+	const confirmPasswordRef = useRef();
+	const [showPw, setShowPw] = useState(false);
+	const [errors, setErrors] = useState({
+		firstName: "",
+		lastName: "",
+		email: "",
+		password: "",
+		confirmPassword: "",
+	});
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		const firstName = firstNameRef.current.value;
+		const lastName = lastNameRef.current.value;
+		const username = emailRef.current.value;
+		const password = passwordRef.current.value;
+		const confirmPassword = confirmPasswordRef.current.value;
+		const errors = {};
+		if (firstName === "") {
+			errors.firstName = "Vui lòng nhập tên!";
+		}
+		if (lastName === "") {
+			errors.lastName = "Vui lòng nhập họ!";
+		}
+		if (username === "") {
+			errors.email = "Vui lòng nhập email!";
+		}
+		if (password === "") {
+			errors.password = "Vui lòng nhập mật khẩu!";
+		} else if (password.length < 6) {
+			errors.password = "Mật khẩu tối thiểu 6 ký tự!";
+		}
+		if (confirmPassword === "") {
+			errors.confirmPassword = "Vui lòng nhập mật khẩu xác nhận!";
+		} else if (password !== confirmPassword) {
+			errors.confirmPassword = "Mật khẩu xác nhận không khớp!";
+		}
+		if (Object.keys(errors).length) {
+			setErrors(errors);
+		} else {
+			setErrors({});
+			const SignUpRequest = async () => {
+				const toastId = toast.loading("Đang xử lý!");
+				try {
+					const res = await axiosPost(url.signUp, {
+						firstName,
+						lastName,
+						username,
+						password,
+					});
+					console.log(res);
+					toast.update(toastId, {
+						render: "Đăng ký thành công!",
+						type: "success",
+						closeButton: true,
+						autoClose: 1000,
+						isLoading: false,
+					});
+					// navigate();
+				} catch (error) {
+					toast.update(toastId, {
+						render: "Đăng ký thất bại!",
+						type: "error",
+						closeButton: true,
+						autoClose: 1000,
+						isLoading: false,
+					});
+				}
+			};
+			SignUpRequest();
+		}
+	};
+	const handleChange = (name) => {
+		if (typeof name === "string") {
+			setErrors({
+				...errors,
+				[name]: "",
+			});
+		} else {
+			throw new Error("Name must be string!");
+		}
+	};
 	return (
 		<div className="container-xxl bg-white d-flex p-0">
 			<div className="container-fluid">
 				<div className="row h-100 min-vh-100 align-items-center justify-content-center">
 					<div className="col-12 col-sm-8 col-md-6">
 						{/* should use form tag */}
-						<div className="bg-light bg-gradient rounded p-4 p-sm-5 my-4 mx-3">
-							<div className="d-flex align-items-center justify-content-between mb-3">
+						<form
+							onSubmit={handleSubmit}
+							className="bg-light bg-gradient rounded p-4 p-sm-5 my-4 mx-3 needs-validationc was-validateds">
+							<div className="d-flex align-items-center justify-content-between mb-2 mb-lg-3">
 								<Link to={routes.home}>
-									<h3 className="text-primary text-uppercase">Home</h3>
+									<h3 className="text-primary text-uppercase">Trang chủ</h3>
 								</Link>
-								<h3>Sign Up</h3>
+								<h3>Đăng ký</h3>
 							</div>
 							<div className="row">
-								<div className="col">
-									<div className="form-floating mb-3">
-										<input className="form-control" id="first-name" placeholder="First Name" />
-										<label htmlFor="first-name">First Name</label>
-									</div>
-									<div className="form-floating mb-3">
-										<input className="form-control" id="last-name" placeholder="Last Name" />
-										<label htmlFor="last-name">Last Name</label>
-									</div>
-									<div className="form-floating mb-3">
-										<input type="email" className="form-control" id="Username" placeholder="username" />
-										<label htmlFor="Username">Username</label>
+								<div className="col-12 col-lg-6">
+									<div className="mb-2">
+										<label htmlFor="first-name" className="form-label">
+											Tên
+										</label>
+										<input
+											ref={firstNameRef}
+											onChange={() => {
+												handleChange("firstName");
+											}}
+											className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
+											id="first-name"
+										/>
+										<div className="invalid-feedback">{errors.firstName}</div>
 									</div>
 								</div>
-								<div className="col">
-									<div className="form-floating mb-4">
-										<input type="password" className="form-control" id="Password" placeholder="username" />
-										<label htmlFor="Password">Password</label>
+								<div className="col-12 col-lg-6">
+									<div className="mb-2">
+										<label htmlFor="last-name" className="form-label">
+											Họ
+										</label>
+										<input
+											ref={lastNameRef}
+											onChange={() => {
+												handleChange("lastName");
+											}}
+											className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
+											id="last-name"
+										/>
+										<div className="invalid-feedback">{errors.lastName}</div>
 									</div>
-									<div className="form-floating mb-4">
-										<input type="password" className="form-control" id="confirm-password" placeholder="username" />
-										<label htmlFor="confirm-password">Confirm Password</label>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col-12 col-lg-6">
+									<div className="mb-2">
+										<label htmlFor="Username" className="form-label">
+											Email
+										</label>
+										<input
+											ref={emailRef}
+											onChange={() => {
+												handleChange("email");
+											}}
+											type="email"
+											maxLength={256}
+											className={`form-control ${errors.email ? "is-invalid" : ""}`}
+											id="Username"
+										/>
+										<div className="invalid-feedback">{errors.email}</div>
 									</div>
-									<div className="d-flex align-items-center justify-content-between mb-4">
+								</div>
+								<div className="col-12 col-lg-6">
+									<div className="mb-2">
+										<label htmlFor="Password" className="form-label">
+											Mật khẩu
+										</label>
+										<input
+											ref={passwordRef}
+											onChange={() => {
+												handleChange("password");
+											}}
+											type={showPw ? "text" : "password"}
+											maxLength={100}
+											className={`form-control ${errors.password ? "is-invalid" : ""}`}
+											id="Password"
+										/>
+										<div className="invalid-feedback">{errors.password}</div>
+									</div>
+								</div>
+							</div>
+							<div className="row align-items-center">
+								<div className="col-12 col-lg-6">
+									<div className="mb-2">
+										<label htmlFor="confirm-password" className="form-label">
+											Xác nhận mật khẩu
+										</label>
+										<input
+											ref={confirmPasswordRef}
+											onChange={() => {
+												handleChange("confirmPassword");
+											}}
+											type={showPw ? "text" : "password"}
+											className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+											id="confirm-password"
+										/>
+										<div className="invalid-feedback">{errors.confirmPassword}</div>
+									</div>
+								</div>
+								<div className="col-12 col-lg-6">
+									<div className="d-flex align-items-center justify-content-between mt-2">
 										<div className="form-check">
-											<input type="checkbox" id="check-password" className="form-check-input" />
+											<input
+												type="checkbox"
+												onClick={(e) => {
+													if (e.target.checked) {
+														setShowPw(true);
+													} else {
+														setShowPw(false);
+													}
+												}}
+												id="check-password"
+												className="form-check-input"
+											/>
 											<label htmlFor="check-password" className="form-check-label">
-												Check me out!
+												Hiện mật khẩu!
 											</label>
 										</div>
 									</div>
 								</div>
 							</div>
-							<button type="button" className="btn btn-primary w-100 py-3 mb-4">
-								Sign Up
+							<button type="submit" className="btn btn-primary w-100 py-3 mt-4 mt-lg-2 mb-lg-4">
+								Đăng ký
 							</button>
 							<p className="text-center mb-0">
-								{"Already have an Account? "}
-								<Link to={routes.signIn}>Sign In</Link>
+								{"Đã có tài khoản? "}
+								<Link to={routes.signIn}>Đăng nhập</Link>
 							</p>
-						</div>
+						</form>
 					</div>
 				</div>
 			</div>

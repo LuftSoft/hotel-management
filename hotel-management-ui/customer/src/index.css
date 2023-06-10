@@ -2,6 +2,7 @@
 
 :root {
 	--primary-color: var(--bs-blue);
+	--secondary-color: var(--bs-gray-600);
 }
 body {
 	font-family: "Heebo", sans-serif;

@@ -1,0 +1,28 @@
+.HotelCard__Container {
+	box-shadow: 0 0 4px var(--primary-color);
+	border-radius: 4px;
+}
+.HotelCard__Wrapper {
+	display: flex;
+}
+.HotelCard__Logo {
+	width: 132px;
+	height: 176px;
+	& img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+.HotelCard__InfoContainer {
+	flex-grow: 1;
+	display: flex;
+}
+.HotelCard__Detail {
+	flex-grow: 1;
+	background-color: aliceblue;
+}
+.HotelCard__Deal {
+	min-width: 178px;
+	background-color: antiquewhite;
+}

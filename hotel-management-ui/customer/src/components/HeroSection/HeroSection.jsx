@@ -1,4 +1,14 @@
+import { useEffect } from "react";
+import { useRef } from "react";
+import { formatDate } from "../../utils/helpers";
+
 export default function HeroSection() {
+	const checkInDateRef = useRef(null);
+	const checkOutDateRef = useRef(null);
+	useEffect(() => {
+		const today = new Date();
+		checkInDateRef.current.min = formatDate(today);
+	}, []);
 	return (
 		<section className="position-relative pt-4 pb-5">
 			<div
@@ -22,53 +32,60 @@ export default function HeroSection() {
 					</div>
 					<div className="col-lg-6 ms-auto">
 						<div className="p-5 rounded bg-white">
-							<h3>Booking Your Hotel</h3>
+							<h3>Tìm và đặt phòng khách sạn</h3>
 							<form>
 								<div className="row">
 									<div className="col">
 										<div className="mb-3">
-											<label>Check In:</label>
-											<input type="date" className="form-control" />
+											<label>Ngày nhận phòng:</label>
+											<input
+												ref={checkInDateRef}
+												type="date"
+												className="form-control"
+												onChange={(e) => {
+													const checkInDate = e.target.value;
+													if (checkInDate) {
+														if (new Date(checkInDate).getTime() > new Date(checkOutDateRef.current.value).getTime()) {
+															checkOutDateRef.current.value = null;
+														}
+														checkOutDateRef.current.min = formatDate(new Date(checkInDate));
+														checkOutDateRef.current.disabled = false;
+													} else {
+														checkOutDateRef.current.value = null;
+														checkOutDateRef.current.disabled = true;
+													}
+												}}
+											/>
 										</div>
 										<div className="mb-3">
-											<label>Check Out:</label>
-											<input type="date" className="form-control" />
+											<label>Ngày trả phòng:</label>
+											<input ref={checkOutDateRef} disabled type="date" className="form-control" />
 										</div>
 										<div className="mb-3">
-											<label>Guests:</label>
-											<select className="form-select" aria-label="Default select example">
-												<option defaultChecked>Select </option>
-												<option value="1">One</option>
-												<option value="2">Two</option>
-												<option value="3">Three</option>
-											</select>
+											<label>Số người 1 phòng:</label>
+											<input type="number" className="form-control" defaultValue={1} min={0} />
 										</div>
 										<div className="mb-3">
-											<label>Room:</label>
-											<select className="form-select" aria-label="Default select example">
-												<option defaultChecked>Select </option>
-												<option value="1">One</option>
-												<option value="2">Two</option>
-												<option value="3">Three</option>
-											</select>
+											<label>Số phòng:</label>
+											<input type="number" className="form-control" defaultValue={1} min={0} />
 										</div>
 									</div>
 									<div className="col">
 										<div className="mb-3">
-											<label>Desired Price:</label>
+											<label>Giá mong muốn (VNĐ):</label>
 											<input type="number" className="form-control" min={0} />
 										</div>
 										<div className="mb-3">
-											<label>Province:</label>
+											<label>Tỉnh/thành phố:</label>
 											<select className="form-select" aria-label="Default select example">
-												<option defaultChecked>Select Province</option>
+												<option defaultChecked>Chọn tỉnh/thành phố</option>
 												<option value="1">One</option>
 												<option value="2">Two</option>
 												<option value="3">Three</option>
 											</select>
 										</div>
 										<div className="mb-3">
-											<label>District:</label>
+											<label>Quận/huyện:</label>
 											<select className="form-select" disabled aria-label="Default select example">
 												<option defaultChecked>Select District</option>
 												<option value="1">One</option>
@@ -77,7 +94,7 @@ export default function HeroSection() {
 											</select>
 										</div>
 										<div className="mb-3">
-											<label>Commune:</label>
+											<label>Xã/phường:</label>
 											<select className="form-select" disabled aria-label="Default select example">
 												<option defaultChecked>Select Commune</option>
 												<option value="1">One</option>
@@ -87,7 +104,7 @@ export default function HeroSection() {
 										</div>
 										<div className="d-grid mt-4">
 											<button type="button" className="btn btn-primary">
-												CHECK AVAILABILITY
+												Xem phòng có sẵn
 											</button>
 										</div>
 									</div>
