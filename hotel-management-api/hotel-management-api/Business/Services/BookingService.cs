@@ -28,54 +28,7 @@ namespace hotel_management_api.Business.Services
             this.roomRepository = roomRepository;
             this.bookingRepository = bookingRepository;
         }
-        public async Task<ICreateBookingRoomInteractor.Response> Create(ICreateBookingRoomInteractor.Request request)
-        {
-            try
-            {
-                string userId = await userService.GetUserIdFromToken(request.token);
-                if (userId == null)
-                {
-                    return new ICreateBookingRoomInteractor.Response()
-                    {
-                        Success = false,
-                        Message = "Booking failed"
-                    };
-                }
-                var bookingDto = request.Booking;
-                Booking booking = new Booking();
-                booking.UserId = userId;
-                booking.FromDate = bookingDto.FromDate;
-                booking.ToDate = bookingDto.ToDate;
-                booking.RoomId = bookingDto.RoomId;
-                booking.Status = bookingDto.Status;
-                booking.CreateDate = DateTime.Now;
-                booking.CreateDate = DateTime.Now;
-                booking.IsReturned = true;
-                var isSuccess = await bookingRepository.Create(booking);
-                if (isSuccess)
-                {
-                    return new ICreateBookingRoomInteractor.Response()
-                    {
-                        Success = true,
-                        Message = "Booking success"
-                    };
-                }
-                return new ICreateBookingRoomInteractor.Response()
-                {
-                    Success = false,
-                    Message = "Booking failed"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ICreateBookingRoomInteractor.Response()
-                {
-                    Success = false,
-                    Message = $"Error occur when booking. Error: {ex}"
-                };
-            }
-        }
-        public async Task<IGetAllBookingByUserInteractor.Response> GetByUserId(IGetAllBookingByUserInteractor.Request request)
+        public async Task<IGetAllBookingByUserInteractor.Response> GetByUserIdAsync(IGetAllBookingByUserInteractor.Request request)
         {
             try
             {
@@ -123,6 +76,118 @@ namespace hotel_management_api.Business.Services
                 {
                     Success = false,
                     Message = $"Get list failed. Error: {ex}"
+                };
+            }
+        }
+        public async Task<ICreateBookingRoomInteractor.Response> CreateAsync(ICreateBookingRoomInteractor.Request request)
+        {
+            try
+            {
+                string userId = await userService.GetUserIdFromToken(request.token);
+                if (userId == null)
+                {
+                    return new ICreateBookingRoomInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "Booking failed"
+                    };
+                }
+                var bookingDto = request.Booking;
+                Booking booking = new Booking();
+                booking.UserId = userId;
+                booking.FromDate = bookingDto.FromDate;
+                booking.ToDate = bookingDto.ToDate;
+                booking.RoomId = bookingDto.RoomId;
+                booking.Status = bookingDto.Status;
+                booking.CreateDate = DateTime.Now;
+                booking.CreateDate = DateTime.Now;
+                booking.IsReturned = true;
+                var isSuccess = await bookingRepository.Create(booking);
+                if (isSuccess)
+                {
+                    return new ICreateBookingRoomInteractor.Response()
+                    {
+                        Success = true,
+                        Message = "Booking success"
+                    };
+                }
+                return new ICreateBookingRoomInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Booking failed"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ICreateBookingRoomInteractor.Response()
+                {
+                    Success = false,
+                    Message = $"Error occur when booking. Error: {ex}"
+                };
+            }
+        }
+        public async Task<IUpdateBookingRoomInteractor.Response> UpdateAsync(IUpdateBookingRoomInteractor.Request request)
+        {
+            try
+            {
+                BookingDto requestBooking = request.Booking;
+                string userId = await userService.GetUserIdFromToken(request.token);
+                Booking booking = await bookingRepository.GetOne(request.Booking.Id);
+                if (userId == null || booking == null)
+                {
+                    return new IUpdateBookingRoomInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "Update booking information failed"
+                    };
+                }
+                booking.UpdateDate = DateTime.Now;
+                booking.IsReturned = requestBooking.IsReturned;
+                booking.FromDate = requestBooking.FromDate;
+                booking.ToDate = requestBooking.ToDate;
+                await bookingRepository.Update(booking);
+                return new IUpdateBookingRoomInteractor.Response()
+                {
+                    Success = true,
+                    Message = "Update booking information success"
+                };
+            } catch(Exception ex)
+            {
+                return new IUpdateBookingRoomInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Exception occur when update booking information"
+                };
+            }
+        }
+        public async Task<ICancelBookingRoomInteractor.Response> CancelAsync(ICancelBookingRoomInteractor.Request request)
+        {
+            try
+            {
+                string userId = await userService.GetUserIdFromToken(request.token);
+                Booking booking = await bookingRepository.GetOne(request.BookingId);
+                if (userId == null || booking == null || userId != booking.UserId)
+                {
+                    return new ICancelBookingRoomInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "Update booking information failed"
+                    };
+                }
+                booking.IsReturned = false;
+                await bookingRepository.Update(booking);
+                return new ICancelBookingRoomInteractor.Response()
+                {
+                    Success = true,
+                    Message = "Update booking information success"
+                };
+            }
+            catch(Exception ex) 
+            {
+                return new ICancelBookingRoomInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Error occur when cancel booking information"
                 };
             }
         }

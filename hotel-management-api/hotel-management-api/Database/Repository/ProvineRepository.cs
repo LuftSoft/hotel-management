@@ -10,7 +10,7 @@ namespace hotel_management_api.Database.Repository
         {
             this.appDbContext = appDbContext;
         }
-        public async Task<IEnumerable<Provine>> GetListProovine()
+        public async Task<IEnumerable<Provine>> GetListProvine()
         {
             return await appDbContext.Provines.ToListAsync();
         }

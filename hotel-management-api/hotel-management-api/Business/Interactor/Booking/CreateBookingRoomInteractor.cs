@@ -17,7 +17,7 @@ namespace hotel_management_api.Business.Interactor.Booking
             public bool? Success { get; set; }
             public BookingDto? Booking { set; get; }
         }
-        Task<ICreateBookingRoomInteractor.Response> Create(ICreateBookingRoomInteractor.Request request);
+        Task<ICreateBookingRoomInteractor.Response> CreateAsync(ICreateBookingRoomInteractor.Request request);
     }
     public class CreateBookingRoomInteractor: ICreateBookingRoomInteractor
     {
@@ -27,9 +27,9 @@ namespace hotel_management_api.Business.Interactor.Booking
             this.bookingService = bookingService;
         }
 
-        public async Task<ICreateBookingRoomInteractor.Response> Create(ICreateBookingRoomInteractor.Request request)
+        public async Task<ICreateBookingRoomInteractor.Response> CreateAsync(ICreateBookingRoomInteractor.Request request)
         {
-            return await bookingService.Create(request);
+            return await bookingService.CreateAsync(request);
         }
     }
 }

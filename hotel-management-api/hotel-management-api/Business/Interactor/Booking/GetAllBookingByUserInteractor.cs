@@ -27,7 +27,7 @@ namespace hotel_management_api.Business.Interactor.Booking
         }
         public async Task<IGetAllBookingByUserInteractor.Response> GetAsync(IGetAllBookingByUserInteractor.Request request)
         {
-            return await bookingService.GetByUserId(request);
+            return await bookingService.GetByUserIdAsync(request);
         }
     }
 }

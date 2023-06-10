@@ -19,33 +19,36 @@ namespace hotel_management_api.APIs.User
     [Route("/api/v{version:apiVersion}/user")]
     public class UserController : ControllerBase
     {
+        private readonly IJwtUtil jwtUtil;
+        private readonly IConfiguration configuration;
+        private readonly UserManager<AppUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly IUserLoginInteractor userLoginInteractor;
         private readonly IUserSignupInteractor userSignupInteractor;
         private readonly IFogotPasswordInteractor fogotPasswordInteractor;
         private readonly IGetDetailUserInteractor getDetailUserInteractor;
-        private readonly UserManager<AppUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IJwtUtil jwtUtil;
-        private readonly IConfiguration configuration;
+        private readonly IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor;
         public UserController(
+            IJwtUtil jwtUtil,
+            IConfiguration configuration,
             UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IUserLoginInteractor _userLoginInteractor,
             IUserSignupInteractor _userSignupInteractor,
-            IFogotPasswordInteractor _fogotPasswordInteractor,
             IGetDetailUserInteractor getDetailUserInteractor,
-            IConfiguration configuration,
-            IJwtUtil jwtUtil
+            IFogotPasswordInteractor _fogotPasswordInteractor,
+            IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor
             ) 
         {
-            this.userLoginInteractor = _userLoginInteractor;
-            this.userSignupInteractor = _userSignupInteractor;
-            this.fogotPasswordInteractor = _fogotPasswordInteractor;
-            this.getDetailUserInteractor = getDetailUserInteractor;
-            this.configuration = configuration;
+            this.jwtUtil = jwtUtil;
             this.userManager = userManager;
             this.roleManager = roleManager;
-            this.jwtUtil = jwtUtil;
+            this.configuration = configuration;
+            this.userLoginInteractor = _userLoginInteractor;
+            this.userSignupInteractor = _userSignupInteractor;
+            this.getDetailUserInteractor = getDetailUserInteractor;
+            this.fogotPasswordInteractor = _fogotPasswordInteractor;
+            this.blockAndUnlockUserInteractor = blockAndUnlockUserInteractor;
         }
         //GET
         [MapToApiVersion("1.0")]
@@ -114,6 +117,30 @@ namespace hotel_management_api.APIs.User
             var Authorization = HttpContext.GetTokenAsync("Bearer Token");
             if (Authorization == null) return BadRequest("tooken is null");
             return Ok(Authorization);
+        }
+        [HttpPatch("block/{userId}")]
+        public async Task<IActionResult> blockUser(string userId)
+        {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            var result = await blockAndUnlockUserInteractor.BlockUserAsync(new IBlockAndUnlockUserInteractor.Request()
+            {
+                token = token,
+                userId = userId
+            });
+            if(result.Success == true) return Ok(result);
+            return BadRequest(result);
+        }
+        [HttpPost("unlock/{userId}")]
+        public async Task<IActionResult> unlockUser(string userId)
+        {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            var result = await blockAndUnlockUserInteractor.UnlockUserAsync(new IBlockAndUnlockUserInteractor.Request()
+            {
+                token = token,
+                userId = userId
+            });
+            if (result.Success == true) return Ok(result);
+            return BadRequest(result);
         }
         //DELETE
         [Authorize("owner")]

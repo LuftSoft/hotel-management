@@ -1,6 +1,8 @@
 ﻿using hotel_management_api.Business.Boudaries.User;
 using hotel_management_api.Business.Interactor.Booking;
+using hotel_management_api.Business.Interactor.Comment;
 using hotel_management_api.Business.Interactor.Hotel;
+using hotel_management_api.Business.Interactor.Location;
 using hotel_management_api.Business.Interactor.Room;
 using hotel_management_api.Business.Interactor.RoomGallery;
 using hotel_management_api.Business.Interactor.User;
@@ -16,23 +18,25 @@ namespace hotel_management_api.Extension.DependencyInjections
         public static IServiceCollection RepositoryDependencyInjection( this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IHotelRepository, HotelRepository>();
-            services.AddScoped<IHotelBenefitRepository, HotelBenefitRepository>();
-            services.AddScoped<IHomeletRepository, HomeletRepository>();
-            services.AddScoped<IDistrictRepository, DistrictRepository>();
-            services.AddScoped<IProvineRepository, ProvineRepository>();
-            services.AddScoped<IRoomGalleryRepository, RoomGalleryRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IHotelRepository, HotelRepository>();
+            services.AddScoped<IHomeletRepository, HomeletRepository>();
+            services.AddScoped<IProvineRepository, ProvineRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<IDistrictRepository, DistrictRepository>();
+            services.AddScoped<IRoomGalleryRepository, RoomGalleryRepository>();
+            services.AddScoped<IHotelBenefitRepository, HotelBenefitRepository>();
             return services;
         }
         public static IServiceCollection ServiceDependencyInjection( this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IHotelService,HotelService>();
-            services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IHotelService,HotelService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IRoomGalleryService, RoomGalleryService>();
             return services;
         }
@@ -51,6 +55,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IFogotPasswordInteractor, FogotPasswordInteractor>();
             services.AddScoped<IResetPasswordInteractor, ResetPasswordInteractor>();
             services.AddScoped<IGetDetailUserInteractor, GetDetailUserInteractor>();
+            services.AddScoped<IBlockAndUnlockUserInteractor, BlockAndUnlockUserInteractor>();
             return services;
         }
         public static IServiceCollection HotelInteractorDependencyInjection( this IServiceCollection services)
@@ -82,6 +87,20 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IUpdateBookingRoomInteractor, UpdateBookingRoomInteractor>();
             services.AddScoped<ICancelBookingRoomInteractor, CancelBookingRoomInteractor>();
             services.AddScoped<IGetAllBookingByUserInteractor, GetAllBookingByUserInteractor>();
+            return services;
+        }
+        public static IServiceCollection CommentInteractorDependencyInjection(this IServiceCollection services)
+        {
+            services.AddScoped<ICreateCommentInteractor, CreateCommentInteractor>();
+            services.AddScoped<IUpdateCommentInteractor, UpdateCommentInteractor>();
+            services.AddScoped<IDeleteCommentInteractor, DeleteCommentInteractor>();
+            return services;
+        }
+        public static IServiceCollection LocationInteractorDependency(this IServiceCollection services)
+        {
+            services.AddScoped<IGetHomeletInteractor, GetHomeletInteractor>();
+            services.AddScoped<IGetDistrictInteractor, GetDistrictInteractor>();
+            services.AddScoped<IGetProvineInteractor, GetProvineInteractor>();
             return services;
         }
     }
