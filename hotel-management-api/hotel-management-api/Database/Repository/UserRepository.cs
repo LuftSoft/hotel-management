@@ -122,5 +122,40 @@ namespace hotel_management_api.Database.Repository
             appDbContext.Users.Remove(user);
             return true;
         }
+        public async Task<IEnumerable<string>> GetListRoleOfUser(string userId)
+        {
+            var userRole = appDbContext.UserRoles.AsNoTracking().Where(r => r.UserId ==  userId).Select(r => r.RoleId).ToArray();
+            return await appDbContext.Roles.Where(r => userRole.Contains(r.Id)).Select(r => r.Id).ToListAsync();
+        }
+        public async Task<bool> BlockAsync(string userId)
+        {
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null) return false;
+                user.IsBlock = true;
+                await appDbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> UnlockAsync(string userId)
+        {
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null) return false;
+                user.IsBlock = false;
+                await appDbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

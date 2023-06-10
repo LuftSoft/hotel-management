@@ -6,12 +6,14 @@
         public string? LastName { get; set; }
         public string? UserName { get; set; }
         public string? Password { get; set; }
-        public SignupDto(string? FirstName,string? LastName, string? userName, string? password)
+        public string? Role { get; set; }
+        public SignupDto(string? FirstName,string? LastName, string? userName, string? password, string? role)
         {
             UserName = userName;
             Password = password;
             this.FirstName = FirstName;
             this.LastName = LastName;
+            Role = role;
         }
     }
 }

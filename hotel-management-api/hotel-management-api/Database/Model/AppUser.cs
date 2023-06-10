@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 
 namespace hotel_management_api.Database.Model
 {
@@ -9,6 +10,8 @@ namespace hotel_management_api.Database.Model
         public int? Age { get; set; }
         public string? Avatar { get; set; }
         public string? ResetPasswordToken { get; set; }
+        [DefaultValue(false)]
+        public bool IsBlock { get; set; }
         public ICollection<Booking>? Bookings { get; set; }
         public ICollection<Hotel> Hotels { get; set; }
     }
