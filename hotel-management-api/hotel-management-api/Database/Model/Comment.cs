@@ -10,6 +10,7 @@ namespace hotel_management_api.Database.Model
         public int Id { get; set; }
         public double Rating { get; set; }
         public string? Content { get; set; }
+        public DateTime? CreateDate { get; set; }
         public DateTime? LastChange { get; set; }
         public int BookingId { get; set; }
         public Booking? Booking { get; set; }

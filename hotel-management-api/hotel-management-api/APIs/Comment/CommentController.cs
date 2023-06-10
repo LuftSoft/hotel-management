@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using hotel_management_api.APIs.Comment.DTOs;
+using hotel_management_api.Business.Interactor.Comment;
+using hotel_management_api.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +12,87 @@ namespace hotel_management_api.APIs.Comment
     [ApiController]
     public class CommentController : ControllerBase
     {
-        // GET: api/<CommentControllser>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IJwtUtil jwtUtil;
+        private readonly ICreateCommentInteractor createCommentInteractor;
+        private readonly IUpdateCommentInteractor updateCommentInteractor;
+        private readonly IDeleteCommentInteractor deleteCommentInteractor;
+        public CommentController
+            (
+                IJwtUtil jwtUtil,
+                ICreateCommentInteractor createCommentInteractor,
+                IUpdateCommentInteractor updateCommentInteractor,
+                IDeleteCommentInteractor deleteCommentInteractor
+            )
         {
-            return new string[] { "value1", "value2" };
+            this.jwtUtil = jwtUtil;
+            this.createCommentInteractor = createCommentInteractor;
+            this.updateCommentInteractor = updateCommentInteractor;
+            this.deleteCommentInteractor = deleteCommentInteractor;
         }
-
-        // GET api/<CommentControllser>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/<CommentControllser>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Authorize("user")]
+        public async Task<IActionResult> Post([FromBody] CommentDto commentDto)
         {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if(token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await createCommentInteractor.CreateAsync(new ICreateCommentInteractor.Request() 
+            {
+                token = token,
+                Comment = commentDto
+            });
+            if(result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         // PUT api/<CommentControllser>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [Authorize("user")]
+        public async Task<IActionResult> Put([FromBody] CommentDto commentDto)
         {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await updateCommentInteractor.UpdateAsync(new IUpdateCommentInteractor.Request()
+            {
+                token = token,
+                Comment = commentDto
+            });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         // DELETE api/<CommentControllser>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize("user")]
+        public async Task<IActionResult> Delete(int id)
         {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await deleteCommentInteractor.DeleteAsync(new IDeleteCommentInteractor.Request()
+            {
+                token = token,
+                CommentId = id
+            });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

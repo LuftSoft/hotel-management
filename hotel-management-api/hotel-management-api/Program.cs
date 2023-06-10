@@ -1,6 +1,7 @@
 using hotel_management_api.Database;
 using hotel_management_api.Database.Model;
 using hotel_management_api.Extension.DependencyInjections;
+using hotel_management_api.Extension.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -74,20 +75,24 @@ builder.Services.AddApiVersioning(opt =>
 });
 
 
+
+
 //add dependency
 builder.Services
-    .RepositoryDependencyInjection()
     .ServiceDependencyInjection()
+    .LocationInteractorDependency()
+    .RepositoryDependencyInjection()
     .UtilServiceDependencyInjection()
+    .RoomInteractorDependencyInjection()
     .UserInteractorDependencyInjection()
     .HotelInteractorDependencyInjection()
-    .RoomInteractorDependencyInjection()
-    .RoomGalleryInteractorDependencyInjection()
-    .BookingInteractorDependencyInjection();
+    .BookingInteractorDependencyInjection()
+    .CommentInteractorDependencyInjection()
+    .RoomGalleryInteractorDependencyInjection();
 builder.Services.AddCors(builder =>
 {
     builder.AddPolicy(
-        "all",
+        "CrossOrigin",
         opt => opt.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
     );
 });
@@ -107,6 +112,8 @@ builder.Services.AddSwaggerGen(opt =>
 
 var app = builder.Build();
 
+app.Map("/hello", app => app.UseMiddleware<IsEmailConfirmMiddleware>());
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -119,7 +126,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors("CrossOrigin");
 app.MapControllers();
 
 app.Run();

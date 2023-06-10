@@ -32,7 +32,7 @@ namespace hotel_management_api.APIs.Booking
             this.cancelBookingRoomInteractor = cancelBookingRoomInteractor; 
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int? pageIndex, int? pageSize)
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);
             if (token == null)
@@ -58,7 +58,7 @@ namespace hotel_management_api.APIs.Booking
             {
                 return BadRequest("Not authorized");
             }
-            var result = await createBookingRoomInteractor.Create(new ICreateBookingRoomInteractor.Request() 
+            var result = await createBookingRoomInteractor.CreateAsync(new ICreateBookingRoomInteractor.Request() 
             {
                 Booking = bookingDto,
                 token = token
@@ -69,7 +69,45 @@ namespace hotel_management_api.APIs.Booking
             }
             return BadRequest(result);
         }
-        [HttpPut] public void Put() { }
-        [HttpDelete] public void Delete() { }
+        [HttpPut]
+        [Authorize("user")]
+        public async Task<IActionResult> Put(BookingDto bookingDto) 
+        {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await updateBookingRoomInteractor.UpdateAsync(new IUpdateBookingRoomInteractor.Request()
+            {
+                Booking = bookingDto,
+                token = token
+            });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpDelete]
+        [Authorize("user")]
+        public async Task<IActionResult> Delete(int bookingId) 
+        {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await cancelBookingRoomInteractor.CancelAsync(new ICancelBookingRoomInteractor.Request()
+            {
+                BookingId = bookingId,
+                token = token
+            });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

@@ -149,5 +149,47 @@ namespace hotel_management_api.Business.Services
                 Success = false
             };
         }
+        public async Task<IBlockAndUnlockUserInteractor.Response> BlockUserAsync(IBlockAndUnlockUserInteractor.Request request)
+        {
+            string userId = await GetUserIdFromToken(request.token);
+            List<string> userRoles = (await userRepository.GetListRoleOfUser(userId)).ToList();
+            List<string> blockUuserRoles = (await userRepository.GetListRoleOfUser(request.userId)).ToList();
+            if(userRoles.Count == 0 || blockUuserRoles.Count == 0 
+                || !userRoles.Contains("owner") || blockUuserRoles.Contains("owner")) 
+            {
+                return new IBlockAndUnlockUserInteractor.Response()
+                {
+                    Success = true,
+                    Message = "User don't have permission!"
+                };
+            }
+            await userRepository.BlockAsync(request.userId);
+            return new IBlockAndUnlockUserInteractor.Response()
+            {
+                Success = true,
+                Message = "Block user success"
+            };
+        }
+        public async Task<IBlockAndUnlockUserInteractor.Response> UnlockUserAsync(IBlockAndUnlockUserInteractor.Request request)
+        {
+            string userId = await GetUserIdFromToken(request.token);
+            List<string> userRoles = (await userRepository.GetListRoleOfUser(userId)).ToList();
+            List<string> blockUuserRoles = (await userRepository.GetListRoleOfUser(request.userId)).ToList();
+            if (userRoles.Count == 0 || blockUuserRoles.Count == 0
+                || !userRoles.Contains("owner"))
+            {
+                return new IBlockAndUnlockUserInteractor.Response()
+                {
+                    Success = true,
+                    Message = "User don't have permission!"
+                };
+            }
+            await userRepository.UnlockAsync(request.userId);
+            return new IBlockAndUnlockUserInteractor.Response()
+            {
+                Success = true,
+                Message = "Unlock user success"
+            };
+        }
     }
 }
