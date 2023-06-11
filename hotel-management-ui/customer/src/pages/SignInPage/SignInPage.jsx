@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { routes } from "../../routes";
 import { useRef, useState } from "react";
+import { validateEmail, validatePassword } from "../../utils/helpers";
 
 const initState = {
 	email: "",
@@ -12,18 +13,7 @@ export default function SignInPage() {
 	const passwordRef = useRef();
 	const [showPw, setShowPw] = useState(false);
 	const [errors, setErrors] = useState(initState);
-	const validatePassword = (errors, password) => {
-		if (password === "") {
-			errors.password = "Vui lòng nhập mật khẩu!";
-		} else if (password.length < 6) {
-			errors.password = "Mật khẩu tối thiểu 6 ký tự!";
-		}
-	};
-	const validateEmail = (errors, username) => {
-		if (username === "") {
-			errors.email = "Vui lòng nhập email!";
-		}
-	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const username = emailRef.current.value;
@@ -34,6 +24,7 @@ export default function SignInPage() {
 		if (Object.keys(errors).length) {
 			setErrors(errors);
 		} else {
+			console.log("?");
 			setErrors({
 				...initState,
 			});

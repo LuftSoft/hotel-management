@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
@@ -11,6 +13,7 @@ import "./custom-bs.scss";
 export default function App() {
 	return (
 		<BrowserRouter>
+			<ToastContainer />
 			<Routes>{renderRoutes(publicRoutes)}</Routes>
 		</BrowserRouter>
 	);

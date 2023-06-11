@@ -68,3 +68,16 @@ export const formatDate = (date, pattern = "yyyy-mm-dd") => {
 	}
 	return rs;
 };
+export const validateEmail = (errors, username) => {
+	if (username === "") {
+		errors.email = "Vui lòng nhập email!";
+	}
+};
+export const validatePassword = (errors, password) => {
+	const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{6,}$/;
+	if (password === "") {
+		errors.password = "Vui lòng nhập mật khẩu!";
+	} else if (!decimal.test(password)) {
+		errors.password = "Mật khẩu tối thiểu 6 ký tự. Chứa ít nhất 1 ký tự in hoa, 1 ký tự số và 1 ký tự đặc biệt";
+	}
+};

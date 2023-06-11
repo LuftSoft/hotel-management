@@ -1,8 +1,18 @@
-import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+
 import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { axiosPost, url } from "../../utils/httpRequest";
-import { toast } from "react-toastify";
+import { validateEmail, validatePassword } from "../../utils/helpers";
+
+const initErrors = {
+	firstName: "",
+	lastName: "",
+	email: "",
+	password: "",
+	confirmPassword: "",
+};
 
 export default function SignUpPage() {
 	const firstNameRef = useRef();
@@ -11,13 +21,8 @@ export default function SignUpPage() {
 	const passwordRef = useRef();
 	const confirmPasswordRef = useRef();
 	const [showPw, setShowPw] = useState(false);
-	const [errors, setErrors] = useState({
-		firstName: "",
-		lastName: "",
-		email: "",
-		password: "",
-		confirmPassword: "",
-	});
+	const [errors, setErrors] = useState(initErrors);
+	const navigate = useNavigate();
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const firstName = firstNameRef.current.value;
@@ -32,14 +37,8 @@ export default function SignUpPage() {
 		if (lastName === "") {
 			errors.lastName = "Vui lòng nhập họ!";
 		}
-		if (username === "") {
-			errors.email = "Vui lòng nhập email!";
-		}
-		if (password === "") {
-			errors.password = "Vui lòng nhập mật khẩu!";
-		} else if (password.length < 6) {
-			errors.password = "Mật khẩu tối thiểu 6 ký tự!";
-		}
+		validateEmail(errors, username);
+		validatePassword(errors, password);
 		if (confirmPassword === "") {
 			errors.confirmPassword = "Vui lòng nhập mật khẩu xác nhận!";
 		} else if (password !== confirmPassword) {
@@ -48,7 +47,9 @@ export default function SignUpPage() {
 		if (Object.keys(errors).length) {
 			setErrors(errors);
 		} else {
-			setErrors({});
+			setErrors({
+				...initErrors,
+			});
 			const SignUpRequest = async () => {
 				const toastId = toast.loading("Đang xử lý!");
 				try {
@@ -66,10 +67,11 @@ export default function SignUpPage() {
 						autoClose: 1000,
 						isLoading: false,
 					});
-					// navigate();
+					navigate(routes.signIn);
 				} catch (error) {
+					console.log(error);
 					toast.update(toastId, {
-						render: "Đăng ký thất bại!",
+						render: error.response.data.message,
 						type: "error",
 						closeButton: true,
 						autoClose: 1000,
