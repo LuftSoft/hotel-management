@@ -1,11 +1,13 @@
-import classNames from "classnames/bind";
+// import classNames from "classnames/bind";
 
-import styles from "./HotelPage.scss";
+import "./HotelPage.scss";
 import HotelCard from "../../components/HotelCard";
 import FilterHotel from "../../components/FilterHotel";
 import { Pagination } from "../../components/Pagination";
 
-const cx = classNames.bind(styles);
+// const cx = classNames.bind(import("./HotelPage.scss"));
+
+// console.log(cx);
 
 export default function HotelPage() {
 	return (
