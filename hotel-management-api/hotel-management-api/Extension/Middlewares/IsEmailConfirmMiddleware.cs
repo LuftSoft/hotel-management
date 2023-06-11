@@ -19,12 +19,4 @@ namespace hotel_management_api.Extension.Middlewares
             await _next(context);
         }
     }
-    public static class UserMyCustomMiddlewareExrension
-    {
-        public static IApplicationBuilder UserMyCustomMiddleware(this IApplicationBuilder builder) 
-        {
-            builder.UseMiddleware<IsEmailConfirmMiddleware>();
-            return builder;
-        }
-    }
 }

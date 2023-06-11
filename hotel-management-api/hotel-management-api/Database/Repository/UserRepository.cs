@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace hotel_management_api.Database.Repository
 {   
@@ -132,12 +133,17 @@ namespace hotel_management_api.Database.Repository
         public async Task<IEnumerable<string>> GetListRoleOfUser(string userId)
         {
             var userRole = appDbContext.UserRoles.AsNoTracking().Where(r => r.UserId ==  userId).Select(r => r.RoleId).ToArray();
-            return await appDbContext.Roles.Where(r => userRole.Contains(r.Id)).Select(r => r.Id).ToListAsync();
+            return await appDbContext.Roles.Where(r => userRole.Contains(r.Id)).Select(r => r.Name).ToListAsync();
         }
         public async Task<bool> updatePassword(string userName, string newpassword)
         {
+            Regex PasswordRegex = new Regex("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,100}$");
             var user = await appDbContext.Users.Where(u => u.Email.Equals(userName)).FirstOrDefaultAsync();
             if (user == null)
+            {
+                return false;
+            }
+            if(! PasswordRegex.IsMatch(newpassword))
             {
                 return false;
             }
@@ -173,14 +179,13 @@ namespace hotel_management_api.Database.Repository
                 {
                     return false;
                 }
-                var result = userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash,oldPassword);
-                
-                if (result != PasswordVerificationResult.Success)
-                    return false;
-                string newpass = userManager.PasswordHasher.HashPassword(user, newpassword);
-                user.PasswordHash = newpass;
+                var result = await userManager.ChangePasswordAsync(user, oldPassword, newpassword);
                 await appDbContext.SaveChangesAsync();
-                return true;
+                if (result == IdentityResult.Success)
+                {
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {

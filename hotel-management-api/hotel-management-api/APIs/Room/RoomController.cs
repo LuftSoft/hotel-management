@@ -6,13 +6,16 @@ using hotel_management_api.Database.Repository;
 using hotel_management_api.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static hotel_management_api.Extension.Middlewares.IsUserBlockMiddleware;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace hotel_management_api.APIs.Room
 {
     [Route("api/v{version:apiVersion}/room")]
+    [ApiVersion("1.0")]
     [ApiController]
+    [TypeFilter(typeof(hotelfilter))]
     public class RoomController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;

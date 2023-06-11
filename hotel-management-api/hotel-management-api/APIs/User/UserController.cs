@@ -13,12 +13,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static hotel_management_api.Extension.Middlewares.IsUserBlockMiddleware;
 
 namespace hotel_management_api.APIs.User
 {
     [ApiController]
     [ApiVersion("1.0")]
     [Route("/api/v{version:apiVersion}/user")]
+    [TypeFilter(typeof(hotelfilter))]
     public class UserController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;

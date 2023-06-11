@@ -7,11 +7,14 @@ using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static hotel_management_api.Extension.Middlewares.IsUserBlockMiddleware;
 
 namespace hotel_management_api.APIs.Hotel
 {
     [Route("api/v{version:apiVersion}/hotel")]
+    [ApiVersion("1.0")]
     [ApiController]
+    [TypeFilter(typeof(hotelfilter))]
     public class HotelController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;
@@ -21,6 +24,7 @@ namespace hotel_management_api.APIs.Hotel
         private readonly IDeleteHotelInteractor deleteHotelInteractor;
         private readonly IGetListHotelInteractor getListHotelInteractor;
         private readonly IGetDetailHotelInteractor getDetailHotelInteractor;
+        private readonly IGetListHotelFilterInteractor getListHotelFilterInteractor;
         public HotelController(
             IJwtUtil jwtUtil,
             IUploadFileUtil uploadFileUtil,
@@ -28,9 +32,10 @@ namespace hotel_management_api.APIs.Hotel
             IUpdateHotelInteractor updateHotelInteractor,
             IDeleteHotelInteractor deleteHotelInteractor,
             IGetListHotelInteractor getListHotelInteractor,
-            IGetDetailHotelInteractor getDetailHotelInteractor
-            ) 
-        { 
+            IGetDetailHotelInteractor getDetailHotelInteractor,
+            IGetListHotelFilterInteractor getListHotelFilterInteractor
+            )
+        {
             this.jwtUtil = jwtUtil;
             this.uploadFileUtil = uploadFileUtil;
             this.createHotelInteractor = createHotelInteractor;
@@ -38,9 +43,10 @@ namespace hotel_management_api.APIs.Hotel
             this.deleteHotelInteractor = deleteHotelInteractor;
             this.getListHotelInteractor = getListHotelInteractor;
             this.getDetailHotelInteractor = getDetailHotelInteractor;
+            this.getListHotelFilterInteractor = getListHotelFilterInteractor;
         }
-        [HttpGet()]
-        public async Task<IActionResult> get( int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
+        [HttpGet]
+        public async Task<IActionResult> get(int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
         {
             if (pageSize == 0) pageSize = 10;
             var result = await getListHotelInteractor.GetAsync(new IGetListHotelInteractor.Request()
@@ -53,24 +59,29 @@ namespace hotel_management_api.APIs.Hotel
                 return Ok(result);
             return BadRequest(result);
         }
-        [HttpGet("getsuggest")]
-        public IActionResult getSuggestHotelPosition(string? provine)
-        {
-            return Ok(Directory.GetCurrentDirectory());
-        }
         [HttpGet("{id}")]
         public async Task<IActionResult> getDetail(int id)
         {
             var result = await getDetailHotelInteractor.GetDetail(id);
-            if(result.Success == true)
+            if (result.Success == true)
                 return Ok(result);
             return BadRequest(result);
         }
 
         [HttpPost("filter")]
-        public IActionResult postFilter(int pageIndex, int pageSize, [FromQuery] HotelFilterDto? hotelFilterDto)
+        public async Task<IActionResult> postFilter(int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto getListHotelFilterDto,
+            [FromBody] HotelFilterDto? hotelFilterDto)
         {
-            return Ok(Directory.GetCurrentDirectory());
+            var result = await getListHotelFilterInteractor.GetFilterPaging(new IGetListHotelFilterInteractor.Request()
+            {
+                dto = getListHotelFilterDto,
+                filterDto = hotelFilterDto,
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            });
+            if(result.Success = true)
+                return Ok(result);
+            return BadRequest(result);
         }
         [HttpPost]
         [Authorize("admin")]
@@ -90,7 +101,7 @@ namespace hotel_management_api.APIs.Hotel
 
         [HttpPut]
         [Authorize("admin")]
-        public async Task<IActionResult> put([FromForm] HotelUpdateDto hotelUpdateDto) 
+        public async Task<IActionResult> put([FromForm] HotelUpdateDto hotelUpdateDto)
         {
             try
             {
