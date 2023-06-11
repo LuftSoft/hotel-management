@@ -108,6 +108,16 @@ namespace hotel_management_api.Database.Repository
                 .Select(r => r.HotelId).Distinct().ToList();
             return hotels;
         }
+        public async Task<bool> updateAsync(Hotel hotel)
+        {
+            _appDbContext.Hotels.Update(hotel);
+            int isSuccess = await _appDbContext.SaveChangesAsync();
+            return isSuccess > 0;
 
+        }
+        public async Task<Hotel> getOne(int id)
+        {
+            return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
+        }
     }
 }
