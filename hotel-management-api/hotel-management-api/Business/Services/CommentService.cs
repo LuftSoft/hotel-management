@@ -25,6 +25,15 @@ namespace hotel_management_api.Business.Services
         {
             try
             {
+                var isExist = commentRepository.FindByBookingId(request.Comment.BookingId);
+                if(isExist != null) 
+                {
+                    return new ICreateCommentInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "You already comment",
+                    };
+                }
                 CommentDto commentDto = request.Comment;
                 Comment comment = new Comment();
                 comment.CreateDate = DateTime.Now;
@@ -77,6 +86,9 @@ namespace hotel_management_api.Business.Services
                     Message = "You are not owner of this comment"
                 };
             }
+            comment.LastChange = DateTime.Now;
+            comment.Rating = request.Comment.Rating;
+            comment.Content = request.Comment.Content;
             await commentRepository.UpdateAsync(comment);
             return new IUpdateCommentInteractor.Response()
             {

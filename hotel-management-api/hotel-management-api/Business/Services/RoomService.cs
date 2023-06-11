@@ -59,15 +59,24 @@ namespace hotel_management_api.Business.Services
                 HotelImageGalleries = roomGalleryDtos
             };
         }
-        public async Task<RoomDetailDto?> GetByIdAsync(int id)
+        public async Task<IGetRoomByIdInteractor.Response> GetByIdAsync(int id)
         {
             Room room = await roomRepository.GetByIdAsync(id);
             if (room == null)
             {
-                return null;
+                return new IGetRoomByIdInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Get detail room failed"
+                };
             }
             List<RoomGalleryDto> roomGalleryDtos = (await roomGalleryService.GetByRoomId(id)).ToList();
-            return ConvertToRoomDetailDto(room, roomGalleryDtos);
+            return new IGetRoomByIdInteractor.Response()
+            {
+                Success = true,
+                Message = "Get detail room success",
+                RoomDetailDto = ConvertToRoomDetailDto(room, roomGalleryDtos)
+            };
         }
         public bool GetByHotelId()
         {

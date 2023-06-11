@@ -9,9 +9,10 @@ namespace hotel_management_api.Database.Repository
     {
         Task<bool> roleExist(string name);
         Task<bool> DeleteAsync(string id);
+        Task<bool> updateUser(AppUser user);
         Task<AppUser> userExist(string name);
-        Task<bool> UnlockAsync(string userId);
         Task<bool> BlockAsync(string userId);
+        Task<bool> UnlockAsync(string userId);
         Task<AppUser?> FindByIdAsync(string id);
         Task<AppUser> findUserByEmailAsync(string email);
         Task<IdentityResult> createRoleAsync(IdentityRole role);
@@ -21,5 +22,6 @@ namespace hotel_management_api.Database.Repository
         Task<IdentityResult> addUserRoleAsync(AppUser user, string role);
         Task<IdentityResult> createUserAsync(AppUser user, string password);
         Task<bool> updateResetPasswordTokenAsync(string username, string token);
+        Task<bool> ChangePassword(string userName, string oldPassword, string newpassword);
     }
 }

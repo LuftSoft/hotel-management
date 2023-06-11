@@ -1,4 +1,5 @@
-﻿using hotel_management_api.Database.Model;
+﻿using hotel_management_api.APIs.Comment.DTOs;
+using hotel_management_api.Database.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace hotel_management_api.Database.Repository
@@ -24,14 +25,24 @@ namespace hotel_management_api.Database.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<Comment>?> FindByHotelId(int hotelId)
+        public async Task<IEnumerable<CommentDto>?> FindByHotelId(int hotelId)
         {
             try
             {
                 return await appDbContext.Comments
                 .Include(c => c.Booking)
-                .ThenInclude(b => b.Room)
+                .ThenInclude(b => b.User)
                 .Where(c => c.Booking.Room.HotelId == hotelId)
+                .Select(c => new CommentDto()
+                {
+                    Id = c.Id,
+                    BookingId = c.BookingId,
+                    Content = c.Content,
+                    CreateDate = c.CreateDate,
+                    LastChange = c.LastChange,
+                    Rating = c.Rating,
+                    UserName = $"{c.Booking.User.FirstName} {c.Booking.User.LastName}"
+                })
                 .ToListAsync();
             }
             catch(Exception ex)
@@ -39,6 +50,10 @@ namespace hotel_management_api.Database.Repository
                 System.Diagnostics.Debug.WriteLine($"Comment repository FindByIdAsync -> {ex.Message}");
                 return null;
             }
+        }
+        public async Task<Comment> FindByBookingId(int id)
+        {
+            return await appDbContext.Comments.FirstOrDefaultAsync(c => c.BookingId == id);
         }
 
         public async Task<Comment?> CreateAsync(Comment comment)

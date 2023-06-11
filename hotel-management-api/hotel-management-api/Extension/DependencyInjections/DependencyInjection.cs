@@ -27,6 +27,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IDistrictRepository, DistrictRepository>();
             services.AddScoped<IRoomGalleryRepository, RoomGalleryRepository>();
             services.AddScoped<IHotelBenefitRepository, HotelBenefitRepository>();
+            services.AddScoped<IHotelCategoryRepository, HotelCategoryRepository>();
             return services;
         }
         public static IServiceCollection ServiceDependencyInjection( this IServiceCollection services)
@@ -52,27 +53,32 @@ namespace hotel_management_api.Extension.DependencyInjections
         {
             services.AddScoped<IUserLoginInteractor, UserLoginInteractor>();
             services.AddScoped<IUserSignupInteractor, UserSignupInteractor>();
+            services.AddScoped<IUpdateUserInteractor, UpdateUserInteractor>();
+            services.AddScoped<IDeleteUserInteractor, DeleteUserInteractor>();
             services.AddScoped<IFogotPasswordInteractor, FogotPasswordInteractor>();
             services.AddScoped<IResetPasswordInteractor, ResetPasswordInteractor>();
             services.AddScoped<IGetDetailUserInteractor, GetDetailUserInteractor>();
+            services.AddScoped<IResetPasswordInteractor, ResetPasswordInteractor>();
+            services.AddScoped<IChangePasswordInteractor, ChangePasswordInteractor>();
             services.AddScoped<IBlockAndUnlockUserInteractor, BlockAndUnlockUserInteractor>();
             return services;
         }
         public static IServiceCollection HotelInteractorDependencyInjection( this IServiceCollection services)
         {
-            services.AddScoped<IGetListHotelInteractor, GetListHotelInteractor>();
             services.AddScoped<ICreateHotelInteractor, CreateHotelInteractor>();
             services.AddScoped<IUpdateHotelInteractor, UpdateHotelInteractor>();
             services.AddScoped<IDeleteHotelInteractor, DeleteHotelInteractor>();
+            services.AddScoped<IGetListHotelInteractor, GetListHotelInteractor>();
+            services.AddScoped<IGetDetailHotelInteractor, GetDetailHotelInteractor>();
             return services;
         }
         public static IServiceCollection RoomInteractorDependencyInjection(this IServiceCollection services) 
         {
-            services.AddScoped<IGetRoomByHotelIdInteractor, GetRoomByHotelIdInteractor>();
-            services.AddScoped<IGetRoomByIdInteractor,  GetRoomByIdInteractor>();   
             services.AddScoped<IAddNewRoomInteractor, AddNewRoomInteractor>();
             services.AddScoped<IUpdateRoomInteractor, UpdateRoomInteractor>();
             services.AddScoped<IDeleteRoomInteractor, DeleteRoomInteractor>();
+            services.AddScoped<IGetRoomByIdInteractor,  GetRoomByIdInteractor>();   
+            services.AddScoped<IGetRoomByHotelIdInteractor, GetRoomByHotelIdInteractor>();
             return services;
         }
         public static IServiceCollection RoomGalleryInteractorDependencyInjection(this IServiceCollection services) 

@@ -22,6 +22,11 @@ namespace hotel_management_api.Database.Repository
         {
             return await appDbContext.HotelBenefits.FirstOrDefaultAsync(f => f.Id == id);
         }
+        public async Task<HotelBenefit?> FindByHotelIdAsync(int id)
+        {
+            int? Benefitid = await appDbContext.Hotels.Where(h => h.Id == id).Select(h => h.HotelBenefitId).FirstOrDefaultAsync();
+            return await appDbContext.HotelBenefits.FirstOrDefaultAsync(b => b.Id == Benefitid);
+        }
         public async Task<int> CreateAsync(HotelBenefit hotelBenefit)
         {
             try
