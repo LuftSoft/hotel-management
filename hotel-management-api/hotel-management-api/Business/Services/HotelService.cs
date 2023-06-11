@@ -47,6 +47,65 @@ namespace hotel_management_api.Business.Services
             this.hotelBenefitRepository = hotelBenefitRepository;
             this.hotelCategoryRepository = hotelCategoryRepository;
         }
+        public async Task<HotelDto> ConvertHotelToHotelDto(Hotel hotel)
+        {
+            double min = Double.MaxValue, max = 0;
+            var rooms = (await roomRepository.GetByHotelIdAsync(hotel.Id)).ToList();
+            if (rooms.Any())
+            {
+                foreach( var room in rooms )
+                {
+                    if(room.Price < min) min = room.Price;
+                    if (room.Price > max) max = room.Price;
+                }
+            }
+            return new HotelDto()
+            {
+                Id = hotel.Id,
+                Name = hotel.Name,
+                Star = hotel.Id,
+                Description = hotel.Description,
+                Address = hotel.Address,
+                LogoLink = hotel.LogoLink,
+                Slug = hotel.Slug,
+                CreatedDate = hotel.CreatedDate,
+                UpdateDate = hotel.UpdateDate,
+                USerId = hotel.USerId,
+                HotelCategoryId = hotel.Id,
+                HotelBenefit = hotel.HotelBenefit,
+                HomeletId = hotel.Id,
+                MinPrice = min,
+                MaxPrice = max
+            };
+        }
+        public async Task<IGetDetailHotelInteractor.Response> GetDetail(int hotelId)
+        {
+            Hotel hotel = await hotelRepository.FindByIdAsync(hotelId);
+            if (hotel == null) return new IGetDetailHotelInteractor.Response("Get failed", false, null);
+            var rooms = (await roomRepository.GetByHotelIdAsync(hotelId)).ToList();
+            var comments = (await commentRepository.FindByHotelId(hotelId)).ToList();
+            var benefit = hotel.HotelBenefit;
+            var hotelCategory = await hotelCategoryRepository.GetById(hotel.HotelCategoryId);
+            HotelDetailDto hotelDetailDto = new HotelDetailDto()
+            {
+                Id = hotel.Id,
+                Name = hotel.Name,
+                Star = hotel.Star,
+                Slug = hotel.Slug,
+                USerId = hotel.USerId,
+                Address = hotel.Address,
+                LogoLink = hotel.LogoLink,
+                HotelCategory = hotelCategory,
+                UpdateDate = hotel.UpdateDate,
+                CreatedDate = hotel.CreatedDate,
+                Description = hotel.Description,
+                Rooms = rooms,
+                HotelBenefit = benefit,
+                Comments = comments
+
+            };
+            return new IGetDetailHotelInteractor.Response("Get success", true, hotelDetailDto);
+        }
         public async Task<IGetListHotelInteractor.Response> GetPaging(IGetListHotelInteractor.Request request)
         {
             try
@@ -84,15 +143,20 @@ namespace hotel_management_api.Business.Services
                     hotelFilter.RoonCount, hotelFilter.RoomSize);
                 hotels = hotels.Where(h => containHotel.Contains(h.Id)).ToList();
                 hotels = hotels.Skip(request.pageSize * request.pageIndex).Take(request.pageSize).ToList();
+                var hotelDtos = new List<HotelDto>();
+                foreach (var hotel in hotels)
+                {
+                    hotelDtos.Add(await ConvertHotelToHotelDto(hotel));
+                }
                 var category = await hotelCategoryRepository.GetAll();
                 //tim kiem theo ngay`
                 return new IGetListHotelInteractor.Response()
                 {
                     Success = true,
-                    Hotels = hotels.ToList(),
-                    TotalPage = (hotels.Count() / request.pageSize)+1,
+                    Hotels = hotelDtos.ToList(),
+                    TotalPage = (hotels.Count() / request.pageSize) + 1,
                     PageIndex = request.pageIndex,
-                    Categories = (List<HotelCategory>?) category,
+                    Categories = (List<HotelCategory>?)category,
                     Message = "Get list hotel success"
                 };
             }
@@ -105,33 +169,131 @@ namespace hotel_management_api.Business.Services
                 };
             }
         }
-        public async Task<IGetDetailHotelInteractor.Response> GetDetail(int hotelId) 
+        public async Task<IGetListHotelFilterInteractor.Response> GetFilterPaging(IGetListHotelFilterInteractor.Request request)
         {
-            Hotel hotel = await hotelRepository.FindByIdAsync(hotelId);
-            if(hotel == null) return new IGetDetailHotelInteractor.Response("Get failed", false, null);
-            var rooms = (await roomRepository.GetByHotelIdAsync(hotelId)).ToList();
-            var comments = (await commentRepository.FindByHotelId(hotelId)).ToList();
-            var benefit = hotel.HotelBenefit;
-            var hotelCategory = await hotelCategoryRepository.GetById(hotel.HotelCategoryId);
-            HotelDetailDto hotelDetailDto = new HotelDetailDto()
+            try
             {
-                Id = hotel.Id,
-                Name = hotel.Name,
-                Star = hotel.Star,
-                Slug = hotel.Slug,
-                USerId = hotel.USerId,
-                Address = hotel.Address,
-                LogoLink = hotel.LogoLink,
-                HotelCategory = hotelCategory,
-                UpdateDate = hotel.UpdateDate,
-                CreatedDate = hotel.CreatedDate,
-                Description = hotel.Description,
-                Rooms = rooms,
-                HotelBenefit = benefit, 
-                Comments = comments
+                var hotelFilter = request.dto;
+                var hotels = await hotelRepository.GetAllAsync();
+                if (hotelFilter.HomeletId != null)
+                {
+                    hotels = hotels.Where(h => h.HomeletId == hotelFilter.HomeletId).ToList();
+                }
+                else if (hotelFilter.DistrictId != null)
+                {
+                    var homelets = await homeletRepository.FindByDistrictIdAsync(hotelFilter.DistrictId);
+                    if (homelets != null)
+                    {
+                        List<string> homeletsId = homelets.Select(h => h.Id).ToList();
+                        hotels = hotels.Where(h => homeletsId.Contains(h.HomeletId)).ToList();
+                    }
+                }
+                else if (hotelFilter.ProvineId != null)
+                {
+                    var districts = await districtRepository.FindByProvineIdAsync(hotelFilter.ProvineId);
+                    List<string> homeletIds = new List<string>();
+                    if (districts != null)
+                    {
+                        foreach (var item in districts)
+                        {
+                            var tmp = (await homeletRepository.FindByDistrictIdAsync(item.Id)).Select(h => h.Id).ToList();
+                            homeletIds.AddRange(tmp);
+                        }
+                    }
+                    hotels = hotels.Where(h => homeletIds.Contains(h.HomeletId)).ToList();
+                }
 
-            };
-            return new IGetDetailHotelInteractor.Response("Get success", true, hotelDetailDto);
+                var containHotel = await hotelRepository.HotelFilterAsync(hotelFilter.FromDate,
+                    hotelFilter.RoonCount, hotelFilter.RoomSize);
+                hotels = hotels.Where(h => containHotel.Contains(h.Id)).ToList();
+                var hotelDtos = new List<HotelDto>();
+                foreach(var hotel in hotels)
+                {
+                    hotelDtos.Add(await ConvertHotelToHotelDto(hotel));
+                }
+                HotelFilterDto filterDto = request.filterDto;
+                if (filterDto.PriceSort != null)
+                {
+                    switch (filterDto.PriceSort)
+                    {
+                        case 0:
+                            hotelDtos = hotelDtos.OrderBy(h => h.MinPrice).ToList();
+                            break;
+                        case 1:
+                            hotelDtos = hotelDtos.OrderByDescending(h => h.MaxPrice).ToList();
+                            break;
+                    }
+                }
+                if(filterDto.MaxPrice != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.MaxPrice <= filterDto.MaxPrice).ToList();
+                }
+                if(filterDto.MinPrice != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.MinPrice >= filterDto.MinPrice).ToList();
+                }
+                //benefit
+                if(filterDto.WifiFree != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.WifiFree == true).ToList();
+                }
+                if (filterDto.Resttaurant != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Resttaurant == true).ToList();
+                }
+                if (filterDto.AllTimeFrontDesk != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.AllTimeFrontDesk == true).ToList();
+                }
+                if (filterDto.Elevator != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Elevator == true).ToList();
+                }
+                if (filterDto.Pool != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Pool == true).ToList();
+                }
+                if (filterDto.FreeBreakfast != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.FreeBreakfast == true).ToList();
+                }
+                if (filterDto.AirConditioner != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.AirConditioner == true).ToList();
+                }
+                if (filterDto.CarBorow != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.CarBorow == true).ToList();
+                }
+                if (filterDto.Parking != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Parking == true).ToList();
+                }
+                if (filterDto.AllowPet != null)
+                {
+                    hotelDtos = hotelDtos.Where(h => h.HotelBenefit.AllowPet == true).ToList();
+                }
+                hotelDtos = hotelDtos.Skip(request.pageSize * request.pageIndex).Take(request.pageSize).ToList();
+                var category = await hotelCategoryRepository.GetAll();
+                //tim kiem theo ngay`
+                return new IGetListHotelFilterInteractor.Response()
+                {
+                    Success = true,
+                    Hotels = hotelDtos.ToList(),
+                    TotalPage = (hotels.Count() / request.pageSize) + 1,
+                    PageIndex = request.pageIndex,
+                    Categories = (List<HotelCategory>?)category,
+                    Message = "Get list hotel success"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new IGetListHotelFilterInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Get list filter failed"
+                };
+            }
         }
         public async Task<ICreateHotelInteractor.Response> Create(ICreateHotelInteractor.Request request)
         {
