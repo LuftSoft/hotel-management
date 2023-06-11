@@ -12,31 +12,40 @@ namespace hotel_management_api.Business.Services
         private readonly IJwtUtil jwtUtil;
         private readonly IUploadFileUtil uploadFileUtil;
         private readonly IUserRepository userRepository;
+        private readonly IRoomRepository roomRepository;
         private readonly IHotelRepository hotelRepository;
+        private readonly ICommentRepository commentRepository;
         private readonly IHomeletRepository homeletRepository;
         private readonly IProvineRepository provineRepository;
         private readonly IDistrictRepository districtRepository;
         private readonly IHotelBenefitRepository hotelBenefitRepository;
+        private readonly IHotelCategoryRepository hotelCategoryRepository;
         public HotelService
             (
             IJwtUtil jwtUtil,
             IUserRepository userRepository,
             IUploadFileUtil uploadFileUtil,
+            IRoomRepository roomRepository,
             IHotelRepository hotelRepository,
+            ICommentRepository commentRepository,
             IHomeletRepository homeletRepository,
             IProvineRepository provineRepository,
             IDistrictRepository districtRepositor,
-            IHotelBenefitRepository hotelBenefitRepository
+            IHotelBenefitRepository hotelBenefitRepository,
+            IHotelCategoryRepository hotelCategoryRepository
             )
         {
             this.jwtUtil = jwtUtil;
             this.uploadFileUtil = uploadFileUtil;
             this.userRepository = userRepository;
+            this.roomRepository = roomRepository;
             this.hotelRepository = hotelRepository;
+            this.commentRepository = commentRepository;
             this.homeletRepository = homeletRepository;
             this.provineRepository = provineRepository;
             this.districtRepository = districtRepositor;
             this.hotelBenefitRepository = hotelBenefitRepository;
+            this.hotelCategoryRepository = hotelCategoryRepository;
         }
         public async Task<IGetListHotelInteractor.Response> GetPaging(IGetListHotelInteractor.Request request)
         {
@@ -72,9 +81,10 @@ namespace hotel_management_api.Business.Services
                     hotels = hotels.Where(h => homeletIds.Contains(h.HomeletId)).ToList();
                 }
                 var containHotel = await hotelRepository.HotelFilterAsync(hotelFilter.FromDate,
-                    hotelFilter.RoonCount, hotelFilter.RoomSize, hotelFilter.Price);
+                    hotelFilter.RoonCount, hotelFilter.RoomSize);
                 hotels = hotels.Where(h => containHotel.Contains(h.Id)).ToList();
                 hotels = hotels.Skip(request.pageSize * request.pageIndex).Take(request.pageSize).ToList();
+                var category = await hotelCategoryRepository.GetAll();
                 //tim kiem theo ngay`
                 return new IGetListHotelInteractor.Response()
                 {
@@ -82,6 +92,7 @@ namespace hotel_management_api.Business.Services
                     Hotels = hotels.ToList(),
                     TotalPage = (hotels.Count() / request.pageSize)+1,
                     PageIndex = request.pageIndex,
+                    Categories = (List<HotelCategory>?) category,
                     Message = "Get list hotel success"
                 };
             }
@@ -93,6 +104,34 @@ namespace hotel_management_api.Business.Services
                     Message = $"Get list hotel failed!.Hotel service. Error: {ex.Message}"
                 };
             }
+        }
+        public async Task<IGetDetailHotelInteractor.Response> GetDetail(int hotelId) 
+        {
+            Hotel hotel = await hotelRepository.FindByIdAsync(hotelId);
+            if(hotel == null) return new IGetDetailHotelInteractor.Response("Get failed", false, null);
+            var rooms = (await roomRepository.GetByHotelIdAsync(hotelId)).ToList();
+            var comments = (await commentRepository.FindByHotelId(hotelId)).ToList();
+            var benefit = hotel.HotelBenefit;
+            var hotelCategory = await hotelCategoryRepository.GetById(hotel.HotelCategoryId);
+            HotelDetailDto hotelDetailDto = new HotelDetailDto()
+            {
+                Id = hotel.Id,
+                Name = hotel.Name,
+                Star = hotel.Star,
+                Slug = hotel.Slug,
+                USerId = hotel.USerId,
+                Address = hotel.Address,
+                LogoLink = hotel.LogoLink,
+                HotelCategory = hotelCategory,
+                UpdateDate = hotel.UpdateDate,
+                CreatedDate = hotel.CreatedDate,
+                Description = hotel.Description,
+                Rooms = rooms,
+                HotelBenefit = benefit, 
+                Comments = comments
+
+            };
+            return new IGetDetailHotelInteractor.Response("Get success", true, hotelDetailDto);
         }
         public async Task<ICreateHotelInteractor.Response> Create(ICreateHotelInteractor.Request request)
         {

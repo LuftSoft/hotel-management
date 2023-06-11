@@ -19,7 +19,7 @@ namespace hotel_management_api.Database.Repository
         {
             return await _appDbContext.Rooms.Where(r => r.Price <= price).Select(r => r.HotelId).Distinct().ToListAsync();
         }
-        public async Task<IEnumerable<int>> HotelFilterAsync(DateTime fromDate, int roomCount, int roomSize, double roomPrice)
+        public async Task<IEnumerable<int>> HotelFilterAsync(DateTime fromDate, int roomCount, int roomSize)
         {
             var bookingRooms = await _appDbContext.Bookings.AsNoTracking().Where(b => b.ToDate >= fromDate)
                 .GroupBy(b => b.RoomId)
@@ -29,7 +29,8 @@ namespace hotel_management_api.Database.Repository
                     count = b.Count()
                 }).ToListAsync();
             var rooms = await _appDbContext.Rooms
-                .Select(r => new {
+                .Select(r => new IHotelRepository.HotelFilterList()
+                {
                     Id = r.Id,
                     RoomSize = r.NumOfPeope,
                     Price = r.Price,
@@ -38,27 +39,30 @@ namespace hotel_management_api.Database.Repository
                 }).ToListAsync();
             if (bookingRooms.Any())
             {
-                rooms = await _appDbContext.Rooms.Join(
+                rooms = rooms.Join(
                 bookingRooms,
                 r => r.Id,
                 b => b.id,
                 (r, b) =>
-                new
+                new IHotelRepository.HotelFilterList()
                 {
                     Id = r.Id,
-                    RoomSize = r.NumOfPeope,
+                    RoomSize = r.RoomSize,
                     Price = r.Price,
                     TotalRoom = r.TotalRoom - b.count,
                     HotelId = r.HotelId
-                }).ToListAsync();
+                }
+                ).ToList();
             }
-            var hotels = rooms.Where(r => r.Price <= roomPrice && r.RoomSize >= roomSize && r.TotalRoom >= roomCount)
+            var hotels = rooms.Where(r => r.RoomSize >= roomSize && r.TotalRoom >= roomCount)
                 .Select(r => r.HotelId).Distinct().ToList();
             return hotels;
         }
         public async Task<Hotel?> FindByIdAsync(int id)
         {
-            return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
+            return await _appDbContext.Hotels
+                .Include(h => h.HotelBenefit)
+                .FirstOrDefaultAsync(h => h.Id == id);
         }
         public async Task<IEnumerable<Hotel>> GetAllAsync()
         {

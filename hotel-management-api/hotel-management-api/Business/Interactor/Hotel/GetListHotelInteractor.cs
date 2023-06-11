@@ -15,6 +15,7 @@ namespace hotel_management_api.Business.Interactor.Hotel
         public class Response
         {
             public List<Database.Model.Hotel>? Hotels { set; get; }
+            public List<HotelCategory>? Categories { set; get; }
             public string? Message { get; set; }
             public bool? Success { get; set; }
             public int TotalPage { get; set; }

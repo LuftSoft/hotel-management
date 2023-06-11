@@ -51,7 +51,7 @@ namespace hotel_management_api.APIs.Booking
         }
         [HttpPost]
         [Authorize("user")]
-        public async Task<IActionResult> Post(BookingDto bookingDto) 
+        public async Task<IActionResult> Post([FromBody] BookingDto bookingDto) 
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);
             if (token == null)
@@ -71,7 +71,7 @@ namespace hotel_management_api.APIs.Booking
         }
         [HttpPut]
         [Authorize("user")]
-        public async Task<IActionResult> Put(BookingDto bookingDto) 
+        public async Task<IActionResult> Put([FromBody] BookingDto bookingDto) 
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);
             if (token == null)
@@ -89,9 +89,9 @@ namespace hotel_management_api.APIs.Booking
             }
             return BadRequest(result);
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize("user")]
-        public async Task<IActionResult> Delete(int bookingId) 
+        public async Task<IActionResult> Delete(int id) 
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);
             if (token == null)
@@ -100,7 +100,7 @@ namespace hotel_management_api.APIs.Booking
             }
             var result = await cancelBookingRoomInteractor.CancelAsync(new ICancelBookingRoomInteractor.Request()
             {
-                BookingId = bookingId,
+                BookingId = id,
                 token = token
             });
             if (result.Success == true)
