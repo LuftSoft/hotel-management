@@ -72,7 +72,7 @@ export default function DetailHotelPage() {
 				</div>
 			</div>
 			<div className="mt-3">
-				<h2 className="fs-4">Available Room Types in ACE Hotel Saigon</h2>
+				<h2 className="fs-4">Những phòng còn trống tại ACE Hotel Saigon</h2>
 				<div className="bg-light rounded border p-3">
 					<div className="container p-0">
 						<div className="d-flex">
@@ -135,14 +135,78 @@ export default function DetailHotelPage() {
 									</div>
 									<div className="d-flex">
 										<div className="flex-grow-1">
-											<div className="d-flex flex-column bg-light">
+											<div className="d-flex flex-column">
 												<div className="row">
-													<div className="col">1</div>
-													<div className="col">2</div>
+													<div className="col">
+														<div className="d-flex flex-column">
+															<div className="d-flex flex-column">
+																<div className="d-flex text-muted">
+																	<i className="fa-solid fa-store"></i>
+																	<div>Nhà hàng</div>
+																</div>
+															</div>
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa-solid fa-elevator"></i>
+																	<div>Thang máy</div>
+																</div>
+															</div>
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa-solid fa-water-ladder"></i>
+																	<div>Bể bơi</div>
+																</div>
+															</div>
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa fa-utensils"></i>
+																	<div>Bữa sáng miễn phí</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div className="col">
+														<div className="d-flex flex-column">
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa fa-temperature-arrow-down"></i>
+																	<div>Máy điều hòa</div>
+																</div>
+															</div>
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa-sharp fa-solid fa-bicycle"></i>
+																	<div>Thuê xe</div>
+																</div>
+															</div>
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa-solid fa-wifi"></i>
+																	<div>Wifi miễn phí</div>
+																</div>
+															</div>
+															<div className="d-flex flex-column">
+																<div className="d-flex text-info">
+																	<i className="fa-solid fa-parking"></i>
+																	<div>Chỗ đậu xe</div>
+																</div>
+															</div>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
-										<div style={{ width: "25%" }}>2</div>
+										<div className="d-flex flex-column align-items-end" style={{ width: "25%" }}>
+											<div className="d-flex flex-column text-end">
+												<div>{"600.000 VNĐ"}</div>
+												<div className="text-danger">{"450.000 VNĐ"}</div>
+												<div>{"/ room / night(s)"}</div>
+												<div className="text-primary">{"Giá cuối cùng"}</div>
+											</div>
+											<div>
+												<button className="btn btn-primary">Đặt ngay</button>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
