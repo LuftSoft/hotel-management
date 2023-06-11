@@ -5,6 +5,7 @@ namespace hotel_management_api.Business.Services
 {
     public interface IHotelService
     {
+        Task<IGetDetailHotelInteractor.Response> GetDetail(int hotelId);
         Task<ICreateHotelInteractor.Response> Create(ICreateHotelInteractor.Request request);
         Task<IUpdateHotelInteractor.Response> Update(IUpdateHotelInteractor.Request request);
         Task<IDeleteHotelInteractor.Response> Delete(IDeleteHotelInteractor.Request request);

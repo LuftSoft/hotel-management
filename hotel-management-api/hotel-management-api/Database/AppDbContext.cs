@@ -115,6 +115,10 @@ namespace hotel_management_api.Database
                     .HasConstraintName("FK_Hotel_Room")
                     .OnDelete(DeleteBehavior.Restrict);
             });
+            builder.Entity<Comment>(opt => 
+            {
+                opt.HasIndex(c => c.BookingId).IsUnique();
+            });
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -14,19 +14,21 @@ namespace hotel_management_api.APIs.Hotel
     [ApiController]
     public class HotelController : ControllerBase
     {
-        private readonly IUploadFileUtil uploadFileUtil;
         private readonly IJwtUtil jwtUtil;
+        private readonly IUploadFileUtil uploadFileUtil;
         private readonly ICreateHotelInteractor createHotelInteractor;
         private readonly IUpdateHotelInteractor updateHotelInteractor;
         private readonly IDeleteHotelInteractor deleteHotelInteractor;
         private readonly IGetListHotelInteractor getListHotelInteractor;
+        private readonly IGetDetailHotelInteractor getDetailHotelInteractor;
         public HotelController(
             IJwtUtil jwtUtil,
             IUploadFileUtil uploadFileUtil,
             ICreateHotelInteractor createHotelInteractor,
             IUpdateHotelInteractor updateHotelInteractor,
             IDeleteHotelInteractor deleteHotelInteractor,
-            IGetListHotelInteractor getListHotelInteractor
+            IGetListHotelInteractor getListHotelInteractor,
+            IGetDetailHotelInteractor getDetailHotelInteractor
             ) 
         { 
             this.jwtUtil = jwtUtil;
@@ -35,12 +37,12 @@ namespace hotel_management_api.APIs.Hotel
             this.updateHotelInteractor = updateHotelInteractor;
             this.deleteHotelInteractor = deleteHotelInteractor;
             this.getListHotelInteractor = getListHotelInteractor;
+            this.getDetailHotelInteractor = getDetailHotelInteractor;
         }
         [HttpGet()]
-        public async Task<IActionResult> get(  int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
-        {   
-            //if(hotelFilterDto.RoonCount < 0 || hotelFilterDto.FromDate < )
-            Console.WriteLine($"{pageIndex}{pageSize}");
+        public async Task<IActionResult> get( int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
+        {
+            if (pageSize == 0) pageSize = 10;
             var result = await getListHotelInteractor.GetAsync(new IGetListHotelInteractor.Request()
             {
                 dto = hotelFilterDto,
@@ -56,6 +58,15 @@ namespace hotel_management_api.APIs.Hotel
         {
             return Ok(Directory.GetCurrentDirectory());
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> getDetail(int id)
+        {
+            var result = await getDetailHotelInteractor.GetDetail(id);
+            if(result.Success == true)
+                return Ok(result);
+            return BadRequest(result);
+        }
+
         [HttpPost("filter")]
         public IActionResult postFilter(int pageIndex, int pageSize, [FromQuery] HotelFilterDto? hotelFilterDto)
         {
@@ -76,24 +87,7 @@ namespace hotel_management_api.APIs.Hotel
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize("admin")]
-        [HttpPost("upload")]
-        public async Task<IActionResult> testFile(IFormFile[] ufile)
-        {
-            try
-            {
-                if (ufile != null && ufile.Length > 0)
-                {
-                    var result = await uploadFileUtil.MultiUploadAsync(ufile);
-                    return Ok(result);
-                }
-                return BadRequest(false);
-            }
-            catch
-            {
-                return BadRequest(Directory.GetCurrentDirectory() + "\\wwwroot\\upload");
-            }
-        }
+
         [HttpPut]
         [Authorize("admin")]
         public async Task<IActionResult> put([FromForm] HotelUpdateDto hotelUpdateDto) 
@@ -109,6 +103,7 @@ namespace hotel_management_api.APIs.Hotel
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpDelete]
         [Authorize("admin")]
         public async Task<IActionResult> delete(int id)

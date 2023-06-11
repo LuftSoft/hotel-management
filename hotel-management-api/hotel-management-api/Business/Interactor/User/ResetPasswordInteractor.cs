@@ -6,26 +6,28 @@ namespace hotel_management_api.Business.Interactor.User
 {
     public interface IResetPasswordInteractor
     {
+        public class Request
+        {
+            public string token { get; set; }
+            public string password { get; set; }
+        }
         public class Response
         {
             public string? Message { get; set; }
             public bool? Success { get; set; }
         }
+        Task<IResetPasswordInteractor.Response> ResetPassword(IResetPasswordInteractor.Request request);
     }
     public class ResetPasswordInteractor : IResetPasswordInteractor
     {
-        private readonly IJwtUtil jwtUtil;
         private readonly IUserService userService;
-        public ResetPasswordInteractor(IJwtUtil jwtUtil, IUserService userService) 
+        public ResetPasswordInteractor( IUserService userService) 
         {
-            this.jwtUtil = jwtUtil;
             this.userService = userService;
         }
-        public async Task<IResetPasswordInteractor.Response> ResetPassword(string? token, string password)
+        public async Task<IResetPasswordInteractor.Response> ResetPassword(IResetPasswordInteractor.Request request)
         {
-            var userName = jwtUtil.getUserNameFromToken(token);
-            return await userService.resetPasswordService(userName, password);
-            
+            return await userService.resetPasswordService(request);
         }
     }
 }

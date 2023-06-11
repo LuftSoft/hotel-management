@@ -16,22 +16,22 @@ namespace hotel_management_api.APIs.Room
     public class RoomController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;
+        private readonly IRoomRepository roomRepository;
+        private readonly IRoomGalleryService roomGalleryService;
         private readonly IAddNewRoomInteractor addNewRoomInteractor;
         private readonly IUpdateRoomInteractor updateRoomInteractor;
         private readonly IDeleteRoomInteractor deleteRoomInteractor;
+        private readonly IGetRoomByIdInteractor getRoomByIdInteractor;
         private readonly IGetRoomByHotelIdInteractor getRoomByHotelIdInteractor;
-        //room gallery
         private readonly ICreateRoomGalleryInteractor createRoomGalleryInteractor;
-        private readonly IDeleteRoomGalleryInteractor deleteRoomGalleryInteractor;
-        //test
-        private readonly IRoomRepository roomRepository;
-        private readonly IRoomGalleryService roomGalleryService;
+        private readonly IDeleteRoomGalleryInteractor deleteRoomGalleryInteractor;  
         public RoomController
             (
             IJwtUtil jwtUtil,
-            IAddNewRoomInteractor addNewRoomInteractor,
         IUpdateRoomInteractor updateRoomInteractor,
+            IAddNewRoomInteractor addNewRoomInteractor,
             IDeleteRoomInteractor deleteRoomInteractor,
+            IGetRoomByIdInteractor getRoomByIdInteractor,
             IGetRoomByHotelIdInteractor getRoomByHotelIdInteractor,
             ICreateRoomGalleryInteractor createRoomGalleryInteractor,
             IDeleteRoomGalleryInteractor deleteRoomGalleryInteractor,
@@ -42,32 +42,28 @@ namespace hotel_management_api.APIs.Room
         {
             this.jwtUtil = jwtUtil;
             this.addNewRoomInteractor = addNewRoomInteractor;
-            this.getRoomByHotelIdInteractor = getRoomByHotelIdInteractor;
             this.updateRoomInteractor = updateRoomInteractor;
             this.deleteRoomInteractor = deleteRoomInteractor;
+            this.getRoomByIdInteractor = getRoomByIdInteractor;
+            this.getRoomByHotelIdInteractor = getRoomByHotelIdInteractor;
             this.createRoomGalleryInteractor = createRoomGalleryInteractor;
             this.deleteRoomGalleryInteractor = deleteRoomGalleryInteractor;
             //test
             this.roomRepository = roomRepository;
             this.roomGalleryService = roomGalleryService;
         }
-        // GET: api/<RoomController>
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
-
-        // GET api/<RoomController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
-        {   
-            var room = await roomRepository.GetByHotelIdAsync(id);
-            if(room == null)
-            {
-                return BadRequest("can't find room");
-            }
-            return Ok(room);
+        {
+            var result = await getRoomByIdInteractor.GetByIdAsync(id);
+            if(result.Success == true) 
+                return Ok(result);
+            return BadRequest(result);
         }
 
         // POST api/<RoomController>
@@ -127,8 +123,8 @@ namespace hotel_management_api.APIs.Room
             }
             return BadRequest(result);
         }
-        // PUT api/<RoomController>/5
-        [HttpPut("{id}")]
+        // PUT
+        [HttpPut]
         [Authorize("admin")]
         public async Task<IActionResult> Put([FromBody] RoomUpdateDto updateRoomDto)
         {
@@ -154,7 +150,7 @@ namespace hotel_management_api.APIs.Room
 
         }
 
-        // DELETE api/<RoomController>/5
+        // DELETE
         [HttpDelete("{id}")]
         [Authorize("admin")]
         public async Task<IActionResult> Delete(int id)

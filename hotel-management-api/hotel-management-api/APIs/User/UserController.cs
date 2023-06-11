@@ -1,8 +1,10 @@
-﻿using hotel_management_api.APIs.User.UserDTOs;
+﻿using hotel_management_api.APIs.User.DTOs;
+using hotel_management_api.APIs.User.UserDTOs;
 using hotel_management_api.Business.Boudaries.User;
 using hotel_management_api.Business.Interactor.User;
 using hotel_management_api.Database.Model;
 using hotel_management_api.Utils;
+using Humanizer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,8 +27,12 @@ namespace hotel_management_api.APIs.User
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IUserLoginInteractor userLoginInteractor;
         private readonly IUserSignupInteractor userSignupInteractor;
+        private readonly IUpdateUserInteractor updateUserInteractor;
+        private readonly IDeleteUserInteractor deleteUserInteractor;
         private readonly IFogotPasswordInteractor fogotPasswordInteractor;
         private readonly IGetDetailUserInteractor getDetailUserInteractor;
+        private readonly IResetPasswordInteractor resetPasswordInteractor;
+        private readonly IChangePasswordInteractor changePasswordInteractor;
         private readonly IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor;
         public UserController(
             IJwtUtil jwtUtil,
@@ -34,37 +40,38 @@ namespace hotel_management_api.APIs.User
             UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IUserLoginInteractor _userLoginInteractor,
+            IUpdateUserInteractor updateUserInteractor,
+            IDeleteUserInteractor deleteUserInteractor,
             IUserSignupInteractor _userSignupInteractor,
             IGetDetailUserInteractor getDetailUserInteractor,
+            IResetPasswordInteractor resetPasswordInteractor,
             IFogotPasswordInteractor _fogotPasswordInteractor,
+            IChangePasswordInteractor changePasswordInteractor,
             IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor
-            ) 
+            )
         {
             this.jwtUtil = jwtUtil;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.configuration = configuration;
             this.userLoginInteractor = _userLoginInteractor;
+            this.updateUserInteractor = updateUserInteractor;
+            this.deleteUserInteractor = deleteUserInteractor;
             this.userSignupInteractor = _userSignupInteractor;
             this.getDetailUserInteractor = getDetailUserInteractor;
+            this.resetPasswordInteractor = resetPasswordInteractor;
             this.fogotPasswordInteractor = _fogotPasswordInteractor;
+            this.changePasswordInteractor = changePasswordInteractor;
             this.blockAndUnlockUserInteractor = blockAndUnlockUserInteractor;
         }
         //GET
         [MapToApiVersion("1.0")]
         [HttpGet("detail")]
         [Authorize]
-        public async Task<IActionResult> Get() 
+        public async Task<IActionResult> Get()
         {
             var result = await getDetailUserInteractor.Get(HttpContext);
             return Ok(result);
-        }
-        [HttpGet("reset-password")]
-        public IActionResult ResetPassword([FromQuery] string token)
-        {
-            if (jwtUtil.getUserNameFromToken(token) == null)
-                return BadRequest("bad trip");
-            return Ok(jwtUtil.getUserNameFromToken(token));
         }
         [HttpGet("refresh_token")]
         [Authorize(Roles = "admin")]
@@ -103,20 +110,34 @@ namespace hotel_management_api.APIs.User
         
         //PUT
         [HttpPut]
-        public IActionResult UpdateUser()
+        public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDto dto)
         {
-            return Ok("put method");
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null) return Unauthorized();
+            var result = await updateUserInteractor.UpdateAsync(new IUpdateUserInteractor.Request()
+            {
+                token = token,
+                updateUserDto = dto
+            });
+            if (result.Success == true) return Ok(result);
+            return BadRequest(result);
         }
         //PATCH
         [Authorize("user")]
         [HttpPatch("change-password")]
-        public async Task<IActionResult> ChangePassword()
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
-            var ListAuthorize = HttpContext.Request.Headers.Authorization.ToList();
-            ListAuthorize.ForEach(item => Console.WriteLine(item));
-            var Authorization = HttpContext.GetTokenAsync("Bearer Token");
-            if (Authorization == null) return BadRequest("tooken is null");
-            return Ok(Authorization);
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+                return BadRequest("token is null");
+            var result = await changePasswordInteractor.ChangePassword(new IChangePasswordInteractor.Request()
+            {
+                token = token,
+                oldPassword = dto.OldPassword,
+                newPassword = dto.NewPassword
+            });
+            if (result.Success == false) return BadRequest(result);
+            return Ok(result);
         }
         [HttpPatch("block/{userId}")]
         public async Task<IActionResult> blockUser(string userId)
@@ -130,7 +151,7 @@ namespace hotel_management_api.APIs.User
             if(result.Success == true) return Ok(result);
             return BadRequest(result);
         }
-        [HttpPost("unlock/{userId}")]
+        [HttpPatch("unlock/{userId}")]
         public async Task<IActionResult> unlockUser(string userId)
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);
@@ -142,12 +163,32 @@ namespace hotel_management_api.APIs.User
             if (result.Success == true) return Ok(result);
             return BadRequest(result);
         }
+        [HttpPatch("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            var result = await resetPasswordInteractor.ResetPassword(new IResetPasswordInteractor.Request()
+            {
+                token = resetPasswordDto.token,
+                password = resetPasswordDto.newPassword
+            });
+            if (result.Success == true)
+                return Ok(result);
+            return BadRequest(result);
+        }
         //DELETE
         [Authorize("owner")]
-        [HttpDelete]
-        public IActionResult Delete(string userId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
-            return Ok("dedlete method");
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null) return Unauthorized();
+            var result = await deleteUserInteractor.DeleteAsync(new IDeleteUserInteractor.Request()
+            {
+                token = token,
+                deleteId = id
+            });
+            if (result.Success == true) return Ok(result);
+            return BadRequest(result);
         }
     }
 }

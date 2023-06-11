@@ -3,7 +3,7 @@
     public static class DbUserRole
     {
         public const string Admin = "admin";
-        public const string HotelAdmin = "hotel_admin";
+        public const string Owner = "owner";
         public const string User = "user";
     }
 }

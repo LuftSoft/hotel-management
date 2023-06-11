@@ -133,7 +133,7 @@ namespace hotel_management_api.Business.Services
                 BookingDto requestBooking = request.Booking;
                 string userId = await userService.GetUserIdFromToken(request.token);
                 Booking booking = await bookingRepository.GetOne(request.Booking.Id);
-                if (userId == null || booking == null)
+                if (userId == null || booking == null || userId != booking.UserId)
                 {
                     return new IUpdateBookingRoomInteractor.Response()
                     {
