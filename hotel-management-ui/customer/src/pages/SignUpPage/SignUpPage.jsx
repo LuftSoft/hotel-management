@@ -50,7 +50,7 @@ export default function SignUpPage() {
 			setErrors({
 				...initErrors,
 			});
-			const SignUpRequest = async () => {
+			const signUpRequest = async () => {
 				const toastId = toast.loading("Đang xử lý!");
 				try {
 					const res = await axiosPost(url.signUp, {
@@ -79,7 +79,7 @@ export default function SignUpPage() {
 					});
 				}
 			};
-			SignUpRequest();
+			signUpRequest();
 		}
 	};
 	const handleChange = (name) => {

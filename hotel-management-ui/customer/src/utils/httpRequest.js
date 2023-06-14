@@ -5,7 +5,42 @@ export const axiosInstance = axios.create({
 });
 
 export const url = {
+	signIn: "user/login",
 	signUp: "user/signup",
+	getUser: "user/detail",
+	province: "location/provine",
+	district: "location/district/",
+	homelet: "location/homelet/",
+};
+
+export const axiosJWT = (accessToken, refreshToken, dispatch) => {
+	const instance = axios.create({
+		baseURL: import.meta.env.VITE_BASE_URL,
+	});
+	instance.interceptors.request.use(
+		async (config) => {
+			const date = new Date();
+			// check refresh token exp first, then check accesToken
+			const decodedRefresh = jwtDecode(refreshToken);
+			if (decodedRefresh.exp < date.getTime() / 1000) {
+				// set token null then show login, and then redirect path before
+			}
+			const decodedToken = jwtDecode(accessToken);
+			if (decodedToken.exp < date.getTime() / 1000) {
+				const data = await getNewAccessToken(refreshToken);
+				if (data.isSuccess) {
+					dispatch(loginSuccess(data));
+					config.headers["Authorization"] = `Bearer ${data.accessToken}`;
+				}
+			}
+			return config;
+		},
+		(error) => {
+			console.log(error);
+			return Promise.reject(error);
+		},
+	);
+	return instance;
 };
 
 export const axiosGet = async (url, config = {}, instance = axiosInstance) => {

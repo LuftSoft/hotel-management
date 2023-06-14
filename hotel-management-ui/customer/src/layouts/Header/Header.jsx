@@ -1,8 +1,13 @@
 import { Link, NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import logo from "../../assets/logo.png";
 import { routes } from "../../routes";
+import UserMenu from "./UserMenu";
+import { selectUser } from "../../redux/selectors";
 
 export default function Header() {
+	const currentUser = useSelector(selectUser);
 	return (
 		<>
 			{/* top bar */}
@@ -21,7 +26,7 @@ export default function Header() {
 							</span>
 						</div>
 					</div>
-					<div className="col-lg-6 text-lg-end">
+					<div className="col-lg-6 text-lg-end d-flex justify-content-end align-items-center">
 						<div className="d-inline-flex align-items-center h-100">
 							<a href="#" className="me-2">
 								<i className="fa-brands fa-facebook"></i>
@@ -36,12 +41,20 @@ export default function Header() {
 						<a href="#" className="btn btn-primary ms-3">
 							Booking Now
 						</a>
-						<Link to={routes.signIn} className="btn btn-primary ms-3">
-							Đăng nhập
-						</Link>
-						<Link to={routes.signUp} className="btn btn-primary ms-3">
-							Đăng ký
-						</Link>
+						<div className="d-inline ms-3">
+							{currentUser ? (
+								<UserMenu />
+							) : (
+								<>
+									<Link to={routes.signIn} className="btn btn-primary">
+										Đăng nhập
+									</Link>
+									<Link to={routes.signUp} className="btn btn-primary ms-3">
+										Đăng ký
+									</Link>
+								</>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>

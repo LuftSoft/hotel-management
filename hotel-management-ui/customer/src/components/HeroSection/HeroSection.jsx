@@ -1,14 +1,121 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { formatDate } from "../../utils/helpers";
+import { useQuery } from "@tanstack/react-query";
+import { axiosGet, url } from "../../utils/httpRequest";
 
 export default function HeroSection() {
+	console.log("render");
 	const checkInDateRef = useRef(null);
 	const checkOutDateRef = useRef(null);
+	const provinceRef = useRef();
+	const districtRef = useRef();
+	const homeletRef = useRef();
+	// const getDistrict = useRef(false);
+	const [getDistrict, setGetDistrict] = useState(false);
+	const [getHomelet, setGetHomelet] = useState(false);
+
+	const hotelProvince = useQuery({
+		queryKey: ["hotelProvince"],
+		queryFn: async () => {
+			try {
+				const res = await axiosGet(url.province);
+				return res;
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		staleTime: 3 * 60 * 1000,
+		// refetchOnWindowFocus: false,
+	});
+	const hotelDistrict = useQuery({
+		queryKey: ["hotelDistrict"],
+		queryFn: async () => {
+			try {
+				const res = await axiosGet(url.district + provinceRef.current.value);
+				return res;
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		enabled: getDistrict,
+		staleTime: 3 * 60 * 1000,
+		// refetchOnWindowFocus: false,
+	});
+	const hotelHomelet = useQuery({
+		queryKey: ["hotelHomelet"],
+		queryFn: async () => {
+			try {
+				const res = await axiosGet(url.homelet + districtRef.current.value);
+				return res;
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		enabled: getHomelet,
+		staleTime: 3 * 60 * 1000,
+		// refetchOnWindowFocus: false,
+	});
+
+	let provinces = [];
+	if (hotelProvince.isSuccess) {
+		provinces = hotelProvince.data.data;
+	}
+	let districts = [];
+	if (hotelDistrict.isSuccess) {
+		districts = hotelDistrict.data.data;
+	}
+	let homelets = [];
+	if (hotelHomelet.isSuccess) {
+		homelets = hotelHomelet.data.data;
+	}
+
+	const handleSearch = () => {
+		console.log("click", provinceRef.current.value);
+		homeletRef.current.disabled = !homeletRef.current.disabled;
+	};
+	const handleProvinceChange = (e) => {
+		const value = e.target.value;
+		if (value !== "undefined") {
+			console.log("test");
+			if (!getDistrict) {
+				setGetDistrict(true);
+			}
+			districtRef.current.disabled = false;
+			hotelDistrict.refetch();
+		} else {
+			console.log("vo");
+			if (getDistrict) {
+				setGetDistrict(false);
+			}
+			districtRef.current.disabled = true;
+			districtRef.current.value = undefined;
+			homeletRef.current.disabled = true;
+			homeletRef.current.value = undefined;
+		}
+	};
+	const handleDistrictChange = (e) => {
+		const value = e.target.value;
+		if (value !== "undefined") {
+			if (!getDistrict) {
+				setGetHomelet(true);
+			}
+			homeletRef.current.disabled = false;
+			hotelHomelet.refetch();
+		} else {
+			if (getDistrict) {
+				setGetHomelet(false);
+			}
+			homeletRef.current.disabled = true;
+			homeletRef.current.value = undefined;
+		}
+	};
+
 	useEffect(() => {
 		const today = new Date();
 		checkInDateRef.current.min = formatDate(today);
 	}, []);
+
 	return (
 		<section className="position-relative pt-4 pb-5">
 			<div
@@ -72,38 +179,58 @@ export default function HeroSection() {
 									</div>
 									<div className="col">
 										<div className="mb-3">
-											<label>Giá mong muốn (VNĐ):</label>
-											<input type="number" className="form-control" min={0} />
-										</div>
-										<div className="mb-3">
 											<label>Tỉnh/thành phố:</label>
-											<select className="form-select" aria-label="Default select example">
-												<option defaultChecked>Chọn tỉnh/thành phố</option>
-												<option value="1">One</option>
-												<option value="2">Two</option>
-												<option value="3">Three</option>
+											<select
+												ref={provinceRef}
+												onChange={handleProvinceChange}
+												className="form-select"
+												aria-label="Default select example">
+												<option defaultChecked value="undefined">
+													Chọn tỉnh/thành phố
+												</option>
+												{provinces?.map((province) => (
+													<option key={province.id} value={province.id}>
+														{province.name}
+													</option>
+												))}
 											</select>
 										</div>
 										<div className="mb-3">
 											<label>Quận/huyện:</label>
-											<select className="form-select" disabled aria-label="Default select example">
-												<option defaultChecked>Select District</option>
-												<option value="1">One</option>
-												<option value="2">Two</option>
-												<option value="3">Three</option>
+											<select
+												ref={districtRef}
+												onChange={handleDistrictChange}
+												className="form-select"
+												disabled
+												aria-label="Default select example">
+												<option defaultChecked value="undefined">
+													Chọn quận/huyện
+												</option>
+												{districts?.map((district) => (
+													<option key={district.id} value={district.id}>
+														{district.name}
+													</option>
+												))}
 											</select>
 										</div>
 										<div className="mb-3">
 											<label>Xã/phường:</label>
-											<select className="form-select" disabled aria-label="Default select example">
-												<option defaultChecked>Select Commune</option>
-												<option value="1">One</option>
-												<option value="2">Two</option>
-												<option value="3">Three</option>
+											<select ref={homeletRef} className="form-select" disabled aria-label="Default select example">
+												<option value="undefined" defaultChecked>
+													Chọn xã/phường
+												</option>
+												{homelets?.map((homelet) => (
+													<option key={homelet.id} value={homelet.id}>
+														{homelet.name}
+													</option>
+												))}
 											</select>
 										</div>
-										<div className="d-grid mt-4">
-											<button type="button" className="btn btn-primary">
+										<label className="p-0 m-0" style={{ visibility: "hidden" }}>
+											none
+										</label>
+										<div className="d-grid">
+											<button type="button" onClick={handleSearch} className="btn btn-primary">
 												Xem phòng có sẵn
 											</button>
 										</div>

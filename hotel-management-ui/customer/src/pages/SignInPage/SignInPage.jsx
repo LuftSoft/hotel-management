@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { validateEmail, validatePassword } from "../../utils/helpers";
+import { toast } from "react-toastify";
+import { axiosGet, axiosPost, url } from "../../utils/httpRequest";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/userSlice";
 
 const initState = {
 	email: "",
@@ -13,6 +17,8 @@ export default function SignInPage() {
 	const passwordRef = useRef();
 	const [showPw, setShowPw] = useState(false);
 	const [errors, setErrors] = useState(initState);
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -24,10 +30,47 @@ export default function SignInPage() {
 		if (Object.keys(errors).length) {
 			setErrors(errors);
 		} else {
-			console.log("?");
 			setErrors({
 				...initState,
 			});
+			const signInRequest = async () => {
+				const toastId = toast.loading("Đang xử lý!");
+				try {
+					const res = await axiosPost(url.signIn, {
+						username,
+						password,
+					});
+					console.log(res);
+					toast.update(toastId, {
+						render: "Đăng nhập thành công!",
+						type: "success",
+						closeButton: true,
+						autoClose: 1000,
+						isLoading: false,
+					});
+					dispatch(updateUser({}));
+					navigate(routes.home);
+				} catch (error) {
+					console.log(error);
+					toast.update(toastId, {
+						render: error.response.data.message,
+						type: "error",
+						closeButton: true,
+						autoClose: 1000,
+						isLoading: false,
+					});
+				}
+			};
+			const getUser = async () => {
+				try {
+					const res = await axiosGet(url.getUser, {
+						headers: {},
+					});
+				} catch (error) {
+					console.log(error);
+				}
+			};
+			signInRequest();
 		}
 	};
 	const handleChange = (name) => {
