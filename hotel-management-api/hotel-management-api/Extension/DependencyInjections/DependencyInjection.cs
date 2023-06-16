@@ -10,6 +10,7 @@ using hotel_management_api.Business.Services;
 using hotel_management_api.Database.Repository;
 using hotel_management_api.Utils;
 using System.Runtime.CompilerServices;
+using static hotel_management_api.Extension.Middlewares.IsUserBlockMiddleware;
 
 namespace hotel_management_api.Extension.DependencyInjections
 {
@@ -70,6 +71,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IDeleteHotelInteractor, DeleteHotelInteractor>();
             services.AddScoped<IGetListHotelInteractor, GetListHotelInteractor>();
             services.AddScoped<IGetDetailHotelInteractor, GetDetailHotelInteractor>();
+            services.AddScoped<IGetListHotelFilterInteractor, GetListHotelFilterInteractor>();
             return services;
         }
         public static IServiceCollection RoomInteractorDependencyInjection(this IServiceCollection services) 
@@ -107,6 +109,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IGetHomeletInteractor, GetHomeletInteractor>();
             services.AddScoped<IGetDistrictInteractor, GetDistrictInteractor>();
             services.AddScoped<IGetProvineInteractor, GetProvineInteractor>();
+            services.AddScoped<hotelfilter>();
             return services;
         }
     }

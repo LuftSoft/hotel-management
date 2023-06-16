@@ -50,6 +50,7 @@ namespace hotel_management_api.Business.Services
             {
                 return new UserDto()
                 {
+                    Id = user.Id,
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -59,6 +60,10 @@ namespace hotel_management_api.Business.Services
                 };
             }
             return null;
+        }
+        public async Task<AppUser> FindByIdAsync(string userId)
+        {
+            return await userRepository.FindByIdAsync(userId);
         }
         public async Task<IDeleteUserInteractor.Response> DeleteAsync(IDeleteUserInteractor.Request request)
         {
@@ -239,11 +244,11 @@ namespace hotel_management_api.Business.Services
             List<string> userRoles = (await userRepository.GetListRoleOfUser(userId)).ToList();
             List<string> blockUuserRoles = (await userRepository.GetListRoleOfUser(request.userId)).ToList();
             if(userRoles.Count == 0 || blockUuserRoles.Count == 0 
-                || !userRoles.Contains("owner") || blockUuserRoles.Contains("owner")) 
+                || !userRoles.Contains(DbUserRole.Owner) || blockUuserRoles.Contains(DbUserRole.Owner)) 
             {
                 return new IBlockAndUnlockUserInteractor.Response()
                 {
-                    Success = true,
+                    Success = false,
                     Message = "User don't have permission!"
                 };
             }
@@ -264,7 +269,7 @@ namespace hotel_management_api.Business.Services
             {
                 return new IBlockAndUnlockUserInteractor.Response()
                 {
-                    Success = true,
+                    Success = false,
                     Message = "User don't have permission!"
                 };
             }

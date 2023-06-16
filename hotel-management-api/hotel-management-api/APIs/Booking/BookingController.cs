@@ -4,11 +4,14 @@ using hotel_management_api.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static hotel_management_api.Extension.Middlewares.IsUserBlockMiddleware;
 
 namespace hotel_management_api.APIs.Booking
 {
     [Route("api/v{version:apiVersion}/booking")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [TypeFilter(typeof(hotelfilter))]
     public class BookingController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;

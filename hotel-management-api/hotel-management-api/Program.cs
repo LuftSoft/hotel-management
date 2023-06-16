@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
 
@@ -25,7 +26,11 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("hotel_management"));
 });
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+})
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthentication(options =>
@@ -106,17 +111,33 @@ builder.Services.AddSwaggerGen(opt =>
     opt.AddSecurityDefinition("Bearer",
         new Microsoft.OpenApi.Models.OpenApiSecurityScheme
         {
+            Name = "Authorization",
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
             In = Microsoft.OpenApi.Models.ParameterLocation.Header,
             Description = "Please enter into field the word 'Bearer' following by space and JWT",
-            Name = "Authorization",
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+            Scheme = "Bearer"
         });
-    opt.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement());
+    opt.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
 });
 
 var app = builder.Build();
 
-app.Map("/hello", app => app.UseMiddleware<IsEmailConfirmMiddleware>());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -132,5 +153,4 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("CrossOrigin");
 app.MapControllers();
-
 app.Run();
