@@ -1,4 +1,30 @@
+import { useDispatch } from "react-redux";
+import { logoutSuccess } from "../../../redux/authSlice";
+import { updateUser } from "../../../redux/userSlice";
+
 export default function UserMenu() {
+	const dispatch = useDispatch();
+	const handleLogout = async (e) => {
+		e.preventDefault();
+		// const axiosJwt = createAxiosJwt(accessToken, refreshToken, dispatch);
+		// try {
+		// 	const res = await axiosJwt.patch(
+		// 		path.logout,
+		// 		{},
+		// 		{
+		// 			headers: {
+		// 				Authorization: `bearer ${accessToken}`,
+		// 			},
+		// 		},
+		// 	);
+		// 	if (res.data.isSuccess) {
+		dispatch(logoutSuccess());
+		dispatch(updateUser(null));
+		// 	}
+		// } catch (error) {
+		// 	console.log(error);
+		// }
+	};
 	return (
 		<div className="d-flex">
 			<div className="dropdown">
@@ -14,7 +40,7 @@ export default function UserMenu() {
 					<a href="#" className="dropdown-item">
 						Tài khoản
 					</a>
-					<a href="#" className="dropdown-item">
+					<a href="#" className="dropdown-item" onClick={handleLogout}>
 						Đăng xuất
 					</a>
 				</div>

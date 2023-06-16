@@ -4,14 +4,25 @@ import "./HotelPage.scss";
 import HotelCard from "../../components/HotelCard";
 import FilterHotel from "../../components/FilterHotel";
 import { Pagination } from "../../components/Pagination";
+import { Navigate, redirect, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { routes } from "../../routes";
+import { useEffect } from "react";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
 // console.log(cx);
 
 export default function HotelPage() {
+	const location = useLocation();
+	const searchParams = new URLSearchParams(location.search);
+	const params = {};
+	searchParams.forEach((value, key) => {
+		params[key] = value;
+	});
+	console.log(params);
 	return (
 		<div className="HotelPage__Container my-3">
+			{/* <Navigate to={"/"} replace={true} /> */}
 			<div className="HotelPage__Body">
 				<div className="HotelPage__Filter p-3 bg-white border rounded">
 					<FilterHotel />

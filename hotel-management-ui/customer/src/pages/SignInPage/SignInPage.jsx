@@ -3,9 +3,11 @@ import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { validateEmail, validatePassword } from "../../utils/helpers";
 import { toast } from "react-toastify";
-import { axiosGet, axiosPost, url } from "../../utils/httpRequest";
+import { axiosGet, axiosJWT, axiosPost, url } from "../../utils/httpRequest";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/userSlice";
+import jwtDecode from "jwt-decode";
+import { loginSuccess } from "../../redux/authSlice";
 
 const initState = {
 	email: "",
@@ -48,7 +50,8 @@ export default function SignInPage() {
 						autoClose: 1000,
 						isLoading: false,
 					});
-					dispatch(updateUser({}));
+					dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
+					getUser(res.accessToken, res.refreshToken, dispatch);
 					navigate(routes.home);
 				} catch (error) {
 					console.log(error);
@@ -61,13 +64,27 @@ export default function SignInPage() {
 					});
 				}
 			};
-			const getUser = async () => {
-				try {
-					const res = await axiosGet(url.getUser, {
-						headers: {},
-					});
-				} catch (error) {
-					console.log(error);
+			const getUser = async (accessToken, refreshToken, dispatch) => {
+				if (refreshToken) {
+					const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
+					try {
+						const res = await axiosJwt.get(url.getUser, {
+							headers: {
+								Authorization: `Bearer ${accessToken}`,
+							},
+						});
+						console.log(res);
+						dispatch(updateUser(res.data.userDto));
+						return {
+							isSuccess: true,
+							data: res.data,
+						};
+					} catch (error) {
+						console.log(error);
+						return {
+							data: error.response.data,
+						};
+					}
 				}
 			};
 			signInRequest();

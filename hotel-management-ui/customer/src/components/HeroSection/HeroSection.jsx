@@ -3,14 +3,19 @@ import { useRef } from "react";
 import { formatDate } from "../../utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { axiosGet, url } from "../../utils/httpRequest";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../../routes";
 
 export default function HeroSection() {
 	console.log("render");
+	const navigate = useNavigate();
 	const checkInDateRef = useRef(null);
 	const checkOutDateRef = useRef(null);
 	const provinceRef = useRef();
 	const districtRef = useRef();
 	const homeletRef = useRef();
+	const guestRef = useRef();
+	const roomRef = useRef();
 	// const getDistrict = useRef(false);
 	const [getDistrict, setGetDistrict] = useState(false);
 	const [getHomelet, setGetHomelet] = useState(false);
@@ -71,8 +76,23 @@ export default function HeroSection() {
 	}
 
 	const handleSearch = () => {
-		console.log("click", provinceRef.current.value);
-		homeletRef.current.disabled = !homeletRef.current.disabled;
+		// console.log("click", provinceRef.current.value);
+		// homeletRef.current.disabled = !homeletRef.current.disabled;
+		let params = "?";
+		if (checkInDateRef.current.value) {
+			console.log(checkInDateRef.current.value);
+		}
+		params += "pageIndex=1&";
+		params += "pageSize=10&";
+		params += "ProvineId=" + (provinceRef.current.value === "undefined" ? "" : provinceRef.current.value) + "&";
+		params += "DistrictId=" + (districtRef.current.value === "undefined" ? "" : districtRef.current.value) + "&";
+		params += "HomeletId=" + (homeletRef.current.value === "undefined" ? "" : homeletRef.current.value) + "&";
+		params += "RoonCount=" + roomRef.current.value + "&";
+		params += "RoomSize=" + guestRef.current.value + "&";
+		params += "FromDate=" + checkInDateRef.current.value + "&";
+		params += "ToDate=" + checkOutDateRef.current.value;
+
+		navigate(routes.hotel + params);
 	};
 	const handleProvinceChange = (e) => {
 		const value = e.target.value;
@@ -170,11 +190,11 @@ export default function HeroSection() {
 										</div>
 										<div className="mb-3">
 											<label>Số người 1 phòng:</label>
-											<input type="number" className="form-control" defaultValue={1} min={0} />
+											<input ref={guestRef} type="number" className="form-control" defaultValue={1} min={0} />
 										</div>
 										<div className="mb-3">
 											<label>Số phòng:</label>
-											<input type="number" className="form-control" defaultValue={1} min={0} />
+											<input ref={roomRef} type="number" className="form-control" defaultValue={1} min={0} />
 										</div>
 									</div>
 									<div className="col">
