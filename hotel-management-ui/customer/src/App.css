@@ -13,6 +13,13 @@
 	}
 }
 
+.star-active {
+	color: orange !important;
+}
+.star-no {
+	color: gainsboro;
+}
+
 @media (min-width: 960px) {
 	.nav-link.active {
 		color: var(--bs-black);

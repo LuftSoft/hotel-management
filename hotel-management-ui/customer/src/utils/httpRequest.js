@@ -13,6 +13,7 @@ export const url = {
 	district: "location/district/",
 	homelet: "location/homelet/",
 	hotel: "hotel/filter",
+	detailHotel: "hotel/",
 };
 
 export const axiosJWT = (accessToken, refreshToken, dispatch) => {

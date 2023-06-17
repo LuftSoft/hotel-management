@@ -1,218 +1,146 @@
-import star from "../../assets/star.svg";
-import halfStar from "../../assets/half-star.svg";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import { useRef } from "react";
+
+import CommentSection from "../../components/CommentSection";
+import { axiosGet, url } from "../../utils/httpRequest";
+import { Stars } from "../../components/Stars/Stars";
+import RoomCard from "../../components/RoomCard/RoomCard";
 
 export default function DetailHotelPage() {
+	const roomsRef = useRef();
+	const { id } = useParams();
+	const hotelState = useQuery({
+		queryKey: ["hotel", id],
+		queryFn: async () => {
+			try {
+				const res = await axiosGet(url.detailHotel + id);
+				return res;
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		staleTime: 3 * 60 * 1000,
+	});
+	const handleChooseRoom = () => {
+		roomsRef.current.scrollIntoView({
+			behavior: "smooth",
+			block: "nearest",
+			inline: "center",
+		});
+	};
+	let hotel = {};
+	if (hotelState.isSuccess) {
+		hotel = hotelState.data.hotelDto;
+	} else {
+		// return (
+		// 	<div className="d-flex justify-content-center my-5 bg-light">
+		// 		<div className="spinner-border text-primary" role="status">
+		// 			<span className="visually-hidden">Loading...</span>
+		// 		</div>
+		// 	</div>
+		// );
+		return null;
+	}
 	return (
-		<div className="Container mt-3">
-			<div className="bg-white rounded border">
-				<div className="d-flex flex-column p-3">
+		<div className=" bg-light py-3">
+			<div className="Container my-3 d-flex flex-column gap-3">
+				<div className="bg-white rounded border">
+					<div className="d-flex flex-column p-3">
+						<div className="d-flex flex-column">
+							<h4>{hotel.name}</h4>
+							<div className="d-flex align-items-center mb-2">
+								<div className="d-flex me-2">
+									<span className="badge rounded-pill bg-primary">{hotel.hotelCategory.name}</span>
+								</div>
+								<div className="d-flex align-items-center">
+									<Stars numberOfStar={hotel.star} />
+								</div>
+							</div>
+							<div className="d-flex">
+								<i className="fa-solid fa-location-dot text-black-50"></i>
+								<div className="ms-2">{hotel.address}</div>
+							</div>
+							<div className="border my-3"></div>
+							<div className="d-flex">
+								<div className="d-flex flex-grow-1 me-2" style={{ width: 768, height: 488 }}>
+									<img
+										src={hotel.logoLink}
+										alt="room"
+										className="w-100 h-100"
+										style={{ objectFit: "cover" }}
+										onError={(e) => {
+											e.target.src = "/img/hotel-room.webp";
+										}}
+									/>
+								</div>
+								<div className="d-flex flex-column" style={{ width: 152 }}>
+									<img
+										src={hotel.logoLink}
+										alt="room"
+										className="w-100 h-100 mb-2"
+										style={{ objectFit: "cover" }}
+										onError={(e) => {
+											e.target.src = "/img/hotel-room.webp";
+										}}
+									/>
+									<img
+										src={hotel.logoLink}
+										alt="room"
+										className="w-100 h-100 mb-2"
+										style={{ objectFit: "cover" }}
+										onError={(e) => {
+											e.target.src = "/img/hotel-room.webp";
+										}}
+									/>
+									<img
+										src={hotel.logoLink}
+										alt="room"
+										className="w-100 h-100 mb-2"
+										style={{ objectFit: "cover" }}
+										onError={(e) => {
+											e.target.src = "/img/hotel-room.webp";
+										}}
+									/>
+									<img
+										src={hotel.logoLink}
+										alt="room"
+										className="w-100 h-100"
+										style={{ objectFit: "cover" }}
+										onError={(e) => {
+											e.target.src = "/img/hotel-room.webp";
+										}}
+									/>
+								</div>
+							</div>
+							{/* button select room */}
+							<div className="d-flex justify-content-end mt-2">
+								<div className="d-flex flex-column align-items-end">
+									<div>{"Price/room/night starts from"}</div>
+									<div className="text-danger fs-4">{"450.000 VND"}</div>
+									<button onClick={handleChooseRoom} className="btn btn-primary">
+										Chọn phòng
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div
+					className="d-flex flex-column rounded px-3 py-4"
+					style={{
+						backgroundImage:
+							"linear-gradient(92deg, rgb(189, 233, 255) 0%, rgb(214, 241, 255) 50%, rgb(214, 241, 255) 100%)",
+					}}>
 					<div className="d-flex flex-column">
-						<h4>ACE Hotel Saigon</h4>
-						<div className="d-flex align-items-center mb-2">
-							<div className="d-flex me-2">
-								<span className="badge rounded-pill bg-primary">Hotel</span>
-							</div>
-							<div className="d-flex align-items-center">
-								<div>
-									<img src={star} style={{ width: 18, height: 18 }} />
-								</div>
-								<div>
-									<img src={star} style={{ width: 18, height: 18 }} />
-								</div>
-								<div>
-									<img src={star} style={{ width: 18, height: 18 }} />
-								</div>
-								<div>
-									<img src={halfStar} style={{ width: 18, height: 18 }} />
-								</div>
-							</div>
-						</div>
-						<div className="d-flex">
-							<i className="fa-solid fa-location-dot"></i>
-							<div className="ms-1">
-								139H Nguyen Trai, Ben Thanh Ward, District 1, Ho Chi Minh City, Vietnam, 711090
-							</div>
-						</div>
-						<div className="border my-3"></div>
-						<div className="d-flex">
-							<div className="d-flex flex-grow-1 me-2" style={{ width: 768, height: 488 }}>
-								<img src="/img/hotel-room.webp" alt="room" className="w-100 h-100" style={{ objectFit: "cover" }} />
-							</div>
-							<div className="d-flex flex-column" style={{ width: 152 }}>
-								<img
-									src="/img/hotel-room.webp"
-									alt="room"
-									className="w-100 h-100 mb-2"
-									style={{ objectFit: "cover" }}
-								/>
-								<img
-									src="/img/hotel-room.webp"
-									alt="room"
-									className="w-100 h-100 mb-2"
-									style={{ objectFit: "cover" }}
-								/>
-								<img
-									src="/img/hotel-room.webp"
-									alt="room"
-									className="w-100 h-100 mb-2"
-									style={{ objectFit: "cover" }}
-								/>
-								<img src="/img/hotel-room.webp" alt="room" className="w-100 h-100" style={{ objectFit: "cover" }} />
-							</div>
-						</div>
-						{/* button select room */}
-						<div className="d-flex justify-content-end mt-2">
-							<div className="d-flex flex-column align-items-end">
-								<div>{"Price/room/night starts from"}</div>
-								<div className="text-danger fs-4">{"450.000 VND"}</div>
-								<button className="btn btn-primary">Chọn phòng</button>
-							</div>
-						</div>
+						<h2 ref={roomsRef} className="fs-4">
+							Những phòng còn trống tại {hotel.name}
+						</h2>
+						<RoomCard />
 					</div>
 				</div>
-			</div>
-			<div className="mt-3">
-				<h2 className="fs-4">Những phòng còn trống tại ACE Hotel Saigon</h2>
-				<div className="bg-light rounded border p-3">
-					<div className="container p-0">
-						<div className="d-flex">
-							<div className="bg-white p-0">
-								<div className="d-flex flex-column">
-									<div>
-										<div className="mb-1" style={{ height: 144 }}>
-											<img
-												src="/img/hotel-room.webp"
-												alt="room"
-												className="w-100 h-100"
-												style={{ objectFit: "fill" }}
-											/>
-										</div>
-									</div>
-									<div className="d-flex justify-content-between">
-										<div style={{ width: 94, height: 50 }}>
-											<img
-												src="/img/hotel-room.webp"
-												alt="room"
-												className="w-100 h-100"
-												style={{ objectFit: "fill" }}
-											/>
-										</div>
-										<div style={{ width: 94, height: 50 }}>
-											<img
-												src="/img/hotel-room.webp"
-												alt="room"
-												className="w-100 h-100"
-												style={{ objectFit: "fill" }}
-											/>
-										</div>
-										<div style={{ width: 94, height: 50 }}>
-											<img
-												src="/img/hotel-room.webp"
-												alt="room"
-												className="w-100 h-100"
-												style={{ objectFit: "fill" }}
-											/>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="w-100 bg-white ms-3 rounded">
-								<div className="d-flex flex-column px-4 py-3">
-									<div className="d-flex flex-column">
-										<div className="fw-bold fs-6">Standard Double Room</div>
-										<div className="d-flex justify-content-between text-secondary">
-											<div>
-												<i className="fa-solid fa-bed"></i>
-												<span className="ms-2">1 Giường đôi</span>
-											</div>
-											<div>
-												<i className="fa-solid fa-user-group"></i>
-												<span className="ms-2">2 người</span>
-											</div>
-											<div className="text-danger">(3 phòng có sẵn)</div>
-										</div>
-										<div className="border my-3"></div>
-									</div>
-									<div className="d-flex">
-										<div className="flex-grow-1">
-											<div className="d-flex flex-column">
-												<div className="row">
-													<div className="col">
-														<div className="d-flex flex-column">
-															<div className="d-flex flex-column">
-																<div className="d-flex text-muted">
-																	<i className="fa-solid fa-store"></i>
-																	<div>Nhà hàng</div>
-																</div>
-															</div>
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa-solid fa-elevator"></i>
-																	<div>Thang máy</div>
-																</div>
-															</div>
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa-solid fa-water-ladder"></i>
-																	<div>Bể bơi</div>
-																</div>
-															</div>
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa fa-utensils"></i>
-																	<div>Bữa sáng miễn phí</div>
-																</div>
-															</div>
-														</div>
-													</div>
-													<div className="col">
-														<div className="d-flex flex-column">
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa fa-temperature-arrow-down"></i>
-																	<div>Máy điều hòa</div>
-																</div>
-															</div>
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa-sharp fa-solid fa-bicycle"></i>
-																	<div>Thuê xe</div>
-																</div>
-															</div>
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa-solid fa-wifi"></i>
-																	<div>Wifi miễn phí</div>
-																</div>
-															</div>
-															<div className="d-flex flex-column">
-																<div className="d-flex text-info">
-																	<i className="fa-solid fa-parking"></i>
-																	<div>Chỗ đậu xe</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div className="d-flex flex-column align-items-end" style={{ width: "25%" }}>
-											<div className="d-flex flex-column text-end">
-												<div>{"600.000 VNĐ"}</div>
-												<div className="text-danger">{"450.000 VNĐ"}</div>
-												<div>{"/ room / night(s)"}</div>
-												<div className="text-primary">{"Giá cuối cùng"}</div>
-											</div>
-											<div>
-												<button className="btn btn-primary">Đặt ngay</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				{/* Comment Section */}
+				<CommentSection />
 			</div>
 		</div>
 	);
