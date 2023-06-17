@@ -12,6 +12,7 @@ export const url = {
 	province: "location/provine",
 	district: "location/district/",
 	homelet: "location/homelet/",
+	hotel: "hotel/filter",
 };
 
 export const axiosJWT = (accessToken, refreshToken, dispatch) => {

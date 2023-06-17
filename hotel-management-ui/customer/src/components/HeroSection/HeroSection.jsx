@@ -76,8 +76,6 @@ export default function HeroSection() {
 	}
 
 	const handleSearch = () => {
-		// console.log("click", provinceRef.current.value);
-		// homeletRef.current.disabled = !homeletRef.current.disabled;
 		let params = "?";
 		if (checkInDateRef.current.value) {
 			console.log(checkInDateRef.current.value);

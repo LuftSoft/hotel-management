@@ -7,6 +7,8 @@ import { Pagination } from "../../components/Pagination";
 import { Navigate, redirect, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { routes } from "../../routes";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { axiosPost, url } from "../../utils/httpRequest";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
@@ -20,6 +22,29 @@ export default function HotelPage() {
 		params[key] = value;
 	});
 	console.log(params);
+	const hotel = useQuery({
+		queryKey: ["hotel"],
+		queryFn: async () => {
+			try {
+				const res = await axiosPost(
+					url.hotel,
+					{},
+					{
+						params: {
+							...params,
+						},
+					},
+				);
+				console.log(res);
+				return res;
+			} catch (error) {
+				console.log(error);
+				return Promise.reject(error);
+			}
+		},
+		staleTime: 3 * 60 * 1000,
+	});
+	console.log(hotel);
 	return (
 		<div className="HotelPage__Container my-3">
 			{/* <Navigate to={"/"} replace={true} /> */}
