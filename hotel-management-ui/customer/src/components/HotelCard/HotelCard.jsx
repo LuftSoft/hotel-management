@@ -10,8 +10,11 @@ import star from "../../assets/star.svg";
 import halfStar from "../../assets/half-star.svg";
 
 export default function HotelCard() {
+	const handleClick = () => {
+		window.open("/hotel/" + 8, "_blank");
+	};
 	return (
-		<div className="HotelCard__Container">
+		<div className="HotelCard__Container" onClick={handleClick}>
 			<article className="HotelCard__Wrapper">
 				<div className="HotelCard__Logo">
 					<img src="/img/hotel.webp" alt="hotel" />

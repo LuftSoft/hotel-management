@@ -1,9 +1,13 @@
-import star from "../../assets/star.svg";
-import halfStar from "../../assets/half-star.svg";
+import { useSelector } from "react-redux";
+
 import CommentCard from "../CommentCard/CommentCard";
 import PostComment from "../PostComment/PostComment";
+import Stars from "../Stars";
+import ServiceRating from "../ServiceRating";
+import { selectUser } from "../../redux/selectors";
 
-export default function CommentSection() {
+export default function CommentSection({ hotel }) {
+	const currentUser = useSelector(selectUser);
 	return (
 		<div className="d-flex flex-column bg-white rounded">
 			<div className="d-flex flex-column gap-3 px-3 py-4">
@@ -12,7 +16,7 @@ export default function CommentSection() {
 					<h3 className="fs-6">Xếp hạng và điểm đánh giá chung</h3>
 					<div className="text-secondary" style={{ fontSize: 14 }}>
 						{"Từ "}
-						<strong>{"361"}</strong>
+						<strong>{hotel.comments.length || 0}</strong>
 						{" đánh giá của khách đã ở"}
 					</div>
 					<div className="d-flex align-items-center mt-2">
@@ -31,18 +35,14 @@ export default function CommentSection() {
 											height: "104px",
 										}}>
 										<div className="d-inline text-center text-white" style={{ lineHeight: "104px", fontSize: "48px" }}>
-											4.5
+											{hotel.star}
 										</div>
 									</div>
 								</div>
 								<div className="d-flex flex-column justify-content-center">
 									<div className="fs-4 text-center fw-bold text-info">
 										<div className="d-flex align-items-center justify-content-between">
-											<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-											<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-											<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-											<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-											<img className="d-block" src={halfStar} alt="star" style={{ width: 18, height: 18 }} />
+											<Stars numberOfStar={hotel.star} />
 										</div>
 									</div>
 								</div>
@@ -63,14 +63,14 @@ export default function CommentSection() {
 											<div
 												className="progress-bar bg-info"
 												role="progressbar"
-												style={{ width: "75%" }}
+												style={{ width: "15%" }}
 												aria-label="rating"
 												aria-valuenow="75"
 												aria-valuemin="0"
 												aria-valuemax="100"></div>
 										</div>
 									</div>
-									<div className="col-2">63</div>
+									<div className="col-2">13</div>
 								</div>
 								<div className="row">
 									<div className="col-3">Rất tốt</div>
@@ -79,143 +79,73 @@ export default function CommentSection() {
 											<div
 												className="progress-bar bg-info"
 												role="progressbar"
-												style={{ width: "75%" }}
+												style={{ width: "25%" }}
 												aria-label="rating"
 												aria-valuenow="75"
 												aria-valuemin="0"
 												aria-valuemax="100"></div>
 										</div>
 									</div>
-									<div className="col-2">63</div>
+									<div className="col-2">23</div>
 								</div>
 								<div className="row">
-									<div className="col-3">Rất tốt</div>
+									<div className="col-3">Hài lòng</div>
 									<div className="col-7 px-4">
 										<div className="progress">
 											<div
 												className="progress-bar bg-info"
 												role="progressbar"
-												style={{ width: "75%" }}
+												style={{ width: "55%" }}
 												aria-label="rating"
 												aria-valuenow="75"
 												aria-valuemin="0"
 												aria-valuemax="100"></div>
 										</div>
 									</div>
-									<div className="col-2">63</div>
+									<div className="col-2">43</div>
 								</div>
 								<div className="row">
-									<div className="col-3">Rất tốt</div>
+									<div className="col-3">Trung bình</div>
 									<div className="col-7 px-4">
 										<div className="progress">
 											<div
 												className="progress-bar bg-info"
 												role="progressbar"
-												style={{ width: "75%" }}
+												style={{ width: "15%" }}
 												aria-label="rating"
 												aria-valuenow="75"
 												aria-valuemin="0"
 												aria-valuemax="100"></div>
 										</div>
 									</div>
-									<div className="col-2">63</div>
+									<div className="col-2">13</div>
 								</div>
 								<div className="row">
-									<div className="col-3">Rất tốt</div>
+									<div className="col-3">Kém</div>
 									<div className="col-7 px-4">
 										<div className="progress">
 											<div
 												className="progress-bar bg-info"
 												role="progressbar"
-												style={{ width: "75%" }}
+												style={{ width: "5%" }}
 												aria-label="rating"
 												aria-valuenow="75"
 												aria-valuemin="0"
 												aria-valuemax="100"></div>
 										</div>
 									</div>
-									<div className="col-2">63</div>
+									<div className="col-2">6</div>
 								</div>
 							</div>
 						</div>
-						<div className="d-flex flex-column flex-grow-1 ps-5 pe-4">
+						<div className="d-flex flex-column flex-grow-1 align-items-starts ps-5 pe-4">
 							<div>
 								{/* 5 */}
-								<div className="d-flex">
-									<div className="flex-grow-1">Sạch sẽ</div>
-									<div className="flex-grow-1">
-										{/* 5 */}
-										<div className="d-flex align-items-center">
-											<div className="d-flex align-items-center justify-content-between">
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={halfStar} alt="star" style={{ width: 18, height: 18 }} />
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="d-flex">
-									<div className="flex-grow-1">Sạch sẽ</div>
-									<div className="flex-grow-1">
-										{/* 5 */}
-										<div className="d-flex align-items-center">
-											<div className="d-flex align-items-center justify-content-between">
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={halfStar} alt="star" style={{ width: 18, height: 18 }} />
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="d-flex">
-									<div className="flex-grow-1">Sạch sẽ</div>
-									<div className="flex-grow-1">
-										{/* 5 */}
-										<div className="d-flex align-items-center">
-											<div className="d-flex align-items-center justify-content-between">
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={halfStar} alt="star" style={{ width: 18, height: 18 }} />
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="d-flex">
-									<div className="flex-grow-1">Sạch sẽ</div>
-									<div className="flex-grow-1">
-										{/* 5 */}
-										<div className="d-flex align-items-center">
-											<div className="d-flex align-items-center justify-content-between">
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={halfStar} alt="star" style={{ width: 18, height: 18 }} />
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="d-flex">
-									<div className="flex-grow-1">Sạch sẽ</div>
-									<div className="flex-grow-1">
-										{/* 5 */}
-										<div className="d-flex align-items-center">
-											<div className="d-flex align-items-center justify-content-between">
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={star} alt="star" style={{ width: 18, height: 18 }} />
-												<img className="d-block" src={halfStar} alt="star" style={{ width: 18, height: 18 }} />
-											</div>
-										</div>
-									</div>
-								</div>
+								<ServiceRating name="Sạch sẽ" numOfStar={3} />
+								<ServiceRating name="Thoải mái" numOfStar={2.5} />
+								<ServiceRating name="Đồ ăn" numOfStar={4.5} />
+								<ServiceRating name="Vị trí" numOfStar={3.5} />
+								<ServiceRating name="Dịch vụ" numOfStar={4} />
 							</div>
 						</div>
 					</div>
@@ -223,14 +153,15 @@ export default function CommentSection() {
 				{/* list comment */}
 				<div className="d-flex flex-column">
 					{/* to comment */}
-					{true && <PostComment />}
+					{currentUser && <PostComment />}
 					{/* divider */}
 					<div className="my-2"></div>
 					{/* list comment */}
 					<div className="d-flex flex-column">
 						<div className="d-flex flex-column gap-3">
-							<CommentCard />
-							<CommentCard />
+							{hotel.comments.map((comment) => (
+								<CommentCard key={comment.id} comment={comment} />
+							))}
 						</div>
 					</div>
 				</div>

@@ -4,7 +4,7 @@ import { useRef } from "react";
 
 import CommentSection from "../../components/CommentSection";
 import { axiosGet, url } from "../../utils/httpRequest";
-import { Stars } from "../../components/Stars/Stars";
+import Stars from "../../components/Stars";
 import RoomCard from "../../components/RoomCard/RoomCard";
 
 export default function DetailHotelPage() {
@@ -28,6 +28,16 @@ export default function DetailHotelPage() {
 			block: "nearest",
 			inline: "center",
 		});
+	};
+	const getMinPrice = (rooms) => {
+		let minPrice = rooms[0]?.price || 0;
+		for (let index = 0; index < rooms.length; index++) {
+			const room = rooms[index];
+			if (room.price < minPrice) {
+				minPrice = room.price;
+			}
+		}
+		return minPrice;
 	};
 	let hotel = {};
 	if (hotelState.isSuccess) {
@@ -116,8 +126,10 @@ export default function DetailHotelPage() {
 							{/* button select room */}
 							<div className="d-flex justify-content-end mt-2">
 								<div className="d-flex flex-column align-items-end">
-									<div>{"Price/room/night starts from"}</div>
-									<div className="text-danger fs-4">{"450.000 VND"}</div>
+									<div>{"Giá phòng mỗi đêm từ"}</div>
+									<div className="text-danger fs-4 fw-bold">
+										{new Intl.NumberFormat().format(getMinPrice(hotel.rooms)) + " VNĐ"}
+									</div>
 									<button onClick={handleChooseRoom} className="btn btn-primary">
 										Chọn phòng
 									</button>
@@ -136,11 +148,15 @@ export default function DetailHotelPage() {
 						<h2 ref={roomsRef} className="fs-4">
 							Những phòng còn trống tại {hotel.name}
 						</h2>
-						<RoomCard />
+						<div className="d-flex flex-column gap-4">
+							{hotel.rooms.map((room) => (
+								<RoomCard key={room.id} room={room} hotelBenefit={hotel.hotelBenefit} />
+							))}
+						</div>
 					</div>
 				</div>
 				{/* Comment Section */}
-				<CommentSection />
+				<CommentSection hotel={hotel} />
 			</div>
 		</div>
 	);

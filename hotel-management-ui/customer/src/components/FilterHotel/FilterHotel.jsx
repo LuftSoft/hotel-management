@@ -25,62 +25,62 @@ export default function FilterHotel() {
 			<div>
 				<label>Dịch vụ:</label>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="restaurant" />
+					<label className="form-check-label" htmlFor="restaurant">
 						Nhà hàng
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
-						All time front desk
+					<input className="form-check-input" type="checkbox" defaultValue="" id="24h" />
+					<label className="form-check-label" htmlFor="24h">
+						Lễ tân 24h
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="elevator" />
+					<label className="form-check-label" htmlFor="elevator">
 						Thang máy
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="pool" />
+					<label className="form-check-label" htmlFor="pool">
 						Bể bơi
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="free-breakfast" />
+					<label className="form-check-label" htmlFor="free-breakfast">
 						Bữa sáng miễn phí
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="air-conditioner" />
+					<label className="form-check-label" htmlFor="air-conditioner">
 						Máy điều hòa
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="lendingCar" />
+					<label className="form-check-label" htmlFor="lendingCar">
 						Thuê xe
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="wifi-free" />
+					<label className="form-check-label" htmlFor="wifi-free">
 						Wifi free
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="parking" />
+					<label className="form-check-label" htmlFor="parking">
 						Chỗ đậu xe
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultValue="" id="" />
-					<label className="form-check-label" htmlFor="">
+					<input className="form-check-input" type="checkbox" defaultValue="" id="allow-pets" />
+					<label className="form-check-label" htmlFor="allow-pets">
 						Cho phép dắt thú cưng
 					</label>
 				</div>

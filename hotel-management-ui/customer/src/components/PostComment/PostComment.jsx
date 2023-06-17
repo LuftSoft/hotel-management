@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function PostComment() {
 	const starRef = useRef(0);
@@ -23,6 +23,9 @@ export default function PostComment() {
 			setErrorMessage("");
 		}
 	};
+	useEffect(() => {
+		// handleRateStar(4);
+	}, []);
 	return (
 		<div className="d-flex flex-column">
 			<div className="d-flex gap-4 p-3 border-top border-bottom border-2">

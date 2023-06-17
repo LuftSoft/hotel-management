@@ -1,6 +1,6 @@
 import star from "../../assets/star.svg";
 
-export default function CommentCard() {
+export default function CommentCard({ comment }) {
 	return (
 		<div className="d-flex flex-column">
 			<div className="d-flex gap-4 p-3 border border-2 rounded">
@@ -19,7 +19,7 @@ export default function CommentCard() {
 								}}>
 								<img className="w-100 h-100" src="/img/user-avatar.png" alt="avatar" />
 							</div>
-							<div className="d-flex flex-column flex-grow-1 fw-bold">David L</div>
+							<div className="d-flex flex-column flex-grow-1 fw-bold">{comment.userName}</div>
 						</div>
 					</div>
 				</div>
@@ -30,18 +30,15 @@ export default function CommentCard() {
 								<div className="d-flex me-1">
 									<img src={star} alt="star" />
 								</div>
-								<span>4</span>
+								<span>{comment.rating}</span>
 								<span className="mx-1">/</span>
 								<span>5</span>
 							</div>
 						</div>
-						<div className="text-secondary">16 May 23</div>
+						<div className="text-secondary">{new Date(comment.lastChange).toDateString()}</div>
 					</div>
 					<div className="d-flex flex-column">
-						<div>
-							Rooms not that nice. Very noisy reception not that helpful.Rooms not that nice. Very noisy reception not
-							that helpful.
-						</div>
+						<div>{comment.content}</div>
 					</div>
 					<div className="d-flex align-items-center">
 						<div
