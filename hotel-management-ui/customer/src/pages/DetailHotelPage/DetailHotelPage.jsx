@@ -27,7 +27,6 @@ export default function DetailHotelPage() {
 	const handleChooseRoom = () => {
 		roomsRef.current.scrollIntoView({
 			behavior: "smooth",
-			block: "nearest",
 			inline: "center",
 		});
 	};
@@ -84,7 +83,7 @@ export default function DetailHotelPage() {
 										src={hotel.logoLink}
 										alt="room"
 										className="w-100 h-100 mb-2"
-										style={{ objectFit: "cover" }}
+										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
@@ -93,7 +92,7 @@ export default function DetailHotelPage() {
 										src={hotel.logoLink}
 										alt="room"
 										className="w-100 h-100 mb-2"
-										style={{ objectFit: "cover" }}
+										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
@@ -102,7 +101,7 @@ export default function DetailHotelPage() {
 										src={hotel.logoLink}
 										alt="room"
 										className="w-100 h-100 mb-2"
-										style={{ objectFit: "cover" }}
+										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
@@ -111,7 +110,7 @@ export default function DetailHotelPage() {
 										src={hotel.logoLink}
 										alt="room"
 										className="w-100 h-100"
-										style={{ objectFit: "cover" }}
+										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}

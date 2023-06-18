@@ -1,4 +1,51 @@
+import { useSelector } from "react-redux";
+import { axiosPost, url } from "../../utils/httpRequest";
+import { selectAccessToken } from "../../redux/selectors";
+import { toast } from "react-toastify";
+
 export default function RoomCard({ room, hotelBenefit }) {
+	const accessToken = useSelector(selectAccessToken);
+	const handleBook = async () => {
+		console.log(room.id);
+		const toastId = toast.loading("Đang xử lý!");
+		try {
+			const res = await axiosPost(
+				url.createBooking,
+				{
+					id: "0",
+					roomId: room.id,
+					status: "create",
+					returned: false,
+					fromDate: "2023-06-19T15:52:09.895Z",
+					toDate: "2023-06-20T15:52:09.895Z",
+				},
+				{
+					headers: {
+						Authorization: "Bearer " + accessToken,
+					},
+				},
+			);
+			console.log(res); //res.success
+			if (res.success) {
+				toast.update(toastId, {
+					render: "Đặt phòng thành công!",
+					type: "success",
+					closeButton: true,
+					autoClose: 1000,
+					isLoading: false,
+				});
+			}
+		} catch (error) {
+			console.log(error);
+			toast.update(toastId, {
+				render: error.response.data.message,
+				type: "error",
+				closeButton: true,
+				autoClose: 1000,
+				isLoading: false,
+			});
+		}
+	};
 	return (
 		<div className="bg-light rounded border p-3">
 			<div className="container p-0">
@@ -166,7 +213,9 @@ export default function RoomCard({ room, hotelBenefit }) {
 										<div className="text-primary">{"Giá cuối cùng"}</div>
 									</div>
 									<div>
-										<button className="btn btn-primary">Đặt ngay</button>
+										<button type="button" onClick={handleBook} className="btn btn-primary">
+											Đặt ngay
+										</button>
 									</div>
 								</div>
 							</div>

@@ -6,21 +6,26 @@
 // const cx = classNames.bind(styles);
 
 import "./HotelCard.scss";
-import star from "../../assets/star.svg";
-import halfStar from "../../assets/half-star.svg";
+import Stars from "../Stars/Stars";
 
 export default function HotelCard({ hotel }) {
 	const handleClick = () => {
-		window.open("/hotel/" + 8, "_blank");
+		window.open("/hotel/" + hotel.id, "_blank");
 	};
 	return (
 		<div className="HotelCard__Container" onClick={handleClick}>
 			<article className="HotelCard__Wrapper">
 				<div className="HotelCard__Logo">
-					<img src="/img/hotel.webp" alt="hotel" />
+					<img
+						src={hotel.logoLink}
+						alt="hotel"
+						onError={(e) => {
+							e.target.src = "/img/hotel.webp";
+						}}
+					/>
 				</div>
 				<div className="HotelCard__InfoContainer">
-					<div className="HotelCard__Detail py-3">
+					<div className="HotelCard__Detail py-2">
 						<div className="d-flex flex-column px-3 justify-content-between">
 							<div className="d-flex flex-column">
 								<div>
@@ -31,23 +36,12 @@ export default function HotelCard({ hotel }) {
 										<span className="badge rounded-pill bg-primary">Khách sạn</span>
 									</div>
 									<div className="d-flex align-items-center">
-										<div>
-											<img src={star} style={{ width: 18, height: 18 }} />
-										</div>
-										<div>
-											<img src={star} style={{ width: 18, height: 18 }} />
-										</div>
-										<div>
-											<img src={star} style={{ width: 18, height: 18 }} />
-										</div>
-										<div>
-											<img src={halfStar} style={{ width: 18, height: 18 }} />
-										</div>
+										<Stars numberOfStar={hotel.star} />
 									</div>
 								</div>
 								<div className="d-flex align-items-center mb-2 text-secondary">
 									<i className="fa-solid fa-location-dot"></i>
-									<div className="ms-1">Bến nghé, Thành phố Hồ Chí Minh</div>
+									<div className="ms-1">{hotel.address}</div>
 								</div>
 								<div className="d-flex">
 									<div className="d-flex align-items-center">
@@ -87,7 +81,7 @@ export default function HotelCard({ hotel }) {
 							<span className="text-info" style={{ fontSize: 12 }}>
 								Thanh toán khi nhận phòng
 							</span>
-							<span className="text-danger">{"1.026.000 VNĐ"}</span>
+							<span className="text-danger">{new Intl.NumberFormat().format(hotel.minPrice) + " VNĐ"}</span>
 							<span className="text-info">Giá cuối cùng</span>
 						</div>
 					</div>

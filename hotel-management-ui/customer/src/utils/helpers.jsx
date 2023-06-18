@@ -54,19 +54,34 @@ export const renderRoutes = (routes) => {
 		throw new Error("Routes must be an array!");
 	}
 };
-
-export const formatDate = (date, pattern = "yyyy-mm-dd") => {
-	let rs = null;
-	switch (pattern) {
-		case "yyyy-mm-dd":
-			rs = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1}-${
-				date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
-			}`;
-			break;
-		default:
-			throw new Error("date pattern is not founded!");
+export const dateToString = (stringDate) => {
+	const date = new Date(stringDate);
+	const year = date.getFullYear();
+	const month = date.getMonth() + 1;
+	const day = date.getDate();
+	return `${day}/${month}/${year}`;
+};
+export const formatDate = (date, pattern = "yyyy-mm-dd", seperater = "-") => {
+	if (date instanceof Date) {
+		let rs = null;
+		switch (pattern.toLowerCase()) {
+			case "yyyy-mm-dd":
+				rs = `${date.getFullYear()}${seperater}${
+					date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1
+				}${seperater}${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()}`;
+				break;
+			case "dd-mm-yyyy":
+				rs = `${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()}${seperater}${
+					date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1
+				}${seperater}${date.getFullYear()}`;
+				break;
+			default:
+				throw new Error("date pattern is not founded!");
+		}
+		return rs;
+	} else {
+		throw new Error("Is Not A Date!");
 	}
-	return rs;
 };
 export const validateEmail = (errors, username) => {
 	if (username === "") {
@@ -74,10 +89,10 @@ export const validateEmail = (errors, username) => {
 	}
 };
 export const validatePassword = (errors, password) => {
-	const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{6,}$/;
+	const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 	if (password === "") {
 		errors.password = "Vui lòng nhập mật khẩu!";
 	} else if (!decimal.test(password)) {
-		errors.password = "Mật khẩu tối thiểu 6 ký tự. Chứa ít nhất 1 ký tự in hoa, 1 ký tự số và 1 ký tự đặc biệt";
+		errors.password = "Mật khẩu tối thiểu 8 ký tự. Chứa ít nhất 1 ký tự in hoa, 1 ký tự số và 1 ký tự đặc biệt";
 	}
 };

@@ -1,4 +1,5 @@
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // import classNames from "classnames/bind";
 
@@ -7,21 +8,80 @@ import HotelCard from "../../components/HotelCard";
 import FilterHotel from "../../components/FilterHotel";
 import { Pagination } from "../../components/Pagination";
 import { axiosPost, url } from "../../utils/httpRequest";
+import HotelPageSkeleton from "./HotelPageSkeleton";
+import { routes } from "../../routes";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
 // console.log(cx);
 
 export default function HotelPage() {
+	const [currentPage, setCurrentPage] = useState(1);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const params = {};
 	searchParams.forEach((value, key) => {
-		params[key] = value;
+		if (value) {
+			switch (key) {
+				case "pageIndex":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "pageSize":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "ProvineId":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "DistrictId":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "HomeletId":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "RoonCount":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "RoomSize":
+					if (!isNaN(value)) {
+						params[key] = value;
+					}
+					break;
+				case "FromDate":
+					if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+						if (!isNaN(Date.parse(value))) {
+							params[key] = value;
+						}
+					}
+					break;
+				case "ToDate":
+					if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+						if (!isNaN(Date.parse(value))) {
+							params[key] = value;
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
 	});
-	console.log(params);
+	if (Object.keys(params).length <= 0) {
+		return <Navigate to={routes.home} />;
+	}
 	const listHotelState = useQuery({
-		queryKey: ["hotel"],
+		queryKey: ["hotel", params],
 		queryFn: async () => {
 			try {
 				const res = await axiosPost(
@@ -44,10 +104,18 @@ export default function HotelPage() {
 	});
 	let listHotel = [];
 	let categories = [];
+	let totalPage = 0;
 	if (listHotelState.isSuccess && listHotelState.data.success) {
+		// if (false) {
 		listHotel = listHotelState.data.hotels;
 		categories = listHotelState.data.categories;
+		totalPage = listHotelState.data.totalPage;
+	} else {
+		return <HotelPageSkeleton />;
 	}
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
 	return (
 		<div className="HotelPage__Container my-3">
 			{/* <Navigate to={"/"} replace={true} /> */}
@@ -69,7 +137,12 @@ export default function HotelPage() {
 						</div>
 					</div>
 					{/* pagination */}
-					<Pagination currentPage={1} totalPage={2} className={"justify-content-center mt-3"} />
+					<Pagination
+						currentPage={currentPage}
+						totalPage={totalPage}
+						onPageChange={handlePageChange}
+						className={"justify-content-center mt-3"}
+					/>
 				</div>
 			</div>
 		</div>

@@ -20,7 +20,6 @@ function Pagination({ onPageChange, totalCount, totalPage = 0, siblingCount = 1,
 	return (
 		<ul className={cx(className, "Container")}>
 			<li className={cx("Arrow", { disabled: currentPage === 1 })} onClick={onPrevious}>
-				{/* <FontAwesomeIcon icon={faAngleLeft} className={cx("IconStyle__VerticalCenteredSvg")} /> */}
 				<i className="fa-solid fa-angle-left"></i>
 			</li>
 			{paginationRange.map((pagination) => {
@@ -43,7 +42,6 @@ function Pagination({ onPageChange, totalCount, totalPage = 0, siblingCount = 1,
 				);
 			})}
 			<li className={cx("Arrow", { disabled: currentPage === lastPage })} onClick={onNext}>
-				{/* <FontAwesomeIcon icon={faAngleRight} className={cx("IconStyle__VerticalCenteredSvg")} /> */}
 				<i className="fa-solid fa-angle-right"></i>
 			</li>
 		</ul>

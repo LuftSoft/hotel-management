@@ -16,6 +16,8 @@ export const url = {
 	detailHotel: "hotel/",
 	bookedRooms: "booking",
 	refreshToken: "user/refresh_token",
+	cancelBooking: "booking/",
+	createBooking: "booking",
 };
 
 const getNewAccessToken = async (refreshToken) => {
@@ -72,5 +74,10 @@ export const axiosGet = async (url, config = {}, instance = axiosInstance) => {
 
 export const axiosPost = async (url, data = {}, config = {}, instance = axiosInstance) => {
 	const response = await instance.post(url, data, config);
+	return response.data;
+};
+
+export const axiosDelete = async (url, config = {}, instance = axiosInstance) => {
+	const response = await instance.delete(url, config);
 	return response.data;
 };
