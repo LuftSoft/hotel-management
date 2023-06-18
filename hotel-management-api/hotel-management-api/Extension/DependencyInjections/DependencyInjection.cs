@@ -56,6 +56,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IUserSignupInteractor, UserSignupInteractor>();
             services.AddScoped<IUpdateUserInteractor, UpdateUserInteractor>();
             services.AddScoped<IDeleteUserInteractor, DeleteUserInteractor>();
+            services.AddScoped<IRefreshTokenInteractor, RefreshTokenInteractor>();
             services.AddScoped<IFogotPasswordInteractor, FogotPasswordInteractor>();
             services.AddScoped<IResetPasswordInteractor, ResetPasswordInteractor>();
             services.AddScoped<IGetDetailUserInteractor, GetDetailUserInteractor>();

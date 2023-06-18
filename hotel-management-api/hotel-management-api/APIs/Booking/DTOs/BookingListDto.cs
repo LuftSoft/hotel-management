@@ -7,7 +7,7 @@
         public int RoomSize { get; set; }
         public string RoomName { get; set; }
         public string? Status { get; set; }
-        public bool? IsReturned { get; set; }
+        public bool? Returned { get; set; }
         public int? HotelId { get; set; }
         public string? HotelName { get; set; }
         public string? HotelImage { get; set; }

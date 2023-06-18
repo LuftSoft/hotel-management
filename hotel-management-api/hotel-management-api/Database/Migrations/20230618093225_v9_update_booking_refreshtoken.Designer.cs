@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using hotel_management_api.Database;
 
@@ -11,9 +12,10 @@ using hotel_management_api.Database;
 namespace hotel_management_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230618093225_v9_update_booking_refreshtoken")]
+    partial class v9_update_booking_refreshtoken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,8 +184,6 @@ namespace hotel_management_api.Migrations
                         .IsUnique();
 
                     b.ToTable("Comments");
-
-                    b.HasCheckConstraint("CK_comment_rating_max_value", "Rating<=5 AND Rating>=1");
                 });
 
             modelBuilder.Entity("hotel_management_api.Database.Model.District", b =>
@@ -289,8 +289,6 @@ namespace hotel_management_api.Migrations
                     b.HasIndex("USerId");
 
                     b.ToTable("Hotel");
-
-                    b.HasCheckConstraint("CK_hotel_start_max_value", "Star<=5 AND Star>=1");
                 });
 
             modelBuilder.Entity("hotel_management_api.Database.Model.HotelBenefit", b =>

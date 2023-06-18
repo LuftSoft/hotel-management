@@ -15,9 +15,10 @@ namespace hotel_management_api.APIs.Hotel.DTOs
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public string? USerId { get; set; }
+        public HotelCategory? HotelCategory { set; get; }
         public int HotelCategoryId { set; get; }
         public HotelBenefit? HotelBenefit { set; get; }
-        public int HomeletId { set; get; }
+        public string HomeletId { set; get; }
         [DefaultValue(0)]
         public double? MinPrice { set; get; }
         [DefaultValue(0)]

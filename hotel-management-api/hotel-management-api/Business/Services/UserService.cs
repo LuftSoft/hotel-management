@@ -9,6 +9,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using hotel_management_api.APIs.User.DTOs;
 using hotel_management_api.APIs.User.UserDTOs;
+using System.Security.Claims;
 
 namespace hotel_management_api.Business.Services
 {
@@ -136,6 +137,9 @@ namespace hotel_management_api.Business.Services
             var li = result.ToList();
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtUtil.GenerateAccessToken(li, request.loginDto.UserName));
             var refreshToken = new JwtSecurityTokenHandler().WriteToken(jwtUtil.GenerateRefreshToken(li, request.loginDto.UserName));
+            var user = await userRepository.findUserByEmailAsync(request.loginDto.UserName);
+            user.RefreshToken =  refreshToken;
+            await userRepository.updateUser(user);
             return new IUserLoginInteractor.Response(accessToken, refreshToken, "login success", true);
         }
         public async Task<IUserSignupInteractor.Response> SignupService(IUserSignupInteractor.Request request)
@@ -278,6 +282,48 @@ namespace hotel_management_api.Business.Services
             {
                 Success = true,
                 Message = "Unlock user success"
+            };
+        }
+        public async Task<IRefreshTokenInteractor.Response> RefreshToken(string token)
+        {
+            string userId = await GetUserIdFromToken(token);
+            if(userId == null)
+            {
+                return new IRefreshTokenInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Token is invalid"
+                };
+            }
+            AppUser user = await userRepository.FindByIdAsync(userId);
+            if(user.RefreshToken != null && user.RefreshToken != token) 
+            {
+                return new IRefreshTokenInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Token is invalid"
+                };
+            }
+            var liRoles = await userRepository.GetListRoleOfUser(user.Id);
+            List<Claim> userRoles = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            foreach(var role in liRoles)
+            {
+                userRoles.Add(new Claim(ClaimTypes.Role, role));
+            }
+            string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtUtil.GenerateAccessToken(userRoles, user.UserName));
+            string refreshToken = new JwtSecurityTokenHandler().WriteToken(jwtUtil.GenerateRefreshToken(userRoles, user.UserName));
+            user.RefreshToken = refreshToken;
+            await userRepository.updateUser(user);
+            return new IRefreshTokenInteractor.Response()
+            {
+                Success = true,
+                Message = "success",
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
             };
         }
     }

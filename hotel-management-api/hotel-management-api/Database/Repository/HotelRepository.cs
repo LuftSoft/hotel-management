@@ -47,8 +47,7 @@ namespace hotel_management_api.Database.Repository
         }
         public async Task<IEnumerable<Hotel>> GetAllAsync()
         {
-            return await _appDbContext.Hotels.AsNoTracking()
-                .Include(h => h.HotelBenefit)
+            return  await _appDbContext.Hotels.AsNoTracking()
                 .ToListAsync();
         }
         public async Task<IEnumerable<int>> HotelPriceFindAsync(double price)
@@ -61,7 +60,7 @@ namespace hotel_management_api.Database.Repository
         }
         public async Task<IEnumerable<int>> HotelFilterAsync(DateTime fromDate, int roomCount, int roomSize)
         {
-            var bookingRooms = await _appDbContext.Bookings.AsNoTracking().Where(b => b.ToDate >= fromDate && b.IsReturned == false)
+            var bookingRooms = await _appDbContext.Bookings.AsNoTracking().Where(b => b.ToDate >= fromDate && b.Returned == false)
                 .GroupBy(b => b.RoomId)
                 .Select(b => new
                 {
@@ -107,17 +106,6 @@ namespace hotel_management_api.Database.Repository
             var hotels = rooms.Where(r => r.RoomSize >= roomSize && r.TotalRoom >= roomCount)
                 .Select(r => r.HotelId).Distinct().ToList();
             return hotels;
-        }
-        public async Task<bool> updateAsync(Hotel hotel)
-        {
-            _appDbContext.Hotels.Update(hotel);
-            int isSuccess = await _appDbContext.SaveChangesAsync();
-            return isSuccess > 0;
-
-        }
-        public async Task<Hotel> getOne(int id)
-        {
-            return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
         }
     }
 }

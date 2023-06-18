@@ -10,6 +10,7 @@ namespace hotel_management_api.Database.Model
         public int? Age { get; set; }
         public string? Avatar { get; set; }
         public string? ResetPasswordToken { get; set; }
+        public string? RefreshToken { get; set; }
         [DefaultValue(false)]
         public bool IsBlock { get; set; }
         public ICollection<Booking>? Bookings { get; set; }

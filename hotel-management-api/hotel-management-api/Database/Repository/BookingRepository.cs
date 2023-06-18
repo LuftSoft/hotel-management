@@ -10,26 +10,29 @@ namespace hotel_management_api.Database.Repository
         {
             this.appDbContext = appDbContext;
         }
+        public async Task<bool> Cancel(int id)
+        {
+            try
+            {
+                var booking = await appDbContext.Bookings.FirstOrDefaultAsync(b => b.Id == id);
+                if(booking == null)
+                {
+                    return false;
+                }
+                booking.Returned = true;
+                appDbContext.Bookings.Update(booking);
+                int isSuccess = await appDbContext.SaveChangesAsync();
+                return isSuccess > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Booking repository(Cancel). Error: {ex}");
+                return false;
+            }
+        }
         public async Task<Booking> GetOne(int id) 
         {
             return await appDbContext.Bookings.FirstOrDefaultAsync(x => x.Id == id);
-        }
-        public async Task<IEnumerable<Booking>> GetByUserId(string id)
-        {
-            return await appDbContext.Bookings.Where(x => x.UserId == id).ToListAsync();
-        }
-        public async Task<IEnumerable<Booking>> GetByHotelId(int id)
-        {
-            var rooms = await appDbContext.Rooms.Where(r => r.HotelId == id).Select(r => r.Id).ToListAsync();
-            return await appDbContext.Bookings.Where(x => rooms.Contains(x.RoomId)).ToListAsync();
-        }
-        public async Task<IEnumerable<object>> BookingDay(DateTime fromDate)
-        {
-            return await appDbContext.Bookings.Where(b => b.IsReturned == false && b.ToDate < fromDate)
-                .Select(b => new
-                {
-                    id = b.Id
-                }).ToListAsync();
         }
         public async Task<bool> Create(Booking booking)
         {
@@ -59,7 +62,7 @@ namespace hotel_management_api.Database.Repository
                 bookingInfor.ToDate = booking.ToDate;
                 bookingInfor.Status = booking.Status;
                 bookingInfor.Comments = booking.Comments;
-                bookingInfor.IsReturned = booking.IsReturned;
+                bookingInfor.Returned = booking.Returned;
                 appDbContext.Bookings.Update(bookingInfor);
                 int isSuccess = await appDbContext.SaveChangesAsync();
                 return isSuccess > 0;
@@ -70,25 +73,22 @@ namespace hotel_management_api.Database.Repository
                 return false;
             }
         }
-        public async Task<bool> Cancel(int id)
+        public async Task<IEnumerable<Booking>> GetByHotelId(int id)
         {
-            try
-            {
-                var booking = await appDbContext.Bookings.FirstOrDefaultAsync(b => b.Id == id);
-                if(booking == null)
+            var rooms = await appDbContext.Rooms.Where(r => r.HotelId == id).Select(r => r.Id).ToListAsync();
+            return await appDbContext.Bookings.Where(x => rooms.Contains(x.RoomId)).ToListAsync();
+        }
+        public async Task<IEnumerable<Booking>> GetByUserId(string id)
+        {
+            return await appDbContext.Bookings.Where(x => x.UserId == id).ToListAsync();
+        }
+        public async Task<IEnumerable<object>> BookingDay(DateTime fromDate)
+        {
+            return await appDbContext.Bookings.Where(b => b.Returned == false && b.ToDate < fromDate)
+                .Select(b => new
                 {
-                    return false;
-                }
-                booking.IsReturned = false;
-                appDbContext.Bookings.Update(booking);
-                int isSuccess = await appDbContext.SaveChangesAsync();
-                return isSuccess > 0;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Booking repository(Cancel). Error: {ex}");
-                return false;
-            }
+                    id = b.Id
+                }).ToListAsync();
         }
     }
 }

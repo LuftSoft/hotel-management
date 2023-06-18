@@ -63,7 +63,7 @@ namespace hotel_management_api.Business.Services
             {
                 Id = hotel.Id,
                 Name = hotel.Name,
-                Star = hotel.Id,
+                Star = hotel.Star,
                 Description = hotel.Description,
                 Address = hotel.Address,
                 LogoLink = hotel.LogoLink,
@@ -71,9 +71,10 @@ namespace hotel_management_api.Business.Services
                 CreatedDate = hotel.CreatedDate,
                 UpdateDate = hotel.UpdateDate,
                 USerId = hotel.USerId,
-                HotelCategoryId = hotel.Id,
+                HotelCategoryId = hotel.HotelCategoryId,
+                HotelCategory = hotel.HotelCategory,
                 HotelBenefit = hotel.HotelBenefit,
-                HomeletId = hotel.Id,
+                HomeletId = hotel.HomeletId,
                 MinPrice = min,
                 MaxPrice = max
             };
@@ -146,6 +147,8 @@ namespace hotel_management_api.Business.Services
                 var hotelDtos = new List<HotelDto>();
                 foreach (var hotel in hotels)
                 {
+                    var tmp = await hotelBenefitRepository.FindByHotelIdAsync(hotel.Id);
+                    hotel.HotelBenefit = tmp;
                     hotelDtos.Add(await ConvertHotelToHotelDto(hotel));
                 }
                 var category = await hotelCategoryRepository.GetAll();

@@ -31,6 +31,7 @@ namespace hotel_management_api.APIs.User
         private readonly IUserSignupInteractor userSignupInteractor;
         private readonly IUpdateUserInteractor updateUserInteractor;
         private readonly IDeleteUserInteractor deleteUserInteractor;
+        private readonly IRefreshTokenInteractor refreshTokenInteractor;
         private readonly IFogotPasswordInteractor fogotPasswordInteractor;
         private readonly IGetDetailUserInteractor getDetailUserInteractor;
         private readonly IResetPasswordInteractor resetPasswordInteractor;
@@ -45,6 +46,7 @@ namespace hotel_management_api.APIs.User
             IUpdateUserInteractor updateUserInteractor,
             IDeleteUserInteractor deleteUserInteractor,
             IUserSignupInteractor _userSignupInteractor,
+            IRefreshTokenInteractor refreshTokenInteractor,
             IGetDetailUserInteractor getDetailUserInteractor,
             IResetPasswordInteractor resetPasswordInteractor,
             IFogotPasswordInteractor _fogotPasswordInteractor,
@@ -60,6 +62,7 @@ namespace hotel_management_api.APIs.User
             this.updateUserInteractor = updateUserInteractor;
             this.deleteUserInteractor = deleteUserInteractor;
             this.userSignupInteractor = _userSignupInteractor;
+            this.refreshTokenInteractor = refreshTokenInteractor;
             this.getDetailUserInteractor = getDetailUserInteractor;
             this.resetPasswordInteractor = resetPasswordInteractor;
             this.fogotPasswordInteractor = _fogotPasswordInteractor;
@@ -75,13 +78,20 @@ namespace hotel_management_api.APIs.User
             var result = await getDetailUserInteractor.Get(HttpContext);
             return Ok(result);
         }
-        [HttpGet("refresh_token")]
-        [Authorize(Roles = "admin")]
-        public IActionResult testJwt([FromQuery]string token)
+        [HttpGet("refresh-token")]
+        public async Task<IActionResult> refreshToken()
         {
-            if (jwtUtil.getUserNameFromToken(token) == null)
-                return BadRequest("bad trip");
-            return Ok(jwtUtil.getUserNameFromToken(token));
+            string token = HttpContext.Request.Headers.Authorization.FirstOrDefault();
+            if(token == null)
+            {
+                return BadRequest("token is invalid");
+            }
+            var result = await refreshTokenInteractor.RefreshToken(token);
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         //POST
         [HttpPost("login")]

@@ -42,7 +42,7 @@ namespace hotel_management_api.Database.Repository
         }
         public async Task<IEnumerable<int>> HotelRoomSizeAsync(double price)
         {
-            var x = await appDbContext.Bookings.Where(b => b.IsReturned == false && b.ToDate> DateTime.Now).Select(b => b.RoomId).ToListAsync();
+            var x = await appDbContext.Bookings.Where(b => b.Returned == false && b.ToDate> DateTime.Now).Select(b => b.RoomId).ToListAsync();
             return await appDbContext.Rooms.Where(r => r.Price > price).Select(r => r.HotelId).Distinct().ToListAsync();
         }
         public async Task<Room> GetByIdAsync(int id)

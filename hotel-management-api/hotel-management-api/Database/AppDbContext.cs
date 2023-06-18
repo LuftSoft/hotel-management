@@ -114,10 +114,12 @@ namespace hotel_management_api.Database
                     .HasForeignKey(r => r.HotelId)
                     .HasConstraintName("FK_Hotel_Room")
                     .OnDelete(DeleteBehavior.Restrict);
+                opt.HasCheckConstraint("CK_hotel_start_max_value","Star<=5 AND Star>=1");
             });
             builder.Entity<Comment>(opt => 
             {
                 opt.HasIndex(c => c.BookingId).IsUnique();
+                opt.HasCheckConstraint("CK_comment_rating_max_value", "Rating<=5 AND Rating>=1");
             });
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
