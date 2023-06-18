@@ -1,29 +1,16 @@
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+
 import { logoutSuccess } from "../../../redux/authSlice";
 import { updateUser } from "../../../redux/userSlice";
+import { routes } from "../../../routes";
+import { logout } from "../../../services/userServices";
 
 export default function UserMenu() {
 	const dispatch = useDispatch();
 	const handleLogout = async (e) => {
 		e.preventDefault();
-		// const axiosJwt = createAxiosJwt(accessToken, refreshToken, dispatch);
-		// try {
-		// 	const res = await axiosJwt.patch(
-		// 		path.logout,
-		// 		{},
-		// 		{
-		// 			headers: {
-		// 				Authorization: `bearer ${accessToken}`,
-		// 			},
-		// 		},
-		// 	);
-		// 	if (res.data.isSuccess) {
-		dispatch(logoutSuccess());
-		dispatch(updateUser(null));
-		// 	}
-		// } catch (error) {
-		// 	console.log(error);
-		// }
+		logout(dispatch);
 	};
 	return (
 		<div className="d-flex">
@@ -37,9 +24,12 @@ export default function UserMenu() {
 					<span className="ms-2">user name</span>
 				</button>
 				<div className="dropdown-menu dropdown-menu-end">
-					<a href="#" className="dropdown-item">
+					<Link to={routes.account} className="dropdown-item">
 						Tài khoản
-					</a>
+					</Link>
+					<Link to={routes.bookedRoom} className="dropdown-item">
+						Đặt chỗ của tôi
+					</Link>
 					<a href="#" className="dropdown-item" onClick={handleLogout}>
 						Đăng xuất
 					</a>

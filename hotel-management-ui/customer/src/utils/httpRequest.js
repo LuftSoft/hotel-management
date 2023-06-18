@@ -14,6 +14,25 @@ export const url = {
 	homelet: "location/homelet/",
 	hotel: "hotel/filter",
 	detailHotel: "hotel/",
+	bookedRooms: "booking",
+	refreshToken: "user/refresh_token",
+};
+
+const getNewAccessToken = async (refreshToken) => {
+	if (!refreshToken) {
+		throw new Error("refreshToken is not found in refreshToken function");
+	}
+	try {
+		const res = await axiosInstance.get(url.refreshToken, {
+			params: {
+				token: refreshToken,
+			},
+		});
+		console.log(res);
+		return res.data;
+	} catch (error) {
+		console.log("refreshToken", error);
+	}
 };
 
 export const axiosJWT = (accessToken, refreshToken, dispatch) => {

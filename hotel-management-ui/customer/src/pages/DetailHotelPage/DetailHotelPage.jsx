@@ -6,6 +6,7 @@ import CommentSection from "../../components/CommentSection";
 import { axiosGet, url } from "../../utils/httpRequest";
 import Stars from "../../components/Stars";
 import RoomCard from "../../components/RoomCard/RoomCard";
+import DetailHotelSkeleton from "./DetailHotelSkeleton";
 
 export default function DetailHotelPage() {
 	const roomsRef = useRef();
@@ -15,6 +16,7 @@ export default function DetailHotelPage() {
 		queryFn: async () => {
 			try {
 				const res = await axiosGet(url.detailHotel + id);
+				console.log(res);
 				return res;
 			} catch (error) {
 				return Promise.reject(error);
@@ -43,14 +45,7 @@ export default function DetailHotelPage() {
 	if (hotelState.isSuccess) {
 		hotel = hotelState.data.hotelDto;
 	} else {
-		// return (
-		// 	<div className="d-flex justify-content-center my-5 bg-light">
-		// 		<div className="spinner-border text-primary" role="status">
-		// 			<span className="visually-hidden">Loading...</span>
-		// 		</div>
-		// 	</div>
-		// );
-		return null;
+		return <DetailHotelSkeleton />;
 	}
 	return (
 		<div className=" bg-light py-3">

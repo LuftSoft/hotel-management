@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { validateEmail, validatePassword } from "../../utils/helpers";
@@ -15,6 +15,10 @@ const initState = {
 };
 
 export default function SignInPage() {
+	const location = useLocation();
+	const searchParams = new URLSearchParams(location.search);
+	const next = searchParams.get("next");
+	console.log(next);
 	const emailRef = useRef();
 	const passwordRef = useRef();
 	const [showPw, setShowPw] = useState(false);
@@ -52,7 +56,13 @@ export default function SignInPage() {
 					});
 					dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
 					getUser(res.accessToken, res.refreshToken, dispatch);
-					navigate(routes.home);
+					if (next) {
+						setTimeout(() => {
+							navigate(next);
+						}, 1000);
+					} else {
+						navigate(routes.home);
+					}
 				} catch (error) {
 					console.log(error);
 					toast.update(toastId, {
