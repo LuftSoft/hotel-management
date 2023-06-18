@@ -55,7 +55,7 @@ namespace hotel_management_api.Business.Services
                         RoomSize = room.NumOfPeope,
                         RoomName = room.Name,
                         Status = booking.Status,
-                        IsReturned = booking.IsReturned,
+                        Returned = booking.Returned,
                         HotelId = hotel.Id,
                         HotelName = hotel.Name,
                         HotelImage = hotel.LogoLink,
@@ -101,7 +101,7 @@ namespace hotel_management_api.Business.Services
                 booking.Status = bookingDto.Status;
                 booking.CreateDate = DateTime.Now;
                 booking.CreateDate = DateTime.Now;
-                booking.IsReturned = true;
+                booking.Returned = false;
                 var isSuccess = await bookingRepository.Create(booking);
                 if (isSuccess)
                 {
@@ -142,7 +142,7 @@ namespace hotel_management_api.Business.Services
                     };
                 }
                 booking.UpdateDate = DateTime.Now;
-                booking.IsReturned = requestBooking.IsReturned;
+                booking.Returned = requestBooking.Returned;
                 booking.FromDate = requestBooking.FromDate;
                 booking.ToDate = requestBooking.ToDate;
                 await bookingRepository.Update(booking);
@@ -174,7 +174,7 @@ namespace hotel_management_api.Business.Services
                         Message = "Update booking information failed"
                     };
                 }
-                booking.IsReturned = false;
+                booking.Returned = true;
                 await bookingRepository.Update(booking);
                 return new ICancelBookingRoomInteractor.Response()
                 {

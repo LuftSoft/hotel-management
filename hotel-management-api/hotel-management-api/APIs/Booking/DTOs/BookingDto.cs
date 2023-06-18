@@ -7,7 +7,7 @@ namespace hotel_management_api.APIs.Booking.DTOs
         public int Id { get; set; }
         public int RoomId { get; set; }
         public string? Status { get; set; }
-        public bool? IsReturned { get; set; }
+        public bool? Returned { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
     }
