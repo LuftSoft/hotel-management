@@ -3,10 +3,9 @@ import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { validateEmail, validatePassword } from "../../utils/helpers";
 import { toast } from "react-toastify";
-import { axiosGet, axiosJWT, axiosPost, url } from "../../utils/httpRequest";
+import { axiosJWT, axiosPost, url } from "../../utils/httpRequest";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/userSlice";
-import jwtDecode from "jwt-decode";
 import { loginSuccess } from "../../redux/authSlice";
 
 const initState = {
@@ -18,7 +17,6 @@ export default function SignInPage() {
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const next = searchParams.get("next");
-	console.log(next);
 	const emailRef = useRef();
 	const passwordRef = useRef();
 	const [showPw, setShowPw] = useState(false);
@@ -46,7 +44,6 @@ export default function SignInPage() {
 						username,
 						password,
 					});
-					console.log(res);
 					toast.update(toastId, {
 						render: "Đăng nhập thành công!",
 						type: "success",
@@ -83,7 +80,6 @@ export default function SignInPage() {
 								Authorization: `Bearer ${accessToken}`,
 							},
 						});
-						console.log(res);
 						dispatch(updateUser(res.data.userDto));
 						return {
 							isSuccess: true,

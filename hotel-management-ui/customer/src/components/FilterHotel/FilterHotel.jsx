@@ -4,10 +4,10 @@ export default function FilterHotel() {
 			<div className="mb-3">
 				<label>Sắp xếp theo giá:</label>
 				<select className="form-select" aria-label="Default select example">
-					<option defaultChecked value="1">
+					<option defaultChecked value="0">
 						Tăng dần
 					</option>
-					<option value="2">Giảm dần</option>
+					<option value="1">Giảm dần</option>
 				</select>
 			</div>
 			<div className="my-3">

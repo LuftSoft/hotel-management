@@ -1,13 +1,11 @@
+import { useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 // import classNames from "classnames/bind";
 
 import "./HotelPage.scss";
 import HotelCard from "../../components/HotelCard";
 import FilterHotel from "../../components/FilterHotel";
 import { Pagination } from "../../components/Pagination";
-import { Navigate, redirect, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { routes } from "../../routes";
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { axiosPost, url } from "../../utils/httpRequest";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
@@ -22,7 +20,7 @@ export default function HotelPage() {
 		params[key] = value;
 	});
 	console.log(params);
-	const hotel = useQuery({
+	const listHotelState = useQuery({
 		queryKey: ["hotel"],
 		queryFn: async () => {
 			try {
@@ -44,7 +42,12 @@ export default function HotelPage() {
 		},
 		staleTime: 3 * 60 * 1000,
 	});
-	console.log(hotel);
+	let listHotel = [];
+	let categories = [];
+	if (listHotelState.isSuccess && listHotelState.data.success) {
+		listHotel = listHotelState.data.hotels;
+		categories = listHotelState.data.categories;
+	}
 	return (
 		<div className="HotelPage__Container my-3">
 			{/* <Navigate to={"/"} replace={true} /> */}
@@ -55,15 +58,14 @@ export default function HotelPage() {
 				<div className="HotelPage__List">
 					<div>
 						<div className="row gy-3">
-							<div className="col">
-								<HotelCard />
-							</div>
-							<div className="col">
-								<HotelCard />
-							</div>
-							<div className="col">
-								<HotelCard />
-							</div>
+							{listHotel.map((hotel) => {
+								let category = [];
+								return (
+									<div key={hotel.id} className="col">
+										<HotelCard hotel={hotel} />
+									</div>
+								);
+							})}
 						</div>
 					</div>
 					{/* pagination */}

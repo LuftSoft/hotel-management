@@ -80,16 +80,25 @@ export default function HeroSection() {
 		if (checkInDateRef.current.value) {
 			console.log(checkInDateRef.current.value);
 		}
-		params += "pageIndex=1&";
+		params += "pageIndex=0&";
 		params += "pageSize=10&";
-		params += "ProvineId=" + (provinceRef.current.value === "undefined" ? "" : provinceRef.current.value) + "&";
-		params += "DistrictId=" + (districtRef.current.value === "undefined" ? "" : districtRef.current.value) + "&";
-		params += "HomeletId=" + (homeletRef.current.value === "undefined" ? "" : homeletRef.current.value) + "&";
+		if (provinceRef.current.value !== "undefined") {
+			params += "ProvineId=" + provinceRef.current.value + "&";
+		}
+		if (districtRef.current.value !== "undefined") {
+			params += "DistrictId=" + districtRef.current.value + "&";
+		}
+		if (homeletRef.current.value !== "undefined") {
+			params += "HomeletId=" + homeletRef.current.value + "&";
+		}
+		if (checkInDateRef.current.value) {
+			params += "FromDate=" + checkInDateRef.current.value + "&";
+		}
+		if (checkOutDateRef.current.value) {
+			params += "ToDate=" + checkOutDateRef.current.value + "&";
+		}
 		params += "RoonCount=" + roomRef.current.value + "&";
-		params += "RoomSize=" + guestRef.current.value + "&";
-		params += "FromDate=" + checkInDateRef.current.value + "&";
-		params += "ToDate=" + checkOutDateRef.current.value;
-
+		params += "RoomSize=" + guestRef.current.value;
 		navigate(routes.hotel + params);
 	};
 	const handleProvinceChange = (e) => {

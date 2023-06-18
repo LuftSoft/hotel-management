@@ -1,6 +1,9 @@
 export default function BookedRoomCard({ bookedRoom }) {
+	const handleClick = () => {
+		window.open("/hotel/" + bookedRoom.hotelId, "_blank");
+	};
 	return (
-		<div className="border rounded bg-white p-3 d-flex">
+		<div onClick={handleClick} className="border rounded bg-white p-3 d-flex cursor-pointer">
 			<div className="border rounded-2" style={{ overflow: "hidden" }}>
 				<img
 					src={bookedRoom.hotelImage}

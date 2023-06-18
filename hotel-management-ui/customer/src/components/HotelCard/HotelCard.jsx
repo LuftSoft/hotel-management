@@ -9,7 +9,7 @@ import "./HotelCard.scss";
 import star from "../../assets/star.svg";
 import halfStar from "../../assets/half-star.svg";
 
-export default function HotelCard() {
+export default function HotelCard({ hotel }) {
 	const handleClick = () => {
 		window.open("/hotel/" + 8, "_blank");
 	};
@@ -24,7 +24,7 @@ export default function HotelCard() {
 						<div className="d-flex flex-column px-3 justify-content-between">
 							<div className="d-flex flex-column">
 								<div>
-									<h3 className="fs-6 m-0">Aquari Hotel</h3>
+									<h3 className="fs-6 m-0">{hotel.name}</h3>
 								</div>
 								<div className="d-flex my-2">
 									<div className="me-2">
