@@ -1,4 +1,4 @@
-﻿using hotel_management_api.APIs.Booking.DTOs;
+﻿    using hotel_management_api.APIs.Booking.DTOs;
 using hotel_management_api.Business.Interactor.Booking;
 using hotel_management_api.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +15,7 @@ namespace hotel_management_api.APIs.Booking
     public class BookingController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;
+        private readonly IGetAllBookingInteractor getAllBookingInteractor;
         private readonly IGetAllBookingByUserInteractor getAllBookingByUser;
         private readonly ICreateBookingRoomInteractor createBookingRoomInteractor;
         private readonly IUpdateBookingRoomInteractor updateBookingRoomInteractor;
@@ -22,6 +23,7 @@ namespace hotel_management_api.APIs.Booking
         public BookingController
             (
             IJwtUtil jwtUtil,
+            IGetAllBookingInteractor getAllBookingInteractor,
             IGetAllBookingByUserInteractor getAllBookingByUser,
             ICreateBookingRoomInteractor createBookingRoomInteractor,
             IUpdateBookingRoomInteractor updateBookingRoomInteractor,
@@ -29,10 +31,31 @@ namespace hotel_management_api.APIs.Booking
             )
         {
             this.jwtUtil = jwtUtil;
+            this.getAllBookingInteractor = getAllBookingInteractor;
             this.getAllBookingByUser = getAllBookingByUser;
             this.createBookingRoomInteractor = createBookingRoomInteractor;
             this.updateBookingRoomInteractor = updateBookingRoomInteractor;
             this.cancelBookingRoomInteractor = cancelBookingRoomInteractor; 
+        }
+        [HttpGet("all")]
+        [Authorize("owner")]
+        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+        {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await getAllBookingInteractor.GetAll(new IGetAllBookingInteractor.Request()
+            {
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpGet]
         public async Task<IActionResult> Get(int? pageIndex, int? pageSize)

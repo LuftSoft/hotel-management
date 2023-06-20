@@ -9,5 +9,7 @@
         public string? LastName { get; set; }
         public int? Age { get; set; }
         public string? Avatar { get; set; }
+        public bool? IsBlock { get; set; }
+        public List<string>? Roles { get; set; }
     }
 }

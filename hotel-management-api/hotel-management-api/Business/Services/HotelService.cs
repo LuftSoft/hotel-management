@@ -85,7 +85,8 @@ namespace hotel_management_api.Business.Services
             if (hotel == null) return new IGetDetailHotelInteractor.Response("Get failed", false, null);
             var rooms = (await roomRepository.GetByHotelIdAsync(hotelId)).ToList();
             var comments = (await commentRepository.FindByHotelId(hotelId)).ToList();
-            var benefit = hotel.HotelBenefit;
+            var benefit = await hotelBenefitRepository.FindByHotelIdAsync(hotelId);
+            benefit.Hotel = null;
             var hotelCategory = await hotelCategoryRepository.GetById(hotel.HotelCategoryId);
             HotelDetailDto hotelDetailDto = new HotelDetailDto()
             {
@@ -212,7 +213,9 @@ namespace hotel_management_api.Business.Services
                 var hotelDtos = new List<HotelDto>();
                 foreach(var hotel in hotels)
                 {
-                    hotelDtos.Add(await ConvertHotelToHotelDto(hotel));
+                    var tmpHotel = await ConvertHotelToHotelDto(hotel);
+                    tmpHotel.HotelBenefit =  await hotelBenefitRepository.FindByHotelIdAsync(hotel.Id);
+                    hotelDtos.Add(tmpHotel);
                 }
                 HotelFilterDto filterDto = request.filterDto;
                 if (filterDto.PriceSort != null)
@@ -236,43 +239,43 @@ namespace hotel_management_api.Business.Services
                     hotelDtos = hotelDtos.Where(h => h.MinPrice >= filterDto.MinPrice).ToList();
                 }
                 //benefit
-                if(filterDto.WifiFree != null)
+                if(filterDto.WifiFree == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.WifiFree == true).ToList();
                 }
-                if (filterDto.Resttaurant != null)
+                if (filterDto.Resttaurant == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Resttaurant == true).ToList();
                 }
-                if (filterDto.AllTimeFrontDesk != null)
+                if (filterDto.AllTimeFrontDesk == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.AllTimeFrontDesk == true).ToList();
                 }
-                if (filterDto.Elevator != null)
+                if (filterDto.Elevator == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Elevator == true).ToList();
                 }
-                if (filterDto.Pool != null)
+                if (filterDto.Pool == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Pool == true).ToList();
                 }
-                if (filterDto.FreeBreakfast != null)
+                if (filterDto.FreeBreakfast == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.FreeBreakfast == true).ToList();
                 }
-                if (filterDto.AirConditioner != null)
+                if (filterDto.AirConditioner == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.AirConditioner == true).ToList();
                 }
-                if (filterDto.CarBorow != null)
+                if (filterDto.CarBorow == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.CarBorow == true).ToList();
                 }
-                if (filterDto.Parking != null)
+                if (filterDto.Parking == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.Parking == true).ToList();
                 }
-                if (filterDto.AllowPet != null)
+                if (filterDto.AllowPet == true)
                 {
                     hotelDtos = hotelDtos.Where(h => h.HotelBenefit.AllowPet == true).ToList();
                 }

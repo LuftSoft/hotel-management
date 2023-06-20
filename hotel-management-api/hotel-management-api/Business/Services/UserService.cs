@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using hotel_management_api.APIs.User.DTOs;
 using hotel_management_api.APIs.User.UserDTOs;
 using System.Security.Claims;
+using System.Reflection.Metadata.Ecma335;
 
 namespace hotel_management_api.Business.Services
 {
@@ -49,6 +50,7 @@ namespace hotel_management_api.Business.Services
             var user = await userRepository.findUserByEmailAsync(userName);
             if (user != null)
             {
+                var roles = await userRepository.GetListRoleOfUser(user.Id);
                 return new UserDto()
                 {
                     Id = user.Id,
@@ -57,7 +59,8 @@ namespace hotel_management_api.Business.Services
                     LastName = user.LastName,
                     Age = user.Age,
                     Avatar = user.Avatar,
-                    PhoneNumber = user.PhoneNumber
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = roles.ToList()
                 };
             }
             return null;
@@ -141,6 +144,73 @@ namespace hotel_management_api.Business.Services
             user.RefreshToken =  refreshToken;
             await userRepository.updateUser(user);
             return new IUserLoginInteractor.Response(accessToken, refreshToken, "login success", true);
+        }
+        public async Task<IGetAllUserInteractor.Response> GetAllUser()
+        {
+            var users = await userRepository.GetAll();
+            List<UserDto> dtos = new List<UserDto>();
+            foreach(var user in users)
+            {
+                var roles = await userRepository.GetListRoleOfUser(user.Id);
+                dtos.Add(new UserDto()
+                {
+                    Age = user.Age,
+                    Avatar = user.Avatar,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    Id = user.Id,
+                    IsBlock = user.IsBlock,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = roles.ToList()
+                });
+            }
+            return new IGetAllUserInteractor.Response()
+            {
+                Success = true,
+                Message = "Get all user success",
+                Users = dtos
+            };
+
+        }
+        public async Task<IAddRoleToUserInteractor.Response> AddRoleToUser(string userId, string role)
+        {
+            if(await userRepository.IsContainRole(userId, role))
+            {
+                return new IAddRoleToUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = "User already has this role"
+                };
+            }
+            var success = await userRepository.AddRole(userId, role);
+            if (!success)
+            {
+                return new IAddRoleToUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Add role to user failed service"
+                };
+            }
+            var user = await userRepository.FindByIdAsync(userId);
+            var tmpRoles = await userRepository.GetListRoleOfUser(userId);
+            return new IAddRoleToUserInteractor.Response()
+            {
+                Success = true,
+                Message = "Add role to user success",
+                userDto = new UserDto()
+                {
+                    Age = user.Age,
+                    Avatar = user.Avatar,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    Id = user.Id,
+                    IsBlock = user.IsBlock,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = tmpRoles.ToList()
+                }
+            };
         }
         public async Task<IUserSignupInteractor.Response> SignupService(IUserSignupInteractor.Request request)
         {

@@ -58,6 +58,7 @@ namespace hotel_management_api.Database.Repository
         {
             List<RoomDetailDto> results = new List<RoomDetailDto> ();
             var rooms = await appDbContext.Rooms.AsNoTracking().Where(r => r.HotelId == hotelId).ToListAsync();
+            var bookings = await appDbContext.Bookings.Where(b => b.Returned == false && b.ToDate > DateTime.Now).ToListAsync();
             foreach(var r in rooms) 
             {
                 List<RoomGalleryDto> dtos = await appDbContext.RoomGalleries.Where(rg => rg.RooomId == r.Id)
@@ -67,7 +68,9 @@ namespace hotel_management_api.Database.Repository
                         RooomId = r.RooomId,
                         Link = r.Link
                     }).AsNoTracking().ToListAsync();
-                results.Add(ConvertToRoomDetailDto(r,dtos));
+                var roomDto = ConvertToRoomDetailDto(r, dtos);
+                roomDto.EmptyRoom = roomDto.TotalRoom - bookings.Where(b => b.RoomId == r.Id).ToList().Count;
+                results.Add(roomDto);
             }
             return results;
             //return await appDbContext.Rooms.Where(r => r.HotelId == hotelId).ToListAsync();

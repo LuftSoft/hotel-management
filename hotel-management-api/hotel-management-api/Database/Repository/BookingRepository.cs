@@ -34,6 +34,10 @@ namespace hotel_management_api.Database.Repository
         {
             return await appDbContext.Bookings.FirstOrDefaultAsync(x => x.Id == id);
         }
+        public async Task<IEnumerable<Booking>> GetAll()
+        {
+            return await appDbContext.Bookings.ToListAsync();
+        }
         public async Task<bool> Create(Booking booking)
         {
             try
@@ -89,6 +93,10 @@ namespace hotel_management_api.Database.Repository
                 {
                     id = b.Id
                 }).ToListAsync();
+        }
+        public async Task<IEnumerable<Booking>> GetAllAvailableBooking()
+        {
+            return await appDbContext.Bookings.Where(b => b.Returned == false && b.ToDate < DateTime.Now).ToListAsync();
         }
     }
 }

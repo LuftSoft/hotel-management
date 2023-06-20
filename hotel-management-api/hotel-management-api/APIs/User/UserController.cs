@@ -31,10 +31,12 @@ namespace hotel_management_api.APIs.User
         private readonly IUserSignupInteractor userSignupInteractor;
         private readonly IUpdateUserInteractor updateUserInteractor;
         private readonly IDeleteUserInteractor deleteUserInteractor;
+        private readonly IGetAllUserInteractor getAllUserInteractor;
         private readonly IRefreshTokenInteractor refreshTokenInteractor;
         private readonly IFogotPasswordInteractor fogotPasswordInteractor;
         private readonly IGetDetailUserInteractor getDetailUserInteractor;
         private readonly IResetPasswordInteractor resetPasswordInteractor;
+        private readonly IAddRoleToUserInteractor addRoleToUserInteractor;
         private readonly IChangePasswordInteractor changePasswordInteractor;
         private readonly IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor;
         public UserController(
@@ -46,9 +48,11 @@ namespace hotel_management_api.APIs.User
             IUpdateUserInteractor updateUserInteractor,
             IDeleteUserInteractor deleteUserInteractor,
             IUserSignupInteractor _userSignupInteractor,
+            IGetAllUserInteractor getAllUserInteractor,
             IRefreshTokenInteractor refreshTokenInteractor,
             IGetDetailUserInteractor getDetailUserInteractor,
             IResetPasswordInteractor resetPasswordInteractor,
+            IAddRoleToUserInteractor addRoleToUserInteractor,
             IFogotPasswordInteractor _fogotPasswordInteractor,
             IChangePasswordInteractor changePasswordInteractor,
             IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor
@@ -61,8 +65,10 @@ namespace hotel_management_api.APIs.User
             this.userLoginInteractor = _userLoginInteractor;
             this.updateUserInteractor = updateUserInteractor;
             this.deleteUserInteractor = deleteUserInteractor;
+            this.getAllUserInteractor = getAllUserInteractor;
             this.userSignupInteractor = _userSignupInteractor;
             this.refreshTokenInteractor = refreshTokenInteractor;
+            this.addRoleToUserInteractor = addRoleToUserInteractor;
             this.getDetailUserInteractor = getDetailUserInteractor;
             this.resetPasswordInteractor = resetPasswordInteractor;
             this.fogotPasswordInteractor = _fogotPasswordInteractor;
@@ -71,8 +77,22 @@ namespace hotel_management_api.APIs.User
         }
         //GET
         [MapToApiVersion("1.0")]
+        [HttpGet()]
+        [Authorize("owner")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await getAllUserInteractor.GetAllUser();
+            return Ok(result);
+        }
+        [HttpPost("add-role")]
+        [Authorize("owner")]
+        public async Task<IActionResult> AddRoleToUser(AddRoleDto dto)
+        {
+            var result = await addRoleToUserInteractor.AddRoleToUser(dto.UserId, dto.RoleName);
+            return Ok(result);
+        }
         [HttpGet("detail")]
-        [Authorize]
+        [Authorize("user")]
         public async Task<IActionResult> Get()
         {
             var result = await getDetailUserInteractor.Get(HttpContext);

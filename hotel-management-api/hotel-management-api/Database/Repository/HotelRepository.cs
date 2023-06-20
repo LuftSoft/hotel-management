@@ -29,7 +29,6 @@ namespace hotel_management_api.Database.Repository
         public async Task<Hotel?> FindByIdAsync(int id)
         {
             return await _appDbContext.Hotels
-                .Include(h => h.HotelBenefit)
                 .FirstOrDefaultAsync(h => h.Id == id);
         }
         public async Task<bool> updateAsync(Hotel hotel)

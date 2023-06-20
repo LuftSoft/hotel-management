@@ -56,7 +56,9 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IUserSignupInteractor, UserSignupInteractor>();
             services.AddScoped<IUpdateUserInteractor, UpdateUserInteractor>();
             services.AddScoped<IDeleteUserInteractor, DeleteUserInteractor>();
+            services.AddScoped<IGetAllUserInteractor, GetAllUserInteractor>();
             services.AddScoped<IRefreshTokenInteractor, RefreshTokenInteractor>();
+            services.AddScoped<IAddRoleToUserInteractor, AddRoleToUserInteractor>();
             services.AddScoped<IFogotPasswordInteractor, FogotPasswordInteractor>();
             services.AddScoped<IResetPasswordInteractor, ResetPasswordInteractor>();
             services.AddScoped<IGetDetailUserInteractor, GetDetailUserInteractor>();
@@ -92,6 +94,7 @@ namespace hotel_management_api.Extension.DependencyInjections
         }
         public static IServiceCollection BookingInteractorDependencyInjection(this IServiceCollection services)
         {
+            services.AddScoped<IGetAllBookingInteractor, GetAllBookingInteractor>();
             services.AddScoped<ICreateBookingRoomInteractor, CreateBookingRoomInteractor>();
             services.AddScoped<IUpdateBookingRoomInteractor, UpdateBookingRoomInteractor>();
             services.AddScoped<ICancelBookingRoomInteractor, CancelBookingRoomInteractor>();

@@ -14,6 +14,7 @@ namespace hotel_management_api.APIs.Room.DTOs
         public double? Square { get; set; }
         //So luong phong nhu nay la bao nhieu
         public int TotalRoom { get; set; }
+        public int? EmptyRoom { get; set; }
         //hoa`n tie`n   
         public bool Refund { get; set; }
         //do?i li.ch

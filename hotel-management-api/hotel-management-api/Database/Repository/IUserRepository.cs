@@ -12,9 +12,12 @@ namespace hotel_management_api.Database.Repository
         Task<bool> updateUser(AppUser user);
         Task<AppUser> userExist(string name);
         Task<bool> BlockAsync(string userId);
+        Task<IEnumerable<AppUser>?> GetAll();
         Task<bool> UnlockAsync(string userId);
         Task<AppUser?> FindByIdAsync(string id);
+        Task<bool> AddRole(string userid, string role);
         Task<AppUser> findUserByEmailAsync(string email);
+        Task<bool> IsContainRole(string userid, string role);
         Task<IdentityResult> createRoleAsync(IdentityRole role);
         Task<IEnumerable<Claim>?> LoginRepository(LoginDto dto);
         Task<IEnumerable<string>> GetListRoleOfUser(string userId);
