@@ -10,13 +10,29 @@ import { Pagination } from "../../components/Pagination";
 import { axiosPost, url } from "../../utils/httpRequest";
 import HotelPageSkeleton from "./HotelPageSkeleton";
 import { routes } from "../../routes";
+import CardSkeleton from "../../components/CardSkeleton/CardSkeleton";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
 // console.log(cx);
 
+const initFilters = {
+	priceSort: 0,
+	resttaurant: null,
+	allTimeFrontDesk: null,
+	elevator: null,
+	pool: null,
+	freeBreakfast: null,
+	airConditioner: null,
+	carBorow: null,
+	wifiFree: null,
+	parking: null,
+	allowPet: null,
+};
+
 export default function HotelPage() {
 	const [currentPage, setCurrentPage] = useState(1);
+	const [filters, setFilters] = useState(initFilters);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const params = {};
@@ -81,12 +97,15 @@ export default function HotelPage() {
 		return <Navigate to={routes.home} />;
 	}
 	const listHotelState = useQuery({
-		queryKey: ["hotel", params],
+		queryKey: ["hotel", params, filters],
 		queryFn: async () => {
+			console.log(filters);
 			try {
 				const res = await axiosPost(
 					url.hotel,
-					{},
+					{
+						...filters,
+					},
 					{
 						params: {
 							...params,
@@ -110,30 +129,44 @@ export default function HotelPage() {
 		listHotel = listHotelState.data.hotels;
 		categories = listHotelState.data.categories;
 		totalPage = listHotelState.data.totalPage;
-	} else {
-		return <HotelPageSkeleton />;
 	}
+	//  else {
+	// 	return <HotelPageSkeleton />;
+	// }
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
 	};
+	const handleFilter = (filterName, value) => {
+		setFilters({
+			...filters,
+			[filterName]: value,
+		});
+	};
 	return (
-		<div className="HotelPage__Container my-3">
+		<div className="HotelPage__Container my-4">
 			{/* <Navigate to={"/"} replace={true} /> */}
 			<div className="HotelPage__Body">
 				<div className="HotelPage__Filter p-3 bg-white border rounded">
-					<FilterHotel />
+					<FilterHotel handleFilter={handleFilter} />
 				</div>
 				<div className="HotelPage__List">
 					<div>
-						<div className="row gy-3">
-							{listHotel.map((hotel) => {
-								let category = [];
-								return (
-									<div key={hotel.id} className="col">
-										<HotelCard hotel={hotel} />
-									</div>
-								);
-							})}
+						<div className="row gy-3 mx-2">
+							{listHotelState.isFetching ? (
+								<>
+									<CardSkeleton />
+									<CardSkeleton />
+								</>
+							) : (
+								listHotel?.map((hotel) => {
+									let category = [];
+									return (
+										<div key={hotel.id} className="col px-0">
+											<HotelCard hotel={hotel} />
+										</div>
+									);
+								})
+							)}
 						</div>
 					</div>
 					{/* pagination */}

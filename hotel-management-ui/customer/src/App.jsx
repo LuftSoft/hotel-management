@@ -12,6 +12,29 @@ import "./custom-bs.scss";
 import { selectUser } from "./redux/selectors";
 import { useSelector } from "react-redux";
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+	apiKey: "AIzaSyBJaBz4pPayjp0fq3hPzQZtRe3RL0gauYc",
+	authDomain: "booking-hotel-ca412.firebaseapp.com",
+	projectId: "booking-hotel-ca412",
+	storageBucket: "booking-hotel-ca412.appspot.com",
+	messagingSenderId: "52323841285",
+	appId: "1:52323841285:web:d73e82f56483696f5bf36c",
+	measurementId: "G-JLZQKZ6BP5",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+console.log(analytics);
+
 const ProtectedRoute = ({ redirectPath = "/sign-in" }) => {
 	console.log("ProtectedRoute");
 	const currentUser = useSelector(selectUser);

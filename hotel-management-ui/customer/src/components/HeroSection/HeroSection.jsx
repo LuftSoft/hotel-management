@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { useRef } from "react";
 import { formatDate } from "../../utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { axiosGet, url } from "../../utils/httpRequest";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
+import { toast } from "react-toastify";
 
-export default function HeroSection() {
+function HeroSection(props, ref) {
 	console.log("render");
 	const navigate = useNavigate();
 	const checkInDateRef = useRef(null);
@@ -77,8 +78,12 @@ export default function HeroSection() {
 
 	const handleSearch = () => {
 		let params = "?";
-		if (checkInDateRef.current.value) {
-			console.log(checkInDateRef.current.value);
+		if (!(checkInDateRef.current.value && checkOutDateRef.current.value)) {
+			toast.error("Bạn hãy chọn ngày nhận và ngày trả phòng!", {
+				closeButton: true,
+				autoClose: 2000,
+			});
+			return;
 		}
 		params += "pageIndex=0&";
 		params += "pageSize=10&";
@@ -140,7 +145,13 @@ export default function HeroSection() {
 
 	useEffect(() => {
 		const today = new Date();
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		checkInDateRef.current.disabled = false;
+		checkOutDateRef.current.disabled = false;
 		checkInDateRef.current.min = formatDate(today);
+		checkInDateRef.current.value = formatDate(today);
+		checkOutDateRef.current.value = formatDate(tomorrow);
 	}, []);
 
 	return (
@@ -328,3 +339,5 @@ export default function HeroSection() {
 		</section>
 	);
 }
+
+export default forwardRef(HeroSection);

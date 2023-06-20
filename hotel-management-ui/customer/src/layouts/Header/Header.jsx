@@ -8,6 +8,7 @@ import { selectUser } from "../../redux/selectors";
 
 export default function Header() {
 	const currentUser = useSelector(selectUser);
+	const handleBookingNow = () => {};
 	return (
 		<>
 			{/* top bar */}
@@ -38,9 +39,9 @@ export default function Header() {
 								<i className="fa-brands fa-instagram"></i>
 							</a>
 						</div>
-						<a href="#" className="btn btn-primary ms-3">
+						<Link to={routes.home} onClick={handleBookingNow} className="btn btn-primary ms-3">
 							Booking Now
-						</a>
+						</Link>
 						<div className="d-inline ms-3">
 							{currentUser ? (
 								<UserMenu />
@@ -60,7 +61,7 @@ export default function Header() {
 			</div>
 			{/* end top bar */}
 			{/* nav bar */}
-			<div className="container-fluid px-0">
+			<div className="container-fluid px-0 shadow-sm">
 				<nav className="navbar navbar-expand-lg navbar-light px-2 px-lg-5 py-lg-4">
 					<a href={routes.home}>
 						<img src={logo} alt="logo" />

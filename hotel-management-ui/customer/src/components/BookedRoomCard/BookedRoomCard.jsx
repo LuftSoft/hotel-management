@@ -9,14 +9,14 @@ export default function BookedRoomCard({ bookedRoom }) {
 	const [aborted, setAborted] = useState(false);
 	const handleAbort = async (e) => {
 		e.stopPropagation();
-		console.log(bookedRoom.id);
+		// console.log(bookedRoom.id);
 		try {
 			const res = await axiosDelete(url.cancelBooking + bookedRoom.id, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
 			});
-			console.log(res); // res.success
+			// console.log(res); // res.success
 			if (res.success) {
 				setAborted(true);
 			}
