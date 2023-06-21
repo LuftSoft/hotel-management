@@ -1,3 +1,4 @@
+import { routes } from "../../routes";
 import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,9 +9,8 @@ import HotelCard from "../../components/HotelCard";
 import FilterHotel from "../../components/FilterHotel";
 import { Pagination } from "../../components/Pagination";
 import { axiosPost, url } from "../../utils/httpRequest";
-import HotelPageSkeleton from "./HotelPageSkeleton";
-import { routes } from "../../routes";
-import CardSkeleton from "../../components/CardSkeleton/CardSkeleton";
+import CardSkeleton from "../../components/CardSkeleton";
+import { useDeferred } from "../../hooks";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
@@ -33,6 +33,7 @@ const initFilters = {
 export default function HotelPage() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [filters, setFilters] = useState(initFilters);
+	const filtersDeferred = useDeferred(filters, 500);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const params = {};
@@ -97,7 +98,7 @@ export default function HotelPage() {
 		return <Navigate to={routes.home} />;
 	}
 	const listHotelState = useQuery({
-		queryKey: ["hotel", params, filters],
+		queryKey: ["hotel", params, filtersDeferred],
 		queryFn: async () => {
 			console.log(filters);
 			try {
