@@ -37,6 +37,7 @@ namespace hotel_management_api.Database.Repository
                 {
                     Id = c.Id,
                     BookingId = c.BookingId,
+                    UserId = c.Booking.UserId,
                     Content = c.Content,
                     CreateDate = c.CreateDate,
                     LastChange = c.LastChange,
