@@ -11,6 +11,7 @@ import { Pagination } from "../../components/Pagination";
 import { axiosPost, url } from "../../utils/httpRequest";
 import CardSkeleton from "../../components/CardSkeleton";
 import { useDeferred } from "../../hooks";
+import EmptyCard from "../../components/EmptyCard/EmptyCard";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
@@ -18,6 +19,8 @@ import { useDeferred } from "../../hooks";
 
 const initFilters = {
 	priceSort: 0,
+	minPrice: null,
+	maxPrice: null,
 	resttaurant: null,
 	allTimeFrontDesk: null,
 	elevator: null,
@@ -137,10 +140,10 @@ export default function HotelPage() {
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
 	};
-	const handleFilter = (filterName, value) => {
+	const handleFilter = (filter) => {
 		setFilters({
 			...filters,
-			[filterName]: value,
+			...filter,
 		});
 	};
 	return (
@@ -158,7 +161,7 @@ export default function HotelPage() {
 									<CardSkeleton />
 									<CardSkeleton />
 								</>
-							) : (
+							) : listHotel.length > 0 ? (
 								listHotel?.map((hotel) => {
 									let category = [];
 									return (
@@ -167,16 +170,23 @@ export default function HotelPage() {
 										</div>
 									);
 								})
+							) : (
+								<EmptyCard
+									title={"Không tìm thấy khách sạn"}
+									content={"Các khách sạn khớp với bộ lọc sẽ được hiển thị tại đây!"}
+								/>
 							)}
 						</div>
 					</div>
 					{/* pagination */}
-					<Pagination
-						currentPage={currentPage}
-						totalPage={totalPage}
-						onPageChange={handlePageChange}
-						className={"justify-content-center mt-3"}
-					/>
+					{listHotel.length > 0 && (
+						<Pagination
+							currentPage={currentPage}
+							totalPage={totalPage}
+							onPageChange={handlePageChange}
+							className={"justify-content-center mt-3"}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

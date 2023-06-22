@@ -5,6 +5,9 @@ export const axiosInstance = axios.create({
 	baseURL: import.meta.env.VITE_BASE_URL,
 });
 
+/**
+ * this is url object which contains endpoint
+ */
 export const url = {
 	signIn: "user/login",
 	signUp: "user/signup",
@@ -18,16 +21,23 @@ export const url = {
 	refreshToken: "user/refresh_token",
 	cancelBooking: "booking/",
 	createBooking: "booking",
+	postComment: "comment",
+	updateComment: "comment",
 };
 
+/**
+ * to get new accessToken and refreshToken
+ * @param {String} refreshToken
+ * @returns {Object} new Object contains new accessToken and refreshToken
+ */
 const getNewAccessToken = async (refreshToken) => {
 	if (!refreshToken) {
 		throw new Error("refreshToken is not found in refreshToken function");
 	}
 	try {
 		const res = await axiosInstance.get(url.refreshToken, {
-			params: {
-				token: refreshToken,
+			headers: {
+				Authorization: refreshToken,
 			},
 		});
 		console.log(res);

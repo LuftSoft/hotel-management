@@ -63,7 +63,7 @@ export default function SignInPage() {
 				} catch (error) {
 					console.log(error);
 					toast.update(toastId, {
-						render: error.response.data.message,
+						render: "Tài khoản hoặc mật khẩu không đúng!",
 						type: "error",
 						closeButton: true,
 						autoClose: 1000,

@@ -1,6 +1,6 @@
 export default function DetailHotelSkeleton() {
 	return (
-		<div className=" bg-light py-3">
+		<div className="bg-light py-3">
 			<div className="Container my-3 d-flex flex-column gap-3">
 				<div className="bg-white rounded border">
 					<div className="d-flex flex-column p-3">

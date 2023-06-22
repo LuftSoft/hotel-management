@@ -116,7 +116,7 @@ export default function RoomCard({ room, hotelBenefit }) {
 										<i className="fa-solid fa-user-group"></i>
 										<span className="ms-2">{room.numOfPeope + " khách"}</span>
 									</div>
-									<div className="text-danger">{`(${room.totalRoom} phòng có sẵn)`}</div>
+									<div className="text-danger">{`(${room.emptyRoom} phòng có sẵn)`}</div>
 								</div>
 								<div className="border my-3"></div>
 							</div>

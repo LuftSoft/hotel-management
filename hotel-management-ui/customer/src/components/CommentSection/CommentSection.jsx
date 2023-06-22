@@ -1,13 +1,96 @@
-import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
 
+import { axiosJWT, url } from "../../utils/httpRequest";
 import CommentCard from "../CommentCard/CommentCard";
 import PostComment from "../PostComment/PostComment";
 import Stars from "../Stars";
 import ServiceRating from "../ServiceRating";
-import { selectUser } from "../../redux/selectors";
+import { selectAccessToken, selectRefreshToken, selectUser } from "../../redux/selectors";
 
 export default function CommentSection({ hotel }) {
 	const currentUser = useSelector(selectUser);
+	const accessToken = useSelector(selectAccessToken);
+	const refreshToken = useSelector(selectRefreshToken);
+	const dispatch = useDispatch();
+	const bookedRoomState = useQuery({
+		queryKey: ["bookedRoom", accessToken],
+		queryFn: async () => {
+			const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
+			try {
+				const res = await axiosJwt.get(url.bookedRooms, {
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				});
+				return res.data;
+			} catch (error) {
+				return Promise.reject(error);
+			}
+		},
+		staleTime: 3 * 60 * 1000,
+	});
+	let bookedRooms = [];
+	if (bookedRoomState.isSuccess) {
+		bookedRooms = bookedRoomState.data.bookingList;
+	}
+	/**
+	 * return booking id
+	 * @returns {Number|null}
+	 */
+	const getBookedRoomId = () => {
+		for (let index = 0; index < bookedRooms.length; index++) {
+			const bookedRoom = bookedRooms[index];
+			if (bookedRoom.hotelId === hotel.id) {
+				return bookedRoom.id;
+			}
+		}
+		return null;
+	};
+	/**
+	 * return true if user has booked this hotel
+	 * @returns {true|false}
+	 */
+	const isExisted = () => {
+		for (let index = 0; index < bookedRooms.length; index++) {
+			const bookedRoom = bookedRooms[index];
+			if (bookedRoom.hotelId === hotel.id) {
+				return true;
+			}
+		}
+		return false;
+	};
+	/**
+	 * return true if user can post comment to this hotel
+	 * @returns {true|false}
+	 */
+	const canPost = () => {
+		if (currentUser) {
+			for (let index = 0; index < hotel.comments.length; index++) {
+				const comment = hotel.comments[index];
+				if (comment.userId === currentUser.id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+	/**
+	 * return comment of current user if any
+	 * @returns {Object}
+	 */
+	const getComment = () => {
+		if (currentUser) {
+			for (let index = 0; index < hotel.comments.length; index++) {
+				const comment = hotel.comments[index];
+				if (comment.userId === currentUser.id) {
+					return comment;
+				}
+			}
+		}
+		return null;
+	};
+	const comment = getComment();
 	return (
 		<div className="d-flex flex-column bg-white rounded">
 			<div className="d-flex flex-column gap-3 px-3 py-4">
@@ -153,15 +236,27 @@ export default function CommentSection({ hotel }) {
 				{/* list comment */}
 				<div className="d-flex flex-column">
 					{/* to comment */}
-					{currentUser && <PostComment />}
+					{currentUser && isExisted() ? (
+						canPost() ? (
+							<PostComment posted={true} comment={comment} bookedRoomId={getBookedRoomId()} />
+						) : (
+							<PostComment posted={false} />
+						)
+					) : null}
 					{/* divider */}
 					<div className="my-2"></div>
 					{/* list comment */}
 					<div className="d-flex flex-column">
 						<div className="d-flex flex-column gap-3">
-							{hotel.comments.map((comment) => (
-								<CommentCard key={comment.id} comment={comment} />
-							))}
+							{hotel.comments.map((comment) => {
+								if (currentUser) {
+									if (currentUser.id === comment.userId) {
+										return null;
+									}
+								} else {
+									return <CommentCard key={comment.id} comment={comment} />;
+								}
+							})}
 						</div>
 					</div>
 				</div>

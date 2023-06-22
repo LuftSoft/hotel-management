@@ -1,4 +1,23 @@
+import { useRef } from "react";
+
 export default function FilterHotel({ handleFilter }) {
+	const minPriceRef = useRef();
+	const maxPriceRef = useRef();
+	const handleClick = () => {
+		console.log(minPriceRef.current.value);
+		const filter = {};
+		if (minPriceRef.current.value) {
+			filter.minPrice = minPriceRef.current.value;
+		} else {
+			filter.minPrice = null;
+		}
+		if (maxPriceRef.current.value) {
+			filter.maxPrice = maxPriceRef.current.value;
+		} else {
+			filter.maxPrice = null;
+		}
+		handleFilter(filter);
+	};
 	return (
 		<div>
 			<div className="mb-3">
@@ -7,7 +26,7 @@ export default function FilterHotel({ handleFilter }) {
 					className="form-select"
 					aria-label="Default select example"
 					onChange={(e) => {
-						handleFilter("priceSort", e.target.value);
+						handleFilter({ priceSort: e.target.value });
 					}}>
 					<option defaultChecked value="0">
 						Tăng dần
@@ -15,25 +34,34 @@ export default function FilterHotel({ handleFilter }) {
 					<option value="1">Giảm dần</option>
 				</select>
 			</div>
-			{/* <div className="my-3">
-				<label htmlFor="" className="form-label">
-					Giá thấp nhất:
-				</label>
-				<input className="form-control" id="" type="number" min={0} />
+			<div className="border"></div>
+			<div className="mb-3">
+				<div className="my-3">
+					<label htmlFor="" className="form-label">
+						Giá thấp nhất:
+					</label>
+					<input ref={minPriceRef} className="form-control" id="" type="number" min={0} />
+				</div>
+				<div className="my-3">
+					<label htmlFor="" className="form-label">
+						Giá cao nhất:
+					</label>
+					<input ref={maxPriceRef} className="form-control" id="" type="number" min={0} />
+				</div>
+				<button type="button" onClick={handleClick} className="btn btn-outline-primary w-100">
+					Chọn giá
+				</button>
 			</div>
-			<div className="my-3">
-				<label htmlFor="" className="form-label">
-					Giá cao nhất:
-				</label>
-				<input className="form-control" id="" type="number" min={0} />
-			</div> */}
-			<div>
+			<div className="border"></div>
+			<div className="mt-3">
 				<label>Dịch vụ:</label>
 				<div className="form-check">
 					<input
 						className="form-check-input"
 						onChange={(e) => {
-							handleFilter("resttaurant", e.target.checked);
+							handleFilter({
+								resttaurant: e.target.checked,
+							});
 						}}
 						type="checkbox"
 						defaultValue=""
@@ -48,7 +76,7 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("allTimeFrontDesk", e.target.checked);
+							handleFilter({ allTimeFrontDesk: e.target.checked });
 						}}
 						defaultValue=""
 						id="24h"
@@ -62,7 +90,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("elevator", e.target.checked);
+							handleFilter({
+								elevator: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="elevator"
@@ -76,7 +106,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("pool", e.target.checked);
+							handleFilter({
+								pool: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="pool"
@@ -90,7 +122,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("freeBreakfast", e.target.checked);
+							handleFilter({
+								freeBreakfast: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="free-breakfast"
@@ -104,7 +138,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("airConditioner", e.target.checked);
+							handleFilter({
+								airConditioner: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="air-conditioner"
@@ -118,7 +154,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("carBorow", e.target.checked);
+							handleFilter({
+								carBorow: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="lendingCar"
@@ -132,7 +170,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("wifiFree", e.target.checked);
+							handleFilter({
+								wifiFree: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="wifi-free"
@@ -146,7 +186,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("parking", e.target.checked);
+							handleFilter({
+								parking: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="parking"
@@ -160,7 +202,9 @@ export default function FilterHotel({ handleFilter }) {
 						className="form-check-input"
 						type="checkbox"
 						onChange={(e) => {
-							handleFilter("allowPet", e.target.checked);
+							handleFilter({
+								allowPet: e.target.checked,
+							});
 						}}
 						defaultValue=""
 						id="allow-pets"

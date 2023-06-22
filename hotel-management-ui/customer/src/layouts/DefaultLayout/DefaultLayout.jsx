@@ -25,7 +25,7 @@ export default function DefaultLayout({ children }) {
 			{/* open mobile menu */}
 			{/* mobile menu */}
 			<Header />
-			{children}
+			<div>{children}</div>
 			{/* Footer */}
 			<Footer />
 			{/* Search Modal */}
