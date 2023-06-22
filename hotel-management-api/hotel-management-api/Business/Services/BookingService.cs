@@ -213,6 +213,7 @@ namespace hotel_management_api.Business.Services
                         Status = booking.Status,
                         Returned = booking.Returned,
                         HotelId = hotel.Id,
+                        UserId = booking.UserId,
                         HotelName = hotel.Name,
                         HotelImage = hotel.LogoLink,
                         FromDate = booking.FromDate,
