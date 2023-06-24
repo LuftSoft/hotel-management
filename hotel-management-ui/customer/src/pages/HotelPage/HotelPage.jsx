@@ -1,5 +1,5 @@
 import { routes } from "../../routes";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // import classNames from "classnames/bind";
@@ -12,6 +12,7 @@ import { axiosPost, url } from "../../utils/httpRequest";
 import CardSkeleton from "../../components/CardSkeleton";
 import { useDeferred } from "../../hooks";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
+import { useBookingDate } from "../../contexts/bookingDateContext";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
@@ -35,12 +36,15 @@ const initFilters = {
 
 export default function HotelPage() {
 	const [currentPage, setCurrentPage] = useState(1);
+	const { bookingDate, setBookingDate } = useBookingDate();
 	const [filters, setFilters] = useState(initFilters);
 	const filtersDeferred = useDeferred(filters, 500);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
+	const bookingDateTest = {};
 	const params = {};
 	searchParams.forEach((value, key) => {
+		// console.log("test", key, "= ", value);
 		if (value) {
 			switch (key) {
 				case "pageIndex":
@@ -51,6 +55,8 @@ export default function HotelPage() {
 				case "pageSize":
 					if (!isNaN(value)) {
 						params[key] = value;
+					} else {
+						console.log("params", false);
 					}
 					break;
 				case "ProvineId":
@@ -82,6 +88,7 @@ export default function HotelPage() {
 					if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
 						if (!isNaN(Date.parse(value))) {
 							params[key] = value;
+							bookingDateTest[key] = value;
 						}
 					}
 					break;
@@ -89,12 +96,14 @@ export default function HotelPage() {
 					if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
 						if (!isNaN(Date.parse(value))) {
 							params[key] = value;
+							bookingDateTest[key] = value;
 						}
 					}
 					break;
 				default:
 					break;
 			}
+			// setBookingDate(bookingDateTest);
 		}
 	});
 	if (Object.keys(params).length <= 0) {
@@ -116,7 +125,7 @@ export default function HotelPage() {
 						},
 					},
 				);
-				console.log(res);
+				// console.log(res);
 				return res;
 			} catch (error) {
 				console.log(error);
@@ -161,12 +170,12 @@ export default function HotelPage() {
 									<CardSkeleton />
 									<CardSkeleton />
 								</>
-							) : listHotel.length > 0 ? (
+							) : listHotel?.length > 0 ? (
 								listHotel?.map((hotel) => {
 									let category = [];
 									return (
 										<div key={hotel.id} className="col px-0">
-											<HotelCard hotel={hotel} />
+											<HotelCard hotel={hotel} bookingDate={bookingDateTest} searchParams={params} />
 										</div>
 									);
 								})
@@ -179,7 +188,7 @@ export default function HotelPage() {
 						</div>
 					</div>
 					{/* pagination */}
-					{listHotel.length > 0 && (
+					{listHotel?.length > 0 && (
 						<Pagination
 							currentPage={currentPage}
 							totalPage={totalPage}

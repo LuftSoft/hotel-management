@@ -5,6 +5,7 @@ import { selectAccessToken, selectRefreshToken, selectUser } from "../../redux/s
 import { toast } from "react-toastify";
 
 export default function PostComment({ posted = true, comment, bookedRoomId }) {
+	console.log(bookedRoomId);
 	const currentUser = useSelector(selectUser);
 	const accessToken = useSelector(selectAccessToken);
 	const refreshToken = useSelector(selectRefreshToken);
@@ -39,6 +40,14 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 	const handlePost = async () => {
 		const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
 		const idToast = toast.loading("Đang xử lý!");
+		const today = new Date();
+		console.log({
+			rating: starRef.current,
+			content: contentRef.current.value,
+			createDate: today.toISOString(),
+			lastChange: today.toISOString(),
+			bookingId: bookedRoomId,
+		});
 		try {
 			const today = new Date();
 			const res = await axiosJwt.post(

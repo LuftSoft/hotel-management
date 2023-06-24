@@ -36,7 +36,7 @@ const analytics = getAnalytics(app);
 console.log(analytics);
 
 const ProtectedRoute = ({ redirectPath = "/sign-in" }) => {
-	console.log("ProtectedRoute");
+	// console.log("ProtectedRoute");
 	const currentUser = useSelector(selectUser);
 	const currentPathName = window.location.pathname;
 	if (!currentUser) {

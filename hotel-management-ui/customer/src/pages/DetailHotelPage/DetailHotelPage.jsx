@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 import CommentSection from "../../components/CommentSection";
 import { axiosGet, url } from "../../utils/httpRequest";
@@ -9,6 +10,7 @@ import RoomCard from "../../components/RoomCard/RoomCard";
 import DetailHotelSkeleton from "./DetailHotelSkeleton";
 
 export default function DetailHotelPage() {
+	// const { state } = useLocation();
 	const roomsRef = useRef();
 	const { id } = useParams();
 	const hotelState = useQuery({
@@ -46,6 +48,9 @@ export default function DetailHotelPage() {
 	} else {
 		return <DetailHotelSkeleton />;
 	}
+	const handleRoomCardClick = () => {
+		hotelState.refetch();
+	};
 	return (
 		<div className=" bg-light py-3">
 			<div className="Container my-3 d-flex flex-column gap-3">
@@ -144,7 +149,12 @@ export default function DetailHotelPage() {
 						</h2>
 						<div className="d-flex flex-column gap-4">
 							{hotel.rooms.map((room) => (
-								<RoomCard key={room.id} room={room} hotelBenefit={hotel.hotelBenefit} />
+								<RoomCard
+									key={room.id}
+									room={room}
+									hotelBenefit={hotel.hotelBenefit}
+									onCardClick={handleRoomCardClick}
+								/>
 							))}
 						</div>
 					</div>

@@ -7,13 +7,31 @@
 
 import "./HotelCard.scss";
 import Stars from "../Stars/Stars";
+import { Link, createSearchParams, useNavigate } from "react-router-dom";
+import { useBookingDate } from "../../contexts/bookingDateContext";
+import { useDispatch } from "react-redux";
+import { setBookingDate } from "../../redux/bookingDateSlice";
 
-export default function HotelCard({ hotel }) {
+export default function HotelCard({ hotel, bookingDate, searchParams }) {
+	// console.log(bookingDate);
+	const dispatch = useDispatch();
+	// const { setBookingDate } = useBookingDate();
+	const navigate = useNavigate();
 	const handleClick = () => {
-		window.open("/hotel/" + hotel.id, "_blank");
+		// window.open("/hotel/" + hotel.id, "_blank");
+		// navigate("/hotel/" + hotel.id, {
+		// 	state: "test",
+		// 	relative: "route",
+		// });
+		dispatch(setBookingDate(bookingDate));
 	};
 	return (
-		<div className="HotelCard__Container" onClick={handleClick}>
+		<Link
+			to={"/hotel/" + hotel.id + "?" + createSearchParams(searchParams)}
+			target="_blank"
+			state={{ a: "test" }}
+			className="HotelCard__Container border d-block"
+			onClick={handleClick}>
 			<article className="HotelCard__Wrapper">
 				<div className="HotelCard__Logo">
 					<img
@@ -87,6 +105,6 @@ export default function HotelCard({ hotel }) {
 					</div>
 				</div>
 			</article>
-		</div>
+		</Link>
 	);
 }

@@ -1,49 +1,64 @@
 import { useSelector } from "react-redux";
 import { axiosPost, url } from "../../utils/httpRequest";
-import { selectAccessToken } from "../../redux/selectors";
+import { selectAccessToken, selectBookingDate, selectUser } from "../../redux/selectors";
 import { toast } from "react-toastify";
+import { useBookingDate } from "../../contexts/bookingDateContext";
+import { redirect, useNavigate } from "react-router-dom";
+import { routes } from "../../routes";
 
-export default function RoomCard({ room, hotelBenefit }) {
+export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} }) {
+	const bookingDate = useSelector(selectBookingDate);
+	const currentUser = useSelector(selectUser);
+	const currentPathName = window.location.pathname;
+	console.log(new Date(bookingDate.FromDate).toISOString());
+	const navigate = useNavigate();
 	const accessToken = useSelector(selectAccessToken);
 	const handleBook = async () => {
 		console.log(room.id);
-		const toastId = toast.loading("Đang xử lý!");
-		try {
-			const res = await axiosPost(
-				url.createBooking,
-				{
-					id: "0",
-					roomId: room.id,
-					status: "create",
-					returned: false,
-					fromDate: "2023-06-19T15:52:09.895Z",
-					toDate: "2023-06-20T15:52:09.895Z",
-				},
-				{
-					headers: {
-						Authorization: "Bearer " + accessToken,
+		if (currentUser) {
+			const toastId = toast.loading("Đang xử lý!");
+			try {
+				const res = await axiosPost(
+					url.createBooking,
+					{
+						id: "0",
+						roomId: room.id,
+						status: "create",
+						returned: false,
+						fromDate: new Date(bookingDate.FromDate).toISOString(),
+						toDate: new Date(bookingDate.ToDate).toISOString(),
+						// fromDate: "2023-06-19T15:52:09.895Z",
+						// toDate: "2023-06-20T15:52:09.895Z",
 					},
-				},
-			);
-			console.log(res); //res.success
-			if (res.success) {
+					{
+						headers: {
+							Authorization: "Bearer " + accessToken,
+						},
+					},
+				);
+				// console.log(res); //res.success
+				onCardClick();
+				if (res.success) {
+					toast.update(toastId, {
+						render: "Đặt phòng thành công!",
+						type: "success",
+						closeButton: true,
+						autoClose: 1000,
+						isLoading: false,
+					});
+				}
+			} catch (error) {
+				console.log(error);
 				toast.update(toastId, {
-					render: "Đặt phòng thành công!",
-					type: "success",
+					render: "Không thể đặt phòng!",
+					type: "error",
 					closeButton: true,
 					autoClose: 1000,
 					isLoading: false,
 				});
 			}
-		} catch (error) {
-			console.log(error);
-			toast.update(toastId, {
-				render: error.response.data.message,
-				type: "error",
-				closeButton: true,
-				autoClose: 1000,
-				isLoading: false,
-			});
+		} else {
+			navigate(`${routes.signIn}?next=${encodeURIComponent(currentPathName)}`);
 		}
 	};
 	return (

@@ -39,6 +39,7 @@ export default function CommentSection({ hotel }) {
 	 * @returns {Number|null}
 	 */
 	const getBookedRoomId = () => {
+		console.log("in comment section", hotel.id);
 		for (let index = 0; index < bookedRooms.length; index++) {
 			const bookedRoom = bookedRooms[index];
 			if (bookedRoom.hotelId === hotel.id) {
@@ -51,7 +52,7 @@ export default function CommentSection({ hotel }) {
 	 * return true if user has booked this hotel
 	 * @returns {true|false}
 	 */
-	const isExisted = () => {
+	const canPost = () => {
 		for (let index = 0; index < bookedRooms.length; index++) {
 			const bookedRoom = bookedRooms[index];
 			if (bookedRoom.hotelId === hotel.id) {
@@ -64,7 +65,7 @@ export default function CommentSection({ hotel }) {
 	 * return true if user can post comment to this hotel
 	 * @returns {true|false}
 	 */
-	const canPost = () => {
+	const hasPosted = () => {
 		if (currentUser) {
 			for (let index = 0; index < hotel.comments.length; index++) {
 				const comment = hotel.comments[index];
@@ -236,11 +237,11 @@ export default function CommentSection({ hotel }) {
 				{/* list comment */}
 				<div className="d-flex flex-column">
 					{/* to comment */}
-					{currentUser && isExisted() ? (
-						canPost() ? (
-							<PostComment posted={true} comment={comment} bookedRoomId={getBookedRoomId()} />
+					{currentUser && canPost() ? (
+						hasPosted() ? (
+							<PostComment posted={true} comment={comment} />
 						) : (
-							<PostComment posted={false} />
+							<PostComment posted={false} bookedRoomId={getBookedRoomId()} />
 						)
 					) : null}
 					{/* divider */}

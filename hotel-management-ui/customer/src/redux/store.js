@@ -4,17 +4,19 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 
 import authSlice from "./authSlice";
 import userSlice from "./userSlice";
+import bookingDateSlice from "./bookingDateSlice";
 
 const persistConfig = {
 	key: "root",
 	version: 1,
 	storage,
-	whitelist: ["auth", "user"],
+	whitelist: ["auth", "user", "bookingDate"],
 };
 
 const rootReducer = combineReducers({
 	auth: authSlice,
 	user: userSlice,
+	bookingDate: bookingDateSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
