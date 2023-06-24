@@ -135,7 +135,7 @@ namespace hotel_management_api.APIs.User
         [HttpPost("fogot-password")]
         public async Task<IActionResult> fogotpassword([FromBody] FogotPasswordDto dto)
         {   
-            var resullt = await fogotPasswordInteractor.fogotPassword(new IFogotPasswordInteractor.Request(dto.Email));
+            var resullt = await fogotPasswordInteractor.fogotPassword(new IFogotPasswordInteractor.Request(dto.Email,dto.Url));
             if(resullt.Success == true) return Ok(resullt);
             return BadRequest(resullt);
         }

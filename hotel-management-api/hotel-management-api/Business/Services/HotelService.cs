@@ -88,11 +88,19 @@ namespace hotel_management_api.Business.Services
             var benefit = await hotelBenefitRepository.FindByHotelIdAsync(hotelId);
             benefit.Hotel = null;
             var hotelCategory = await hotelCategoryRepository.GetById(hotel.HotelCategoryId);
+            double avgRating = 0;
+            foreach(var comment in comments)
+            {
+                avgRating += comment.Rating;
+            }
+
+            avgRating = Math.Round((avgRating / comments.Count)*2, MidpointRounding.AwayFromZero)/2;
+            
             HotelDetailDto hotelDetailDto = new HotelDetailDto()
             {
                 Id = hotel.Id,
                 Name = hotel.Name,
-                Star = hotel.Star,
+                Star = avgRating,
                 Slug = hotel.Slug,
                 USerId = hotel.USerId,
                 Address = hotel.Address,

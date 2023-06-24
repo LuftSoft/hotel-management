@@ -268,7 +268,7 @@ namespace hotel_management_api.Business.Services
             }
             var token = new JwtSecurityTokenHandler().WriteToken(jwtUtil.GenerateResetPasswordApiToken(user.UserName));
             var result = await sendMailUtil.SendMailAsync(user.Email, "Please click to the link bellow to reset your password",
-                $"{this.configuration["ApplicationHost"]}/fogot-password/{token}");
+                $"{request.Url}/{token}");
             if (result.Success == true) await userRepository.updateResetPasswordTokenAsync(user.UserName, token);
             return new IFogotPasswordInteractor.Response(result.Message, result.Success);
         }

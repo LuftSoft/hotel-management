@@ -8,9 +8,11 @@ namespace hotel_management_api.Business.Interactor.User
         public class Request
         {
             public string? Email { get; set; }
-            public Request(string? email)
+            public string? Url { get; set; }
+            public Request(string? email, string? url)
             {
                 Email = email;
+                Url = url;
             }
         }
         public class Response
