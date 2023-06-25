@@ -191,5 +191,50 @@ namespace hotel_management_api.Business.Services
                 };
             }
         }
+        public async Task<IGetAllBookingInteractor.Response> GetAll(IGetAllBookingInteractor.Request request)
+        {
+            try
+            {
+                if (request.pageSize == 0) request.pageSize = 10;
+                List<BookingListDto> bookingListDtos = new List<BookingListDto>();
+                var bookings = await bookingRepository.GetAll();
+                bookings = bookings.Skip(request.pageIndex * request.pageSize).Take(request.pageSize);
+                foreach (var booking in bookings)
+                {
+                    var room = await roomRepository.GetByIdAsync(booking.RoomId);
+                    var hotel = await hotelRepository.getOne(room.HotelId);
+                    if (room == null || hotel == null) continue;
+                    bookingListDtos.Add(new BookingListDto()
+                    {
+                        Id = booking.Id,
+                        RoomId = booking.RoomId,
+                        RoomSize = room.NumOfPeope,
+                        RoomName = room.Name,
+                        Status = booking.Status,
+                        Returned = booking.Returned,
+                        HotelId = hotel.Id,
+                        UserId = booking.UserId,
+                        HotelName = hotel.Name,
+                        HotelImage = hotel.LogoLink,
+                        FromDate = booking.FromDate,
+                        ToDate = booking.ToDate
+                    });
+                }
+                return new IGetAllBookingInteractor.Response()
+                {
+                    Success = true,
+                    Message = "Error occur when get list  booking",
+                    BookingList = bookingListDtos
+                };
+            }
+            catch(Exception ex)
+            {
+                return new IGetAllBookingInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Error occur when get list  booking"
+                };
+            }
+        }
     }
 }

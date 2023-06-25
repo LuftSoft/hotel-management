@@ -69,6 +69,53 @@ namespace hotel_management_api.Database.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<AppUser>?> GetAll()
+        {
+            try
+            {
+                return await appDbContext.Users.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public async Task<bool> IsContainRole(string userid, string role)
+        {
+            try
+            {
+                var user = await FindByIdAsync(userid);
+                if (user == null) return false;
+                var roles = await GetListRoleOfUser(userid);
+                if (roles.Contains(role)) return true;
+                return false;
+            }
+            catch(Exception ex) 
+            {
+                return false;
+            }
+        }
+        public async Task<bool> AddRole(string userid, string role)
+        {
+            try
+            {
+                var user = await FindByIdAsync(userid);
+                if(user == null) return false;
+                if( await IsContainRole(userid, role)) return false;
+                var tmpRole = await roleManager.FindByNameAsync(role);
+                if (tmpRole == null) return false;
+                var userRole = new IdentityUserRole<string>();
+                userRole.UserId = userid;
+                userRole.RoleId = tmpRole.Id;
+                appDbContext.UserRoles.Add(userRole);
+                await appDbContext.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex) 
+            {
+                return false;
+            }
+        }
         public async Task<AppUser> userExist(string name)
         {
             return await userManager.FindByNameAsync(name);

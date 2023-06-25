@@ -6,6 +6,7 @@ namespace hotel_management_api.Business.Services
     {
         Task<ICreateBookingRoomInteractor.Response> CreateAsync(ICreateBookingRoomInteractor.Request request);
         Task<IGetAllBookingByUserInteractor.Response> GetByUserIdAsync(IGetAllBookingByUserInteractor.Request request);
+        Task<IGetAllBookingInteractor.Response> GetAll(IGetAllBookingInteractor.Request request);
         Task<IUpdateBookingRoomInteractor.Response> UpdateAsync(IUpdateBookingRoomInteractor.Request request);
         Task<ICancelBookingRoomInteractor.Response> CancelAsync(ICancelBookingRoomInteractor.Request request);
     }

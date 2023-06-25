@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Engines;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -30,7 +31,7 @@ namespace hotel_management_api.Utils
             var token = new JwtSecurityToken(
                 issuer: configuration["JWTConfig:ValidIssuer"],
                 audience: configuration["JWTConfig:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.UtcNow.AddHours(7).AddHours(3),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
@@ -46,7 +47,7 @@ namespace hotel_management_api.Utils
             var token = new JwtSecurityToken(
                 issuer: configuration["JWTConfig:ValidIssuer"],
                 audience: configuration["JWTConfig:ValidAudience"],
-                expires: DateTime.Now.AddDays(3),
+                expires: DateTime.UtcNow.AddHours(7).AddDays(3),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
@@ -59,11 +60,12 @@ namespace hotel_management_api.Utils
             authClaims.Add(new Claim(type: "ResetPassword", "true"));
             authClaims.Add(new Claim(type: "UserName", value: username));
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTConfig:RefreshPasswordSecret"]));
-
+            var x = DateTime.Now.AddMinutes(3);
+            Console.WriteLine(x.ToShortTimeString());
             var token = new JwtSecurityToken(
                 issuer: configuration["JWTConfig:ValidIssuer"],
                 audience: configuration["JWTConfig:ValidAudience"],
-                expires: DateTime.Now.AddMinutes(3),
+                expires: DateTime.UtcNow.AddHours(7).AddMinutes(3),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
@@ -84,7 +86,8 @@ namespace hotel_management_api.Utils
         {   
             if(token == null) return true;
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            if(jwt == null) 
+            var x = DateTime.Now.AddDays(30);
+            if (jwt == null) 
                 return true;
             var expired = jwt.ValidTo;
             if(expired > DateTime.Now) 

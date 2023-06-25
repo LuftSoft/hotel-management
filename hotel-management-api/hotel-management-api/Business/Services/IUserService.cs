@@ -10,7 +10,9 @@ namespace hotel_management_api.Business.Services
         Task<AppUser> FindByIdAsync(string userId);
         Task<UserDto?> getDetailAsync(string userId);
         Task<string?> GetUserIdFromToken(string token);
+        Task<IGetAllUserInteractor.Response> GetAllUser();
         Task<IRefreshTokenInteractor.Response> RefreshToken(string token);
+        Task<IAddRoleToUserInteractor.Response> AddRoleToUser(string userId, string role);
         Task<IUserLoginInteractor.Response> LoginService(IUserLoginInteractor.Request request);
         Task<IDeleteUserInteractor.Response> DeleteAsync(IDeleteUserInteractor.Request request);
         Task<IUpdateUserInteractor.Response> UpdateAsync(IUpdateUserInteractor.Request request);

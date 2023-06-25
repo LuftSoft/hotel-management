@@ -25,7 +25,7 @@ namespace hotel_management_api.Business.Services
         {
             try
             {
-                var isExist = commentRepository.FindByBookingId(request.Comment.BookingId);
+                var isExist = await commentRepository.FindByBookingId(request.Comment.BookingId);
                 if(isExist != null) 
                 {
                     return new ICreateCommentInteractor.Response()
