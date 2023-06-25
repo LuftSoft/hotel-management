@@ -20,16 +20,16 @@ export default function SidebarUser() {
 						<div className="border border-2 rounded-circle p-1 overflow-hidden">
 							<img
 								className="rounded-circle"
-								src={currentUser.avatar ? currentUser.avatar : ""}
+								src={currentUser.avatar ? currentUser.avatar : "/img/user-avatar.png"}
 								alt="user-avatar"
-								style={{ width: 60, height: 60 }}
+								style={{ width: 60, height: 60, objectFit: "cover" }}
 								onError={(e) => {
 									e.target.src = "/img/user-avatar.png";
 								}}
 							/>
 						</div>
 						<div className="ms-2">
-							<h3 className="fs-5">name</h3>
+							<h3 className="fs-5">{currentUser.lastName + " " + currentUser.firstName}</h3>
 						</div>
 					</div>
 				</div>

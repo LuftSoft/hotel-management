@@ -22,9 +22,10 @@ export default function UserMenu() {
 					aria-expanded="false">
 					<img
 						className="rounded-circle"
-						src={currentUser.avatar ? currentUser.avatar : ""}
-						alt="user-avatar"
-						style={{ width: 40, height: 40 }}
+						src={currentUser.avatar ? currentUser.avatar : "/img/user-avatar.png"}
+						// src={"/img/user-avatar.png"}
+						alt=""
+						style={{ width: 40, height: 40, objectFit: "cover" }}
 						onError={(e) => {
 							e.target.src = "/img/user-avatar.png";
 						}}

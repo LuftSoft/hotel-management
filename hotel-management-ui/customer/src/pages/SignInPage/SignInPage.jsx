@@ -7,6 +7,7 @@ import { axiosJWT, axiosPost, url } from "../../utils/httpRequest";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/userSlice";
 import { loginSuccess } from "../../redux/authSlice";
+import { getUser } from "../../services/userServices";
 
 const initState = {
 	email: "",
@@ -69,28 +70,6 @@ export default function SignInPage() {
 						autoClose: 1000,
 						isLoading: false,
 					});
-				}
-			};
-			const getUser = async (accessToken, refreshToken, dispatch) => {
-				if (refreshToken) {
-					const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
-					try {
-						const res = await axiosJwt.get(url.getUser, {
-							headers: {
-								Authorization: `Bearer ${accessToken}`,
-							},
-						});
-						dispatch(updateUser(res.data.userDto));
-						return {
-							isSuccess: true,
-							data: res.data,
-						};
-					} catch (error) {
-						console.log(error);
-						return {
-							data: error.response.data,
-						};
-					}
 				}
 			};
 			signInRequest();
@@ -163,7 +142,7 @@ export default function SignInPage() {
 										Hiện mật khẩu!
 									</label>
 								</div>
-								<a href="#">Quên mật khẩu?</a>
+								<Link to={routes.forgotPassword}>Quên mật khẩu?</Link>
 							</div>
 							<button type="submit" className="btn btn-primary w-100 py-3 mb-4">
 								Đăng nhập

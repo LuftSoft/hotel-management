@@ -33,37 +33,41 @@ export default function BookedRoomPage() {
 		bookedRooms = bookedRoomState.data.bookingList;
 	}
 	return (
-		<div className="bg-light">
-			<div className="Container">
-				<div className="d-flex flex-column">
-					<div className="d-flex gap-4 my-3">
-						<SidebarUser />
-						<div className="flex-grow-1 d-flex flex-column gap-3">
-							<div>
-								<h1 className="fs-4">Danh sách phòng đã đặt</h1>
-								{/* card wrapper, list */}
-								<div className="d-flex flex-column gap-3">
-									{bookedRoomState.isFetching ? (
-										<>
-											<CardSkeleton />
-											<CardSkeleton />
-										</>
-									) : bookedRooms.length > 0 ? (
-										bookedRooms.map((bookedRoom) => <BookedRoomCard key={bookedRoom.id} bookedRoom={bookedRoom} />)
-									) : (
-										<EmptyCard
-											title={"Không tìm thấy đặt chỗ"}
-											content={
-												"Mọi chỗ bạn đặt sẽ được hiển thị tại đây. Hiện bạn chưa có bất kỳ đặt chỗ nào, hãy đặt trên trang chủ ngay!"
-											}
-										/>
-									)}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+		<div>
+			<h1 className="fs-4">Danh sách phòng đã đặt</h1>
+			{/* card wrapper, list */}
+			<div className="d-flex flex-column gap-3">
+				{bookedRoomState.isFetching ? (
+					<>
+						<CardSkeleton />
+						<CardSkeleton />
+					</>
+				) : bookedRooms.length > 0 ? (
+					bookedRooms.map((bookedRoom) => <BookedRoomCard key={bookedRoom.id} bookedRoom={bookedRoom} />)
+				) : (
+					<EmptyCard
+						title={"Không tìm thấy đặt chỗ"}
+						content={
+							"Mọi chỗ bạn đặt sẽ được hiển thị tại đây. Hiện bạn chưa có bất kỳ đặt chỗ nào, hãy đặt trên trang chủ ngay!"
+						}
+					/>
+				)}
 			</div>
 		</div>
 	);
+	// return (
+	// 	<div className="bg-light">
+	// 		<div className="Container">
+	// 			<div className="d-flex flex-column">
+	// 				<div className="d-flex gap-4 my-3">
+	// 					<SidebarUser />
+	// 					<div className="flex-grow-1 d-flex flex-column gap-3">
+	// 						{/* cutting here */}
+
+	// 					</div>
+	// 				</div>
+	// 			</div>
+	// 		</div>
+	// 	</div>
+	// );
 }

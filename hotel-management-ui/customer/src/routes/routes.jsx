@@ -6,6 +6,8 @@ import HotelPage from "../pages/HotelPage";
 import DetailHotelPage from "../pages/DetailHotelPage";
 import BookedRoomPage from "../pages/BookedRoomPage/BookedRoomPage";
 import AccountPage from "../pages/AccountPage/AccountPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import MenuUser from "../layouts/MenuUser";
 
 export const routes = {
 	home: "/",
@@ -21,6 +23,7 @@ export const routes = {
 	bookedRoom: "/user/booked-room",
 	account: "/user/account",
 	signOut: "/sign-out",
+	forgotPassword: "/forgot-password",
 };
 
 export const publicRoutes = [
@@ -34,9 +37,10 @@ export const publicRoutes = [
 	{ path: routes.pages, page: HomePage, layout: null },
 	{ path: routes.news, page: HomePage, layout: null },
 	{ path: routes.contact, page: HomePage, layout: null },
+	{ path: routes.forgotPassword, page: ForgotPasswordPage, layout: NonLayout },
 ];
 
 export const privateRoutes = [
-	{ path: routes.bookedRoom, page: BookedRoomPage, layout: null },
-	{ path: routes.account, page: AccountPage, layout: null },
+	{ path: routes.bookedRoom, page: BookedRoomPage, layout: MenuUser },
+	{ path: routes.account, page: AccountPage, layout: MenuUser },
 ];

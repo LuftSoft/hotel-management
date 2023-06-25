@@ -4,9 +4,12 @@
 	--primary-color: var(--bs-blue);
 	--secondary-color: var(--bs-gray-600);
 }
+
 body {
 	font-family: "Heebo", sans-serif;
+	overflow-y: overlay;
 }
+
 *,
 ::after,
 ::before {
@@ -14,6 +17,7 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
 a {
 	/* color: #009cff; */
 	text-decoration: none;

@@ -78,7 +78,7 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 			console.log(error);
 			toast.update(idToast, {
 				render: "Đăng bình luận thất bại!",
-				type: "success",
+				type: "error",
 				closeButton: true,
 				autoClose: 1000,
 				isLoading: false,

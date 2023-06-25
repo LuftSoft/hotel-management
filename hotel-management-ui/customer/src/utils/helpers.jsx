@@ -88,11 +88,19 @@ export const validateEmail = (errors, username) => {
 		errors.email = "Vui lòng nhập email!";
 	}
 };
-export const validatePassword = (errors, password) => {
+export const validatePassword = (errors, password, key = "password") => {
 	const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 	if (password === "") {
-		errors.password = "Vui lòng nhập mật khẩu!";
+		errors[key] = "Vui lòng nhập mật khẩu!";
 	} else if (!decimal.test(password)) {
-		errors.password = "Mật khẩu tối thiểu 8 ký tự. Chứa ít nhất 1 ký tự in hoa, 1 ký tự số và 1 ký tự đặc biệt";
+		errors[key] = "Mật khẩu tối thiểu 8 ký tự. Chứa ít nhất 1 ký tự in hoa, 1 ký tự số và 1 ký tự đặc biệt";
+	}
+};
+export const validatePhone = (errors, phone) => {
+	const phoneRegex = /^0[1-9]{1}[0-9]{8,9}$/;
+	if (phone === "") {
+		errors.phone = "Vui lòng nhập số điện thoại!";
+	} else if (!phoneRegex.test(phone)) {
+		errors.phone = "Số điện thoại không đúng định dạng! Ví dụ: 0234242524";
 	}
 };

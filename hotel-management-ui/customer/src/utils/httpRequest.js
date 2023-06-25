@@ -23,6 +23,9 @@ export const url = {
 	createBooking: "booking",
 	postComment: "comment",
 	updateComment: "comment",
+	forgotPassword: "user/fogot-password",
+	editProfile: "user",
+	changePw: "user/change-password",
 };
 
 /**
