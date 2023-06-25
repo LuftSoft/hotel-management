@@ -118,7 +118,7 @@ export default function PasswordTab() {
 								onClick={() => {
 									setShowOldPw(!showOldPw);
 								}}
-								className="input-right-icon">
+								className="input-right-icon row-label">
 								{showOldPw ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
 							</span>
 							<div className="invalid-feedback">{errors.oldPw}</div>
@@ -144,7 +144,7 @@ export default function PasswordTab() {
 								onClick={() => {
 									setShowNewPw(!showNewPw);
 								}}
-								className="input-right-icon">
+								className="input-right-icon row-label">
 								{showNewPw ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
 							</span>
 							<div className="invalid-feedback">{errors.newPw}</div>
@@ -170,7 +170,7 @@ export default function PasswordTab() {
 								onClick={() => {
 									setShowConfirmPw(!showConfirmPw);
 								}}
-								className="input-right-icon">
+								className="input-right-icon row-label">
 								{showConfirmPw ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
 							</span>
 							<div className="invalid-feedback">{errors.confirmPw}</div>

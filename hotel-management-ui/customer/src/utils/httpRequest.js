@@ -26,6 +26,7 @@ export const url = {
 	forgotPassword: "user/fogot-password",
 	editProfile: "user",
 	changePw: "user/change-password",
+	resetPassword: "user/reset-password",
 };
 
 /**
@@ -92,5 +93,10 @@ export const axiosPost = async (url, data = {}, config = {}, instance = axiosIns
 
 export const axiosDelete = async (url, config = {}, instance = axiosInstance) => {
 	const response = await instance.delete(url, config);
+	return response.data;
+};
+
+export const axiosPatch = async (url, data = {}, config = {}, instance = axiosInstance) => {
+	const response = await instance.patch(url, data, config);
 	return response.data;
 };

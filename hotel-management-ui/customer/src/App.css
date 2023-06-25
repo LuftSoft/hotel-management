@@ -34,10 +34,17 @@
 .input-right-icon {
 	position: absolute;
 	top: 50%;
-	right: calc(1.5em);
 	transform: translateY(-50%);
 	color: var(--secondary-color);
 	cursor: pointer;
+}
+
+.input-right-icon.row-label {
+	right: calc(1.5em);
+}
+
+.input-right-icon.col-label {
+	right: calc(0.75rem);
 }
 
 .form-control.is-invalid+.input-right-icon {

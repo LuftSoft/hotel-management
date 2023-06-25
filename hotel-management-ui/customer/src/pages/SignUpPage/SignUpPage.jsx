@@ -71,7 +71,7 @@ export default function SignUpPage() {
 				} catch (error) {
 					console.log(error);
 					toast.update(toastId, {
-						render: error.response.data.message,
+						render: error.response?.data.message || "Không thể đăng ký tài khoản!",
 						type: "error",
 						closeButton: true,
 						autoClose: 1000,

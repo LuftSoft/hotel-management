@@ -30,6 +30,7 @@ export default function ForgotPasswordPage() {
 				try {
 					const res = await axiosPost(url.forgotPassword, {
 						email,
+						url: window.location.host + "/reset-password?token=",
 					});
 					console.log(res);
 					toast.update(toastId, {

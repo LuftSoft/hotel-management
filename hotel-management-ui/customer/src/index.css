@@ -5,6 +5,25 @@
 	--secondary-color: var(--bs-gray-600);
 }
 
+/* custome scrollbar */
+::-webkit-scrollbar {
+	width: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--primary-color);
+	border-radius: 8px;
+	transition: color 0.2s ease 0s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--primary-color);
+}
+
 body {
 	font-family: "Heebo", sans-serif;
 	overflow-y: overlay;
