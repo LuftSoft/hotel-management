@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosJWT, url } from "../../utils/httpRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAccessToken, selectRefreshToken } from "../../redux/selectors";
-import SidebarUser from "../../components/SidebarUser/SidebarUser";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
 import CardSkeleton from "../../components/CardSkeleton/CardSkeleton";
 
@@ -55,19 +54,4 @@ export default function BookedRoomPage() {
 			</div>
 		</div>
 	);
-	// return (
-	// 	<div className="bg-light">
-	// 		<div className="Container">
-	// 			<div className="d-flex flex-column">
-	// 				<div className="d-flex gap-4 my-3">
-	// 					<SidebarUser />
-	// 					<div className="flex-grow-1 d-flex flex-column gap-3">
-	// 						{/* cutting here */}
-
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 		</div>
-	// 	</div>
-	// );
 }

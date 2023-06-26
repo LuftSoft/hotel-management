@@ -1,28 +1,55 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { axiosJWT, url } from "../../utils/httpRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAccessToken, selectRefreshToken, selectUser } from "../../redux/selectors";
 import { toast } from "react-toastify";
 
-export default function PostComment({ posted = true, comment, bookedRoomId }) {
-	console.log(bookedRoomId);
+const defaultFn = () => {};
+
+export default function PostComment({ posted = true, comment, bookedRoomId, onPostCommentClick = defaultFn }) {
 	const currentUser = useSelector(selectUser);
 	const accessToken = useSelector(selectAccessToken);
 	const refreshToken = useSelector(selectRefreshToken);
 	const dispatch = useDispatch();
 	const starRef = useRef(0);
 	const contentRef = useRef();
+
+	const starsRef = useRef();
+
 	const [errorMessage, setErrorMessage] = useState("");
+
+	const getMap = () => {
+		if (!starsRef.current) {
+			// Initialize the Map on first usage.
+			starsRef.current = new Map();
+		}
+		return starsRef.current;
+	};
+
+	const getNode = (id, node) => {
+		const map = getMap();
+		if (node) {
+			map.set(id, node);
+		} else {
+			map.delete(id);
+		}
+	};
+
 	const handleRateStar = (star) => {
 		starRef.current = star;
-		const listNode = document.querySelectorAll(".rating-star");
-		for (let index = 0; index < listNode.length; index++) {
-			const element = listNode[index];
-			if (index < star) {
-				element.classList.add("star-active");
-			} else {
-				element.classList.remove("star-active");
-			}
+		const map = getMap();
+		if (star === 0) {
+			map.forEach((node) => {
+				node.classList.remove("star-active");
+			});
+		} else {
+			map.forEach((node, key) => {
+				if (key <= star) {
+					node.classList.add("star-active");
+				} else {
+					node.classList.remove("star-active");
+				}
+			});
 		}
 	};
 	const handleClick = () => {
@@ -30,6 +57,7 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 			setErrorMessage("Vui lòng chọn số sao!");
 		} else {
 			setErrorMessage("");
+			onPostCommentClick();
 			if (posted) {
 				handleUpdate();
 			} else {
@@ -40,14 +68,6 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 	const handlePost = async () => {
 		const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
 		const idToast = toast.loading("Đang xử lý!");
-		const today = new Date();
-		console.log({
-			rating: starRef.current,
-			content: contentRef.current.value,
-			createDate: today.toISOString(),
-			lastChange: today.toISOString(),
-			bookingId: bookedRoomId,
-		});
 		try {
 			const today = new Date();
 			const res = await axiosJwt.post(
@@ -97,7 +117,7 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 					content: contentRef.current.value,
 					createDate: comment.createDate,
 					lastChange: new Date().toISOString(),
-					bookingId: comment.bookingId,
+					bookingId: bookedRoomId,
 				},
 				{
 					headers: {
@@ -118,7 +138,7 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 			console.log(error);
 			toast.update(idToast, {
 				render: "Cập nhật bình luận thất bại!",
-				type: "success",
+				type: "error",
 				closeButton: true,
 				autoClose: 1000,
 				isLoading: false,
@@ -134,7 +154,8 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 				<div
 					className="d-flex flex-column"
 					style={{
-						flexBasis: "25%",
+						// flexBasis: "25%",
+						minWidth: "25%",
 					}}>
 					<div className="d-flex flex-column">
 						<div className="d-flex align-items-center">
@@ -155,36 +176,18 @@ export default function PostComment({ posted = true, comment, bookedRoomId }) {
 				<div className="d-flex flex-column gap-2 flex-grow-1">
 					<div className="d-flex justify-content-between" style={{ cursor: "pointer" }}>
 						<div className="d-flex align-items-center justify-content-between">
-							<i
-								className="fa-solid fa-star rating-star star-no"
-								data-index="1"
-								onClick={() => {
-									handleRateStar(1);
-								}}></i>
-							<i
-								className="fa-solid fa-star rating-star star-no"
-								data-index="2"
-								onClick={() => {
-									handleRateStar(2);
-								}}></i>
-							<i
-								className="fa-solid fa-star rating-star star-no"
-								data-index="3"
-								onClick={() => {
-									handleRateStar(3);
-								}}></i>
-							<i
-								className="fa-solid fa-star rating-star star-no"
-								data-index="4"
-								onClick={() => {
-									handleRateStar(4);
-								}}></i>
-							<i
-								className="fa-solid fa-star rating-star star-no"
-								data-index="5"
-								onClick={() => {
-									handleRateStar(5);
-								}}></i>
+							{Array.from({ length: 5 }).map((_, index) => (
+								<i
+									key={index}
+									ref={(node) => {
+										getNode(index + 1, node);
+									}}
+									className="fa-solid fa-star rating-star star-no"
+									data-index={index + 1}
+									onClick={() => {
+										handleRateStar(index + 1);
+									}}></i>
+							))}
 						</div>
 						{/* <div className="text-secondary">16 May 23</div> */}
 					</div>

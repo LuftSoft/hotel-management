@@ -3,13 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { axiosJWT, url } from "../../utils/httpRequest";
 import CommentCard from "../CommentCard/CommentCard";
-import PostComment from "../PostComment/PostComment";
 import Stars from "../Stars";
 import ServiceRating from "../ServiceRating";
-import { selectAccessToken, selectRefreshToken, selectUser } from "../../redux/selectors";
+import { selectAccessToken, selectRefreshToken } from "../../redux/selectors";
 
 export default function CommentSection({ hotel }) {
-	const currentUser = useSelector(selectUser);
 	const accessToken = useSelector(selectAccessToken);
 	const refreshToken = useSelector(selectRefreshToken);
 	const dispatch = useDispatch();
@@ -34,64 +32,7 @@ export default function CommentSection({ hotel }) {
 	if (bookedRoomState.isSuccess) {
 		bookedRooms = bookedRoomState.data.bookingList;
 	}
-	/**
-	 * return booking id
-	 * @returns {Number|null}
-	 */
-	const getBookedRoomId = () => {
-		console.log("in comment section", hotel.id);
-		for (let index = 0; index < bookedRooms.length; index++) {
-			const bookedRoom = bookedRooms[index];
-			if (bookedRoom.hotelId === hotel.id) {
-				return bookedRoom.id;
-			}
-		}
-		return null;
-	};
-	/**
-	 * return true if user has booked this hotel
-	 * @returns {true|false}
-	 */
-	const canPost = () => {
-		for (let index = 0; index < bookedRooms.length; index++) {
-			const bookedRoom = bookedRooms[index];
-			if (bookedRoom.hotelId === hotel.id) {
-				return true;
-			}
-		}
-		return false;
-	};
-	/**
-	 * return true if user can post comment to this hotel
-	 * @returns {true|false}
-	 */
-	const hasPosted = () => {
-		if (currentUser) {
-			for (let index = 0; index < hotel.comments.length; index++) {
-				const comment = hotel.comments[index];
-				if (comment.userId === currentUser.id) {
-					return true;
-				}
-			}
-		}
-		return false;
-	};
-	/**
-	 * return comment of current user if any
-	 * @returns {Object}
-	 */
-	const getComment = () => {
-		if (currentUser) {
-			for (let index = 0; index < hotel.comments.length; index++) {
-				const comment = hotel.comments[index];
-				if (comment.userId === currentUser.id) {
-					return comment;
-				}
-			}
-		}
-		return null;
-	};
-	const comment = getComment();
+
 	return (
 		<div className="d-flex flex-column bg-white rounded">
 			<div className="d-flex flex-column gap-3 px-3 py-4">
@@ -237,27 +178,14 @@ export default function CommentSection({ hotel }) {
 				{/* list comment */}
 				<div className="d-flex flex-column">
 					{/* to comment */}
-					{currentUser && canPost() ? (
-						hasPosted() ? (
-							<PostComment posted={true} comment={comment} />
-						) : (
-							<PostComment posted={false} bookedRoomId={getBookedRoomId()} />
-						)
-					) : null}
 					{/* divider */}
 					<div className="my-2"></div>
 					{/* list comment */}
 					<div className="d-flex flex-column">
 						<div className="d-flex flex-column gap-3">
-							{hotel.comments.map((comment) => {
-								if (currentUser) {
-									if (currentUser.id === comment.userId) {
-										return null;
-									}
-								} else {
-									return <CommentCard key={comment.id} comment={comment} />;
-								}
-							})}
+							{hotel.comments.map((comment) => (
+								<CommentCard key={comment.id} comment={comment} />
+							))}
 						</div>
 					</div>
 				</div>

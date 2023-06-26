@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useRef } from "react";
-import { useLocation } from "react-router-dom";
 
 import CommentSection from "../../components/CommentSection";
 import { axiosGet, url } from "../../utils/httpRequest";

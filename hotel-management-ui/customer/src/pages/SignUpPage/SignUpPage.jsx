@@ -56,8 +56,9 @@ export default function SignUpPage() {
 					const res = await axiosPost(url.signUp, {
 						firstName,
 						lastName,
-						username,
+						userName: username,
 						password,
+						role: ["user"],
 					});
 					console.log(res);
 					toast.update(toastId, {

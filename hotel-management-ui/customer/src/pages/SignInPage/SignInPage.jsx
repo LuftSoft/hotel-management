@@ -42,7 +42,7 @@ export default function SignInPage() {
 				const toastId = toast.loading("Đang xử lý!");
 				try {
 					const res = await axiosPost(url.signIn, {
-						username,
+						userName: username,
 						password,
 					});
 					toast.update(toastId, {
