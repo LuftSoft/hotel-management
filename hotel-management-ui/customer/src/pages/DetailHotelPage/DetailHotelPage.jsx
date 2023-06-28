@@ -75,7 +75,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -86,7 +86,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100 mb-2"
+										className="w-100 h-100 rounded mb-2"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -95,7 +95,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100 mb-2"
+										className="w-100 h-100 rounded mb-2"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -104,7 +104,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100 mb-2"
+										className="w-100 h-100 rounded mb-2"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -113,7 +113,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";

@@ -94,6 +94,7 @@ export default function BookedRoomCard({ bookedRoom }) {
 						<img
 							src={bookedRoom.hotelImage}
 							alt="avatar"
+							className="rounded"
 							onError={(e) => {
 								e.target.src = "/img/hotel.webp";
 							}}

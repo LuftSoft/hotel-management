@@ -4,14 +4,14 @@ export default function RoomView({ room, hotelBenefit }) {
 	return (
 		<div className="d-flex flex-column flex-lg-row h-100">
 			{/* left */}
-			<div className="flex-grow-1 bg-light d-flex flex-column w-100 rounded">
-				<div className="d-flex justify-content-between px-5 py-3">
-					<div className="fs-4 fw-bold">{room.name}</div>
+			<div className="flex-grow-1 bg-dark d-flex flex-column w-100 rounded-start">
+				<div className="d-flex justify-content-between align-items-center px-4 py-3">
+					<div className="fs-4 fw-bold text-light">{room.name}</div>
 					<div>
-						<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						<button type="button" className="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 				</div>
-				<div className="d-flex flex-column">
+				<div className="d-flex flex-column px-4">
 					<RoomGallery room={room} />
 				</div>
 			</div>

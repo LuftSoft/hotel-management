@@ -9,13 +9,14 @@ export default function RoomGalleryIndicator({ room }) {
 		<div className="d-flex justify-content-center mt-4">
 			{room.hotelImageGalleries.map((value, index) => (
 				<button
+					key={index}
 					type="button"
 					onClick={() => {
 						handleClick(index);
 					}}
 					data-bs-target={`#room-${room.id}-room`}
 					data-bs-slide-to={index}
-					className={`mx-1 ${currentIndex === index ? "active" : ""}`}
+					className={`rounded mx-1 ${currentIndex === index ? "active" : ""}`}
 					// className="mx-1"
 					aria-current="true"
 					aria-label={`Slide ${index + 1}`}>
@@ -26,6 +27,7 @@ export default function RoomGalleryIndicator({ room }) {
 							height: "60px",
 							objectFit: "cover",
 						}}
+						className="rounded"
 						alt=""
 					/>
 				</button>

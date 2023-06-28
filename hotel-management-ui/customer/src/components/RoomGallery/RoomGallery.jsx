@@ -19,7 +19,7 @@ export default function RoomGallery({ room }) {
 									height: "360px",
 									objectFit: "cover",
 								}}
-								className="d-block"
+								className="d-block rounded"
 								alt="..."
 							/>
 						</div>

@@ -36,6 +36,7 @@ export default function HotelCard({ hotel, bookingDate, searchParams }) {
 				<div className="HotelCard__Logo">
 					<img
 						src={hotel.logoLink}
+						// className="rounded"
 						alt="hotel"
 						onError={(e) => {
 							e.target.src = "/img/hotel.webp";

@@ -104,7 +104,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 									<img
 										src={room.hotelImageGalleries[0].link}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -117,7 +117,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 									<img
 										src={room.hotelImageGalleries[0].link}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -128,7 +128,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 									<img
 										src={room.hotelImageGalleries[1].link}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -139,7 +139,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 									<img
 										src={room.hotelImageGalleries[2].link}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
