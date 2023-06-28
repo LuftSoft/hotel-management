@@ -4,7 +4,7 @@ export default function RoomView({ room, hotelBenefit }) {
 	return (
 		<div className="d-flex flex-column flex-lg-row h-100">
 			{/* left */}
-			<div className="flex-grow-1 bg-light d-flex flex-column w-100">
+			<div className="flex-grow-1 bg-light d-flex flex-column w-100 rounded">
 				<div className="d-flex justify-content-between px-5 py-3">
 					<div className="fs-4 fw-bold">{room.name}</div>
 					<div>
@@ -17,7 +17,7 @@ export default function RoomView({ room, hotelBenefit }) {
 			</div>
 			{/* right */}
 			<div
-				className="d-flex flex-row flex-lg-column bg-white"
+				className="d-flex flex-row flex-lg-column bg-white rounded"
 				style={{
 					width: "300px",
 				}}>

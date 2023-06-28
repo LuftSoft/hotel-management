@@ -1,3 +1,5 @@
+import RoomGalleryIndicator from "../RoomGalleryIndicator/RoomGalleryIndicator";
+
 export default function RoomGallery({ room }) {
 	return (
 		<>
@@ -40,28 +42,7 @@ export default function RoomGallery({ room }) {
 					<span className="visually-hidden">Next</span>
 				</button>
 			</div>
-			<div className="d-flex justify-content-center mt-4">
-				{room.hotelImageGalleries.map((value, index) => (
-					<button
-						type="button"
-						data-bs-target={`#room-${room.id}-room`}
-						data-bs-slide-to={index}
-						// className={`mx-1 ${index === 0 ? "active" : ""}`}
-						className="mx-1"
-						aria-current="true"
-						aria-label={`Slide ${index + 1}`}>
-						<img
-							src={value.link}
-							style={{
-								width: "60px",
-								height: "60px",
-								objectFit: "cover",
-							}}
-							alt=""
-						/>
-					</button>
-				))}
-			</div>
+			<RoomGalleryIndicator room={room} />
 		</>
 	);
 }
