@@ -18,7 +18,7 @@ export const url = {
 	hotel: "hotel/filter",
 	detailHotel: "hotel/",
 	bookedRooms: "booking",
-	refreshToken: "user/refresh_token",
+	refreshToken: "user/refresh-token",
 	cancelBooking: "booking/",
 	createBooking: "booking",
 	postComment: "comment",
