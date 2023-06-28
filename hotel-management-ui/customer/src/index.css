@@ -15,13 +15,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-	background: var(--primary-color);
+	background: var(--secondary-color);
 	border-radius: 8px;
 	transition: color 0.2s ease 0s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--primary-color);
+	background: var(--secondary-color);
 }
 
 body {

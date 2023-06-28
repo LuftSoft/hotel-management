@@ -2,17 +2,21 @@ import { useSelector } from "react-redux";
 import { axiosPost, url } from "../../utils/httpRequest";
 import { selectAccessToken, selectBookingDate, selectUser } from "../../redux/selectors";
 import { toast } from "react-toastify";
-import { useBookingDate } from "../../contexts/bookingDateContext";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
+import { useState } from "react";
+import RoomView from "../RoomView/RoomView";
 
 export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} }) {
 	const bookingDate = useSelector(selectBookingDate);
 	const currentUser = useSelector(selectUser);
-	const currentPathName = window.location.pathname;
-	console.log(new Date(bookingDate.FromDate).toISOString());
-	const navigate = useNavigate();
 	const accessToken = useSelector(selectAccessToken);
+
+	const [showDetail, setShowDetail] = useState(false);
+	const currentPathName = window.location.pathname;
+
+	const navigate = useNavigate();
+
 	const handleBook = async () => {
 		console.log(room.id);
 		if (currentUser) {
@@ -61,19 +65,46 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 			navigate(`${routes.signIn}?next=${encodeURIComponent(currentPathName)}`);
 		}
 	};
+	const handleShowDetail = () => {
+		setShowDetail(!showDetail);
+	};
 	return (
 		<div className="bg-light rounded border p-3">
+			{true && (
+				<>
+					<div
+						className="modal fade"
+						id={`room-${room.id}`}
+						tabIndex={-1}
+						aria-labelledby={`room-${room.id}Label`}
+						aria-hidden="true">
+						<div className="modal-dialog modal-lg">
+							<div className="modal-content">
+								<div
+									className="modal-body p-0"
+									style={{
+										// height: "90vh",
+										height: "90vh",
+										maxHeight: "685px",
+									}}>
+									<RoomView room={room} hotelBenefit={hotelBenefit} />
+								</div>
+							</div>
+						</div>
+					</div>
+				</>
+			)}
 			<div className="container p-0">
 				<div className="d-flex">
 					<div className="flex-grow-1 d-flex flex-column bg-white p-0">
-						<div className="d-flex flex-column">
-							<div>
-								<div className="mb-1" style={{ height: 144 }}>
+						<div className="d-flex flex-column ">
+							<div className="d-flex flex-column mb-1">
+								<div className="" style={{ height: 144 }}>
 									<img
 										src={room.hotelImageGalleries[0].link}
 										alt="room"
 										className="w-100 h-100"
-										style={{ objectFit: "fill" }}
+										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
@@ -86,7 +117,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 										src={room.hotelImageGalleries[0].link}
 										alt="room"
 										className="w-100 h-100"
-										style={{ objectFit: "fill" }}
+										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
@@ -97,7 +128,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 										src={room.hotelImageGalleries[1].link}
 										alt="room"
 										className="w-100 h-100"
-										style={{ objectFit: "fill" }}
+										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
@@ -108,15 +139,24 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 										src={room.hotelImageGalleries[2].link}
 										alt="room"
 										className="w-100 h-100"
-										style={{ objectFit: "fill" }}
+										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
 										}}
 									/>
 								</div>
 							</div>
+							<div className="d-flex flex-column py-2">
+								<button
+									type="button"
+									onClick={handleShowDetail}
+									className="btn btn-outline-info"
+									data-bs-toggle="modal"
+									data-bs-target={`#room-${room.id}`}>
+									Xem chi tiết
+								</button>
+							</div>
 						</div>
-						{/* <div>test</div> */}
 					</div>
 					<div className="w-100 bg-white ms-3 rounded">
 						<div className="d-flex flex-column px-4 py-3">
