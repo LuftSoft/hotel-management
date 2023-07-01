@@ -86,7 +86,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 										// height: "90vh",
 										height: "90vh",
 										maxHeight: "685px",
-										overflow: "hidden",
+										overflow: "auto",
 									}}>
 									<RoomView room={room} hotelBenefit={hotelBenefit} />
 								</div>

@@ -1,10 +1,6 @@
 import { useState } from "react";
 
-export default function RoomGalleryIndicator({ room }) {
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const handleClick = (index) => {
-		setCurrentIndex(index);
-	};
+export default function RoomGalleryIndicator({ room, currentIndex, handleClick }) {
 	return (
 		<div className="d-flex justify-content-center mt-4">
 			{room.hotelImageGalleries.map((value, index) => (
