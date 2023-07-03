@@ -4,69 +4,73 @@ using System;
 
 namespace hotel_management_api.Database.Repository
 {
-    public class HotelRepository : IHotelRepository
+    public class HotelRepository :  IHotelRepository
     {
-        private readonly AppDbContext _appDbContext;
-        public HotelRepository(AppDbContext appDbContext)
+        private readonly AppDbContext appDbContext;
+        public HotelRepository(AppDbContext _appDbContext)
         {
-            _appDbContext = appDbContext;
+            this.appDbContext = _appDbContext;
         }
         public async Task<Hotel> getOne(int id)
         {
-            return await _appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
+            return await appDbContext.Hotels.FirstOrDefaultAsync(h => h.Id == id);
         }
-        public async Task<bool> deleteAsync(int id)
+        public async Task<bool> Delete(int id)
         {
-            var hotel = _appDbContext.Hotels.FirstOrDefault(h => h.Id == id);
+            var hotel = appDbContext.Hotels.FirstOrDefault(h => h.Id == id);
             if(hotel == null)
             {
                 return false;
             }
-            _appDbContext.Remove(hotel);
-            int isSuccess = await _appDbContext.SaveChangesAsync();
+            appDbContext.Remove(hotel);
+            int isSuccess = await appDbContext.SaveChangesAsync();
             return isSuccess > 0;
+        }
+        public async Task<IEnumerable<Hotel>> GetByOwnerId(string userid)
+        {
+            return await appDbContext.Hotels.Where(h => h.USerId.Equals(userid)).ToListAsync();
         }
         public async Task<Hotel?> FindByIdAsync(int id)
         {
-            return await _appDbContext.Hotels
+            return await appDbContext.Hotels
                 .FirstOrDefaultAsync(h => h.Id == id);
         }
         public async Task<bool> updateAsync(Hotel hotel)
         {
-            _appDbContext.Hotels.Update(hotel);
-            int isSuccess = await _appDbContext.SaveChangesAsync();
+            appDbContext.Hotels.Update(hotel);
+            int isSuccess = await appDbContext.SaveChangesAsync();
             return isSuccess > 0;
 
         }
         public async Task<Hotel?> createAsync(Hotel hotel)
         {
-            _appDbContext.Hotels.Add(hotel);
-            int isSuccess = await _appDbContext.SaveChangesAsync();
+            appDbContext.Hotels.Add(hotel);
+            int isSuccess = await appDbContext.SaveChangesAsync();
             return hotel;
         }
         public async Task<IEnumerable<Hotel>> GetAllAsync()
         {
-            return  await _appDbContext.Hotels.AsNoTracking()
+            return  await appDbContext.Hotels.AsNoTracking()
                 .ToListAsync();
         }
         public async Task<IEnumerable<int>> HotelPriceFindAsync(double price)
         {
-            return await _appDbContext.Rooms.Where(r => r.Price <= price).Select(r => r.HotelId).Distinct().ToListAsync();
+            return await appDbContext.Rooms.Where(r => r.Price <= price).Select(r => r.HotelId).Distinct().ToListAsync();
         }
         public async Task<IEnumerable<int>> HotelNumPeopleAsync(int numOfPeople)
         {
-            return await _appDbContext.Rooms.Where(r => r.NumOfPeope > numOfPeople).Select(r => r.HotelId).Distinct().ToListAsync();
+            return await appDbContext.Rooms.Where(r => r.NumOfPeope > numOfPeople).Select(r => r.HotelId).Distinct().ToListAsync();
         }
         public async Task<IEnumerable<int>> HotelFilterAsync(DateTime fromDate, int roomCount, int roomSize)
         {
-            var bookingRooms = await _appDbContext.Bookings.AsNoTracking().Where(b => b.ToDate >= fromDate && b.Returned == false)
+            var bookingRooms = await appDbContext.Bookings.AsNoTracking().Where(b => b.ToDate >= fromDate && b.Returned == false)
                 .GroupBy(b => b.RoomId)
                 .Select(b => new
                 {
                     id = b.Key,
                     count = b.Count()
                 }).ToListAsync();
-            var rooms = await _appDbContext.Rooms
+            var rooms = await appDbContext.Rooms
                 .Select(r => new IHotelRepository.HotelFilterList()
                 {
                     Id = r.Id,

@@ -25,6 +25,7 @@ namespace hotel_management_api.APIs.Hotel
         private readonly IGetListHotelInteractor getListHotelInteractor;
         private readonly IGetDetailHotelInteractor getDetailHotelInteractor;
         private readonly IGetListHotelFilterInteractor getListHotelFilterInteractor;
+        private readonly IGetListHotelOfOwnerInteractor getListHotelOfOwnerInteractor;
         public HotelController(
             IJwtUtil jwtUtil,
             IUploadFileUtil uploadFileUtil,
@@ -33,7 +34,8 @@ namespace hotel_management_api.APIs.Hotel
             IDeleteHotelInteractor deleteHotelInteractor,
             IGetListHotelInteractor getListHotelInteractor,
             IGetDetailHotelInteractor getDetailHotelInteractor,
-            IGetListHotelFilterInteractor getListHotelFilterInteractor
+            IGetListHotelFilterInteractor getListHotelFilterInteractor,
+            IGetListHotelOfOwnerInteractor getListHotelOfOwnerInteractor
             )
         {
             this.jwtUtil = jwtUtil;
@@ -44,6 +46,7 @@ namespace hotel_management_api.APIs.Hotel
             this.getListHotelInteractor = getListHotelInteractor;
             this.getDetailHotelInteractor = getDetailHotelInteractor;
             this.getListHotelFilterInteractor = getListHotelFilterInteractor;
+            this.getListHotelOfOwnerInteractor = getListHotelOfOwnerInteractor;
         }
         [HttpGet]
         public async Task<IActionResult> get(int pageIndex, int pageSize, [FromQuery] GetListHotelFilterDto hotelFilterDto)
@@ -66,6 +69,22 @@ namespace hotel_management_api.APIs.Hotel
             if (result.Success == true)
                 return Ok(result);
             return BadRequest(result);
+        }
+
+        [HttpGet("user")]
+        [Authorize("admin")]
+        public async Task<IActionResult> getByOwner()
+        {
+            try
+            {
+                string token = jwtUtil.getTokenFromHeader(HttpContext);
+                var result = await getListHotelOfOwnerInteractor.GetHotelOfOwner(token);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("filter")]
@@ -115,7 +134,7 @@ namespace hotel_management_api.APIs.Hotel
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize("admin")]
         public async Task<IActionResult> delete(int id)
         {

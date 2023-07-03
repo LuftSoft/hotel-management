@@ -20,6 +20,7 @@ namespace hotel_management_api.APIs.Booking
         private readonly ICreateBookingRoomInteractor createBookingRoomInteractor;
         private readonly IUpdateBookingRoomInteractor updateBookingRoomInteractor;
         private readonly ICancelBookingRoomInteractor cancelBookingRoomInteractor;
+        private readonly IGetAllBookingByHotelInteractor getAllBookingByHotelInteractor;
         public BookingController
             (
             IJwtUtil jwtUtil,
@@ -27,15 +28,17 @@ namespace hotel_management_api.APIs.Booking
             IGetAllBookingByUserInteractor getAllBookingByUser,
             ICreateBookingRoomInteractor createBookingRoomInteractor,
             IUpdateBookingRoomInteractor updateBookingRoomInteractor,
-            ICancelBookingRoomInteractor cancelBookingRoomInteractor
+            ICancelBookingRoomInteractor cancelBookingRoomInteractor,
+            IGetAllBookingByHotelInteractor getAllBookingByHotelInteractor
             )
         {
             this.jwtUtil = jwtUtil;
-            this.getAllBookingInteractor = getAllBookingInteractor;
             this.getAllBookingByUser = getAllBookingByUser;
+            this.getAllBookingInteractor = getAllBookingInteractor;
             this.createBookingRoomInteractor = createBookingRoomInteractor;
             this.updateBookingRoomInteractor = updateBookingRoomInteractor;
             this.cancelBookingRoomInteractor = cancelBookingRoomInteractor; 
+            this.getAllBookingByHotelInteractor = getAllBookingByHotelInteractor;
         }
         [HttpGet("all")]
         [Authorize("owner")]
@@ -51,6 +54,22 @@ namespace hotel_management_api.APIs.Booking
                 pageIndex = pageIndex,
                 pageSize = pageSize
             });
+            if (result.Success == true)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpGet("hotel/{id}")]
+        [Authorize("admin")]
+        public async Task<IActionResult> GetByHotelId(int id)
+        {
+            string token = jwtUtil.getTokenFromHeader(HttpContext);
+            if (token == null)
+            {
+                return BadRequest("Not authorized");
+            }
+            var result = await getAllBookingByHotelInteractor.GetAllByHotelIdAsync(id);
             if (result.Success == true)
             {
                 return Ok(result);

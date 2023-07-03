@@ -28,6 +28,48 @@ namespace hotel_management_api.Business.Services
             this.roomRepository = roomRepository;
             this.bookingRepository = bookingRepository;
         }
+        public async Task<IGetAllBookingByHotelInteractor.Response> GetByHotelIdAsync(int hotelId)
+        {
+            try
+            {
+                List<BookingListDto> bookingListDtos = new List<BookingListDto>();
+                var bookings = await bookingRepository.GetByHotelId(hotelId);
+                foreach (var booking in bookings)
+                {
+                    var room = await roomRepository.GetByIdAsync(booking.RoomId);
+                    var hotel = await hotelRepository.getOne(room.HotelId);
+                    if (room == null || hotel == null) continue;
+                    bookingListDtos.Add(new BookingListDto()
+                    {
+                        Id = booking.Id,
+                        RoomId = booking.RoomId,
+                        RoomSize = room.NumOfPeope,
+                        RoomName = room.Name,
+                        Status = booking.Status,
+                        Returned = booking.Returned,
+                        HotelId = hotel.Id,
+                        HotelName = hotel.Name,
+                        HotelImage = hotel.LogoLink,
+                        FromDate = booking.FromDate,
+                        ToDate = booking.ToDate
+                    });
+                }
+                return new IGetAllBookingByHotelInteractor.Response()
+                {
+                    Success = true,
+                    Message = "Get list success",
+                    BookingList = bookingListDtos
+                };
+            }
+            catch (Exception ex)
+            {
+                return new IGetAllBookingByHotelInteractor.Response()
+                {
+                    Success = false,
+                    Message = $"Get list failed. Error: {ex}"
+                };
+            }
+        }
         public async Task<IGetAllBookingByUserInteractor.Response> GetByUserIdAsync(IGetAllBookingByUserInteractor.Request request)
         {
             try

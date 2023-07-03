@@ -125,6 +125,10 @@ namespace hotel_management_api.APIs.User
         [HttpPost("signup")]
         public async Task<IActionResult> Signup(SignupDto dto)
         {
+            if(dto.Role == null || dto.Role.Count == 0)
+            {
+                dto.Role = new List<string>() {"user"};
+            }
             var result = await userSignupInteractor.Signup(new IUserSignupInteractor.Request(dto));
             if(result.Success == false)
             {

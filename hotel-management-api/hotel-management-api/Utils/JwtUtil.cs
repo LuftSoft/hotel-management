@@ -60,8 +60,6 @@ namespace hotel_management_api.Utils
             authClaims.Add(new Claim(type: "ResetPassword", "true"));
             authClaims.Add(new Claim(type: "UserName", value: username));
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTConfig:RefreshPasswordSecret"]));
-            var x = DateTime.Now.AddMinutes(3);
-            Console.WriteLine(x.ToShortTimeString());
             var token = new JwtSecurityToken(
                 issuer: configuration["JWTConfig:ValidIssuer"],
                 audience: configuration["JWTConfig:ValidAudience"],
@@ -86,11 +84,11 @@ namespace hotel_management_api.Utils
         {   
             if(token == null) return true;
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var x = DateTime.Now.AddDays(30);
+            var x = DateTime.UtcNow.AddHours(7).AddDays(30);
             if (jwt == null) 
                 return true;
             var expired = jwt.ValidTo;
-            if(expired > DateTime.Now) 
+            if(expired > DateTime.UtcNow.AddHours(7)) 
                 return false;
             return true;
 

@@ -97,38 +97,50 @@ namespace hotel_management_api.Business.Services
         }
         public async Task<IUpdateUserInteractor.Response> UpdateAsync(IUpdateUserInteractor.Request request)
         {
-            UpdateUserDto updateUserDto = request.updateUserDto;
-            string userId = await GetUserIdFromToken(request.token);
-            AppUser user = await userRepository.findUserByEmailAsync(updateUserDto.Email);
-            if (user != null && user.Id != userId)
-                return new IUpdateUserInteractor.Response()
-                {
-                    Success = true,
-                    Message = "Email already used by another user"
-                };
-            string? avatar = "";
-            AppUser updateUser = await userRepository.FindByIdAsync(userId);
-            if (updateUserDto.Avatar != null) { 
-                avatar = await uploadFileUtil.UploadAsync(updateUserDto.Avatar);
-                updateUser.Avatar = avatar;
-            }
-            updateUser.Age = updateUserDto.Age;
-            updateUser.Email = updateUserDto.Email;
-            updateUser.LastName = updateUserDto.LastName;
-            updateUser.FirstName = updateUserDto.FirstName;
-            updateUser.PhoneNumber = updateUserDto.PhoneNumber;
-            var isSuccess = await userRepository.updateUser(updateUser);
-            if(isSuccess)
-                return new IUpdateUserInteractor.Response()
-                {
-                    Success = true,
-                    Message = "Update user success"
-                };
-            return new IUpdateUserInteractor.Response()
+            try
             {
-                Success = false,
-                Message = "Update user failed"
-            };
+                UpdateUserDto updateUserDto = request.updateUserDto;
+                string userId = await GetUserIdFromToken(request.token);
+                AppUser user = await userRepository.findUserByEmailAsync(updateUserDto.Email);
+                if (user != null && user.Id != userId)
+                    return new IUpdateUserInteractor.Response()
+                    {
+                        Success = true,
+                        Message = "Email already used by another user"
+                    };
+                string? avatar = "";
+                AppUser updateUser = await userRepository.FindByIdAsync(userId);
+                if (updateUserDto.Avatar != null)
+                {
+                    avatar = await uploadFileUtil.UploadAsync(updateUserDto.Avatar);
+                    updateUser.Avatar = avatar;
+                }
+                updateUser.Age = updateUserDto.Age;
+                updateUser.Email = updateUserDto.Email;
+                updateUser.LastName = updateUserDto.LastName;
+                updateUser.FirstName = updateUserDto.FirstName;
+                updateUser.PhoneNumber = updateUserDto.PhoneNumber;
+                var isSuccess = await userRepository.updateUser(updateUser);
+                if (isSuccess)
+                    return new IUpdateUserInteractor.Response()
+                    {
+                        Success = true,
+                        Message = "Update user success"
+                    };
+                return new IUpdateUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Update user failed"
+                };
+            }
+            catch(Exception ex)
+            {
+                return new IUpdateUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Error occur when update user"
+                };
+            }
         }
         public async Task<IUserLoginInteractor.Response> LoginService(IUserLoginInteractor.Request request)
         {

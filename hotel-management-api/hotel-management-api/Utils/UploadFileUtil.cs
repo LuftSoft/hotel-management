@@ -11,9 +11,15 @@ namespace hotel_management_api.Utils
     public class UploadFileUtil : IUploadFileUtil
     {
         private readonly IConfiguration configuration;
-        public UploadFileUtil(IConfiguration configuration)
+        private readonly IWebHostEnvironment environment;
+        public UploadFileUtil
+            (
+            IConfiguration configuration
+            , IWebHostEnvironment environment
+            )
         {
             this.configuration = configuration;
+            this.environment = environment;
         }
         public async Task<string?> UploadAsync(IFormFile uploadFile)
         {
@@ -21,7 +27,7 @@ namespace hotel_management_api.Utils
             {
                 var cloudinary = new Cloudinary(this.configuration["CLOUDINARY_URL"].ToString());
                 cloudinary.Api.Secure = true;
-                var basePath = Directory.GetCurrentDirectory() + @"wwwroot/upload";
+                var basePath = Path.Combine(environment.WebRootPath, "upload");
                 if (!Directory.Exists(basePath))
                 {
                     Directory.CreateDirectory(basePath);
@@ -57,7 +63,7 @@ namespace hotel_management_api.Utils
             {
                 var cloudinary = new Cloudinary(this.configuration["CLOUDINARY_URL"].ToString());
                 cloudinary.Api.Secure = true;
-                var basePath = Directory.GetCurrentDirectory() + @"wwwroot/upload";
+                var basePath = Path.Combine(environment.WebRootPath, "upload");
                 if (!Directory.Exists(basePath))
                 {
                     Directory.CreateDirectory(basePath);

@@ -97,7 +97,8 @@ builder.Services
     .HotelInteractorDependencyInjection()
     .BookingInteractorDependencyInjection()
     .CommentInteractorDependencyInjection()
-    .RoomGalleryInteractorDependencyInjection();
+    .RoomGalleryInteractorDependencyInjection()
+    .HotelCategoryInteractorDependencyInjection();
 builder.Services.AddCors(builder =>
 {
     builder.AddPolicy(
@@ -146,6 +147,7 @@ var app = builder.Build();
 //    app.UseSwaggerUI();
 //    app.UseHsts();
 //}
+app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHsts();

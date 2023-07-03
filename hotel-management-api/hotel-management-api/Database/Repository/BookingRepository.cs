@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace hotel_management_api.Database.Repository
 {
-    public class BookingRepository : IBookingRepository
+    public class BookingRepository :  IBookingRepository
     {
         private readonly AppDbContext appDbContext;
-        public BookingRepository(AppDbContext appDbContext) 
+        public BookingRepository(AppDbContext _appDbContext) 
         {
-            this.appDbContext = appDbContext;
+            this.appDbContext = _appDbContext;
         }
         public async Task<bool> Cancel(int id)
         {

@@ -1,5 +1,6 @@
 ﻿using hotel_management_api.Business.Boudaries.User;
 using hotel_management_api.Business.Interactor.Booking;
+using hotel_management_api.Business.Interactor.Category;
 using hotel_management_api.Business.Interactor.Comment;
 using hotel_management_api.Business.Interactor.Hotel;
 using hotel_management_api.Business.Interactor.Location;
@@ -38,6 +39,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IHotelService,HotelService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IRoomGalleryService, RoomGalleryService>();
             return services;
@@ -75,6 +77,15 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IGetListHotelInteractor, GetListHotelInteractor>();
             services.AddScoped<IGetDetailHotelInteractor, GetDetailHotelInteractor>();
             services.AddScoped<IGetListHotelFilterInteractor, GetListHotelFilterInteractor>();
+            services.AddScoped<IGetListHotelOfOwnerInteractor, GetListHotelOfOwnerInteractor>();
+            return services;
+        }
+        public static IServiceCollection HotelCategoryInteractorDependencyInjection(this IServiceCollection services)
+        {
+            services.AddScoped<ICreateCategoryInteractor, CreateCategoryInteractor>();
+            services.AddScoped<IUpdateCategoryInteractor, UpdateCategoryInteractor>();
+            services.AddScoped<IGetAllCategoryInteractor, GetAllCategoryInteractor>();
+            services.AddScoped<IDeleteCategoryInteractor, DeleteCategoryInteractor>();
             return services;
         }
         public static IServiceCollection RoomInteractorDependencyInjection(this IServiceCollection services) 
@@ -99,6 +110,7 @@ namespace hotel_management_api.Extension.DependencyInjections
             services.AddScoped<IUpdateBookingRoomInteractor, UpdateBookingRoomInteractor>();
             services.AddScoped<ICancelBookingRoomInteractor, CancelBookingRoomInteractor>();
             services.AddScoped<IGetAllBookingByUserInteractor, GetAllBookingByUserInteractor>();
+            services.AddScoped<IGetAllBookingByHotelInteractor, GetAllBookingByHotelInteractor>();
             return services;
         }
         public static IServiceCollection CommentInteractorDependencyInjection(this IServiceCollection services)

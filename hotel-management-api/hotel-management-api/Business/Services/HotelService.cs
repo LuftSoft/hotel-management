@@ -70,7 +70,7 @@ namespace hotel_management_api.Business.Services
                 Slug = hotel.Slug,
                 CreatedDate = hotel.CreatedDate,
                 UpdateDate = hotel.UpdateDate,
-                USerId = hotel.USerId,
+                UserId = hotel.USerId,
                 HotelCategoryId = hotel.HotelCategoryId,
                 HotelCategory = hotel.HotelCategory,
                 HotelBenefit = hotel.HotelBenefit,
@@ -178,6 +178,44 @@ namespace hotel_management_api.Business.Services
                 {
                     Success = false,
                     Message = $"Get list hotel failed!.Hotel service. Error: {ex.Message}"
+                };
+            }
+        }
+        public async Task<IGetListHotelOfOwnerInteractor.Response> GetHotelOfOwner(string token)
+        {
+            try
+            {
+                string userName = jwtUtil.getUserNameFromToken(token);
+                string userid = (await userRepository.findUserByEmailAsync(userName)).Id;
+                var hotels = await hotelRepository.GetByOwnerId(userid);
+                List<HotelDto> hotelDtos = new List<HotelDto>();
+                foreach(var hotel in hotels)
+                {
+                    hotelDtos.Add(await ConvertHotelToHotelDto(hotel));
+                }
+                var category = await hotelCategoryRepository.GetAll();
+                if (hotels == null)
+                {
+                    return new IGetListHotelOfOwnerInteractor.Response()
+                    {
+                        Success = false,
+                        Message = "You don't have any hotel yet"
+                    };
+                }
+                return new IGetListHotelOfOwnerInteractor.Response()
+                {
+                    Success = true,
+                    Message = "Get list hotel by owner success",
+                    Hotels = hotelDtos,
+                    Categories = (List<HotelCategory>?)category
+                };
+            }
+            catch(Exception ex)
+            {
+                return new IGetListHotelOfOwnerInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Failed when get list data"
                 };
             }
         }
@@ -395,6 +433,15 @@ namespace hotel_management_api.Business.Services
             var userName = jwtUtil.getUserNameFromToken(request.token);
             var userId = (await userRepository.findUserByEmailAsync(userName)).Id;
             var hotel = await hotelRepository.FindByIdAsync(request.id);
+            if(hotel == null)
+            {
+                return new IDeleteHotelInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Hotel is not exist!"
+
+                };
+            }
             if (userId != hotel.USerId)
             {
                 return new IDeleteHotelInteractor.Response()
@@ -404,7 +451,7 @@ namespace hotel_management_api.Business.Services
 
                 };
             }
-            var isSuccess = await hotelRepository.deleteAsync(request.id);
+            var isSuccess = await hotelRepository.Delete(request.id);
             if (isSuccess)
             {
                 return new IDeleteHotelInteractor.Response()
