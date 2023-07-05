@@ -102,7 +102,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 							<div className="d-flex flex-column mb-1">
 								<div className="" style={{ height: 144 }}>
 									<img
-										src={room.hotelImageGalleries[0].link}
+										src={room.hotelImageGalleries[0]?.link}
 										alt="room"
 										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
@@ -115,7 +115,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 							<div className="d-flex justify-content-between">
 								<div style={{ width: 90, height: 50 }} className="me-1">
 									<img
-										src={room.hotelImageGalleries[0].link}
+										src={room.hotelImageGalleries[0]?.link}
 										alt="room"
 										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
@@ -126,7 +126,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 								</div>
 								<div style={{ width: 90, height: 50 }} className="me-1">
 									<img
-										src={room.hotelImageGalleries[1].link}
+										src={room.hotelImageGalleries[1]?.link}
 										alt="room"
 										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
@@ -137,7 +137,7 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 								</div>
 								<div style={{ width: 90, height: 50 }}>
 									<img
-										src={room.hotelImageGalleries[2].link}
+										src={room.hotelImageGalleries[2]?.link}
 										alt="room"
 										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
