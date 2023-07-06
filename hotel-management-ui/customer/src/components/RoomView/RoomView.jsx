@@ -112,6 +112,13 @@ export default function RoomView({ room, hotelBenefit }) {
 									</div>
 								</div>
 							</div>
+							<div className="border-top border-3 my-2"></div>
+							<div className="d-flex flex-column">
+								<div className="fw-bold">Về phòng này</div>
+								<div className="row">
+									<div className="col-12">{room.description}</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -36,6 +36,10 @@ export default function HotelCard({ hotel, bookingDate, searchParams }) {
 				<div className="HotelCard__Logo">
 					<img
 						src={hotel.logoLink}
+						style={{
+							width: "132px",
+							height: "100%",
+						}}
 						// className="rounded"
 						alt="hotel"
 						onError={(e) => {

@@ -122,9 +122,9 @@ function HeroSection(props, ref) {
 			}
 			districtRef.current.disabled = true;
 			districtRef.current.value = undefined;
-			homeletRef.current.disabled = true;
-			homeletRef.current.value = undefined;
 		}
+		homeletRef.current.disabled = true;
+		homeletRef.current.value = undefined;
 	};
 	const handleDistrictChange = (e) => {
 		const value = e.target.value;
