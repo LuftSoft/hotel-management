@@ -35,6 +35,7 @@ const initFilters = {
 };
 
 export default function HotelPage() {
+	console.log("redner");
 	const [currentPage, setCurrentPage] = useState(1);
 	const { bookingDate, setBookingDate } = useBookingDate();
 	const [filters, setFilters] = useState(initFilters);
@@ -110,7 +111,7 @@ export default function HotelPage() {
 		return <Navigate to={routes.home} />;
 	}
 	const listHotelState = useQuery({
-		queryKey: ["hotel", params, filtersDeferred],
+		queryKey: ["hotel", params, filtersDeferred, currentPage - 1],
 		queryFn: async () => {
 			console.log(filters);
 			try {
@@ -122,6 +123,7 @@ export default function HotelPage() {
 					{
 						params: {
 							...params,
+							pageIndex: currentPage - 1,
 						},
 					},
 				);

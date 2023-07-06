@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { validatePassword } from "../../utils/helpers";
@@ -19,6 +19,7 @@ export default function ResetPasswordPage() {
 	console.log(token);
 	// const { token } = useParams();
 	// console.log(token);
+	const navigate = useNavigate();
 
 	const passwordRef = useRef();
 	const confirmPwRef = useRef();
@@ -64,6 +65,7 @@ export default function ResetPasswordPage() {
 			});
 			console.log(res);
 			if (res.success) {
+				navigate("/");
 				toast.update(toastId, {
 					render: res.message,
 					type: "success",
