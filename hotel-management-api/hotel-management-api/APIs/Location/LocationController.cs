@@ -51,5 +51,35 @@ namespace hotel_management_api.APIs.Location
             }
             return Ok(result);
         }
+        [HttpGet("homelet/detail/{id}")]
+        public async Task<IActionResult> GetDetailHomelet(string id)
+        {
+            var result = await getHomeletInteractor.GetDetailHomeletAsync(id);
+            if (result.Success == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("district/detail/{id}")]
+        public async Task<IActionResult> GetDetailDistrict(string id)
+        {
+            var result = await getDistrictInteractor.GetDetailDistrictAsync(id);
+            if (result.Success == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("provine/detail/{id}")]
+        public async Task<IActionResult> GetDetailProvince(string id)
+        {
+            var result = await getProvineInteractor.GetDetailProvineAsync(id);
+            if (result.Success == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }

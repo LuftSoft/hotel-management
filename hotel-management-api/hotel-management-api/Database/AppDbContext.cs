@@ -70,7 +70,7 @@ namespace hotel_management_api.Database
                     .WithOne(h => h.HotelBenefit)
                     .HasForeignKey<Hotel>(h => h.HotelBenefitId)
                     .HasConstraintName("FK_HotelBenefit_Hotel")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<AppUser>(opt =>
             {
@@ -84,7 +84,7 @@ namespace hotel_management_api.Database
                     .WithOne(b => b.User)
                     .HasForeignKey(b => b.UserId)
                     .HasConstraintName("FK_User_Booking")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<Booking>(opt =>
             {
@@ -92,20 +92,19 @@ namespace hotel_management_api.Database
                     .WithOne(b => b.Booking)
                     .HasForeignKey(c => c.BookingId)
                     .HasConstraintName("FK_Booking_Comment")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<Room>(opt => 
             {
                 opt.HasMany(r => r.RoomGalleries)
                     .WithOne(rg => rg.Room)
                     .HasForeignKey(rg => rg.RooomId)
-                    .HasConstraintName("FK_Room_RoomGallery")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .HasConstraintName("FK_Room_RoomGallery");
                 opt.HasMany(r => r.Bookings)
                     .WithOne(b => b.Room)
                     .HasForeignKey(b => b.RoomId)
                     .HasConstraintName("FK_Room_Booking")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.ClientCascade);
             });
             builder.Entity<Hotel>(opt =>
             {
@@ -113,7 +112,7 @@ namespace hotel_management_api.Database
                     .WithOne(r => r.Hotel)
                     .HasForeignKey(r => r.HotelId)
                     .HasConstraintName("FK_Hotel_Room")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
                 opt.HasCheckConstraint("CK_hotel_start_max_value","Star<=5 AND Star>=1");
             });
             builder.Entity<Comment>(opt => 

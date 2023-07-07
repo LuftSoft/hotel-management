@@ -22,6 +22,7 @@ namespace hotel_management_api.Business.Interactor.Hotel
             public int PageIndex { get; set; }
         }
         Task<IGetListHotelInteractor.Response> GetAsync(IGetListHotelInteractor.Request request);
+        Task<IGetListHotelInteractor.Response> GetAllAsync(IGetListHotelInteractor.Request request);
     }
     public class GetListHotelInteractor : IGetListHotelInteractor
     {
@@ -34,6 +35,10 @@ namespace hotel_management_api.Business.Interactor.Hotel
         public async Task<IGetListHotelInteractor.Response> GetAsync(IGetListHotelInteractor.Request request)
         {
             return await hotelService.GetPaging(request);
+        }
+        public async Task<IGetListHotelInteractor.Response> GetAllAsync(IGetListHotelInteractor.Request request)
+        {
+            return await hotelService.GetAllPaging(request);
         }
     }
 }

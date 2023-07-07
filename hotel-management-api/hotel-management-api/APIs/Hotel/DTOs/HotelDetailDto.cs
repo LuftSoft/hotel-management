@@ -19,7 +19,9 @@ namespace hotel_management_api.APIs.Hotel.DTOs
         public string? USerId { get; set; }
         public HotelCategory? HotelCategory { set; get; }
         public HotelBenefit? HotelBenefit { set; get; }
-        public int HomeletId { set; get; }
+        public string? HomeletId { set; get; }
+        public string? DistrictId { set; get; }
+        public string? ProvineId { set; get; }
         public List<RoomDetailDto> Rooms { get; set; }
         public List<CommentDto> Comments { get; set; }
     }

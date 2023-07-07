@@ -1,5 +1,6 @@
 ﻿using hotel_management_api.APIs.Location.DTOs;
 using hotel_management_api.Business.Interactor.Location;
+using hotel_management_api.Database.Model;
 using hotel_management_api.Database.Repository;
 
 namespace hotel_management_api.Business.Services
@@ -95,6 +96,75 @@ namespace hotel_management_api.Business.Services
                 Success = true,
                 Message = "Get list provine success",
                 Data = provines
+            };
+        }
+        public async Task<IGetHomeletInteractor.DetailHomeletResponse> GetDetailHomeletAsync(string homeletId)
+        {
+            Homelet result = await homeletRepository.FindByIdAsync(homeletId);
+            if(result == null)
+            {
+                return new IGetHomeletInteractor.DetailHomeletResponse()
+                {
+                    Success = false,
+                    Message = "Homelet is not exists!"
+                };
+            }
+            return new IGetHomeletInteractor.DetailHomeletResponse()
+            {
+                Success = true,
+                Message = "Get homelet successful!",
+                Homelet = new HomeletDto()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Type = result.Type
+                }
+            };
+        }
+        public async Task<IGetDistrictInteractor.DetailDistrictResponse> GetDetailDistrictAsync(string districtId)
+        {
+            District result = await districtRepository.FindByIdAsync(districtId);
+            if (result == null)
+            {
+                return new IGetDistrictInteractor.DetailDistrictResponse()
+                {
+                    Success = false,
+                    Message = "Homelet is not exists!"
+                };
+            }
+            return new IGetDistrictInteractor.DetailDistrictResponse()
+            {
+                Success = true,
+                Message = "Get homelet successful!",
+                District = new DistrictDto()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Type = result.Type
+                }
+            };
+        }
+        public async Task<IGetProvineInteractor.DetailProvineResponse> GetDetailProvineAsync(string provineId)
+        {
+            Provine result = await provineRepository.FindByIdAsync(provineId);
+            if (result == null)
+            {
+                return new IGetProvineInteractor.DetailProvineResponse()
+                {
+                    Success = false,
+                    Message = "Homelet is not exists!"
+                };
+            }
+            return new IGetProvineInteractor.DetailProvineResponse()
+            {
+                Success = true,
+                Message = "Get homelet successful!",
+                Provine = new ProvineDto()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Type = result.Type
+                }
             };
         }
     }

@@ -95,7 +95,8 @@ namespace hotel_management_api.Business.Services
             }
 
             avgRating = Math.Round((avgRating / comments.Count)*2, MidpointRounding.AwayFromZero)/2;
-            
+            string districtId = (await homeletRepository.FindByIdAsync(hotel.HomeletId)).DistrictId;
+            string provineId = (await districtRepository.FindByIdAsync(districtId)).ProvineId;
             HotelDetailDto hotelDetailDto = new HotelDetailDto()
             {
                 Id = hotel.Id,
@@ -105,13 +106,16 @@ namespace hotel_management_api.Business.Services
                 USerId = hotel.USerId,
                 Address = hotel.Address,
                 LogoLink = hotel.LogoLink,
+                HomeletId = hotel.HomeletId,
                 HotelCategory = hotelCategory,
                 UpdateDate = hotel.UpdateDate,
                 CreatedDate = hotel.CreatedDate,
                 Description = hotel.Description,
                 Rooms = rooms,
                 HotelBenefit = benefit,
-                Comments = comments
+                Comments = comments,
+                DistrictId = districtId,
+                ProvineId = provineId
 
             };
             return new IGetDetailHotelInteractor.Response("Get success", true, hotelDetailDto);
@@ -152,6 +156,40 @@ namespace hotel_management_api.Business.Services
                 var containHotel = await hotelRepository.HotelFilterAsync(hotelFilter.FromDate,
                     hotelFilter.RoonCount, hotelFilter.RoomSize);
                 hotels = hotels.Where(h => containHotel.Contains(h.Id)).ToList();
+                hotels = hotels.Skip(request.pageSize * request.pageIndex).Take(request.pageSize).ToList();
+                var hotelDtos = new List<HotelDto>();
+                foreach (var hotel in hotels)
+                {
+                    var tmp = await hotelBenefitRepository.FindByHotelIdAsync(hotel.Id);
+                    hotel.HotelBenefit = tmp;
+                    hotelDtos.Add(await ConvertHotelToHotelDto(hotel));
+                }
+                var category = await hotelCategoryRepository.GetAll();
+                //tim kiem theo ngay`
+                return new IGetListHotelInteractor.Response()
+                {
+                    Success = true,
+                    Hotels = hotelDtos.ToList(),
+                    TotalPage = (hotels.Count() / request.pageSize) + 1,
+                    PageIndex = request.pageIndex,
+                    Categories = (List<HotelCategory>?)category,
+                    Message = "Get list hotel success"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new IGetListHotelInteractor.Response()
+                {
+                    Success = false,
+                    Message = $"Get list hotel failed!.Hotel service. Error: {ex.Message}"
+                };
+            }
+        }
+        public async Task<IGetListHotelInteractor.Response> GetAllPaging(IGetListHotelInteractor.Request request)
+        {
+            try
+            {
+                var hotels = await hotelRepository.GetAllAsync();
                 hotels = hotels.Skip(request.pageSize * request.pageIndex).Take(request.pageSize).ToList();
                 var hotelDtos = new List<HotelDto>();
                 foreach (var hotel in hotels)
@@ -389,44 +427,51 @@ namespace hotel_management_api.Business.Services
         }
         public async Task<IUpdateHotelInteractor.Response> Update(IUpdateHotelInteractor.Request request)
         {
-            var userName = jwtUtil.getUserNameFromToken(request.token);
-            var userId = (await userRepository.findUserByEmailAsync(userName)).Id;
-            var dto = request.dto;
-            if (userId != dto.USerId)
+            try
             {
-                return new IUpdateHotelInteractor.Response("you are not owner of the hotel", true);
+                var userName = jwtUtil.getUserNameFromToken(request.token);
+                var userId = (await userRepository.findUserByEmailAsync(userName)).Id;
+                var dto = request.dto;
+                if (userId != dto.USerId)
+                {
+                    return new IUpdateHotelInteractor.Response("you are not owner of the hotel", true);
+                }
+                var fileString = "";
+                if (dto.Logo != null)
+                {
+                    fileString = await uploadFileUtil.UploadAsync(dto.Logo);
+                }
+                var htBn = await hotelBenefitRepository.FindByIdAsync(dto.HotelBenefitId);
+                htBn.AirConditioner = dto.AirConditioner;
+                htBn.AllowPet = dto.AllowPet;
+                htBn.AllTimeFrontDesk = dto.AllTimeFrontDesk;
+                htBn.CarBorow = dto.CarBorow;
+                htBn.Elevator = dto.Elevator;
+                htBn.FreeBreakfast = dto.FreeBreakfast;
+                htBn.Parking = dto.Parking;
+                htBn.Pool = dto.Pool;
+                htBn.Resttaurant = dto.Resttaurant;
+                htBn.WifiFree = dto.WifiFree;
+                await hotelBenefitRepository.UpdateAsync(htBn);
+                var hotelResult = await hotelRepository.FindByIdAsync(dto.Id);
+                if (hotelResult == null)
+                    return new IUpdateHotelInteractor.Response("update hotel information failed", false);
+                hotelResult.Name = dto.Name;
+                hotelResult.Address = dto.Address;
+                hotelResult.Description = dto.Description;
+                hotelResult.UpdateDate = DateTime.Now;
+                hotelResult.HomeletId = dto.HomeletId;
+                hotelResult.Star = dto.Star;
+                hotelResult.HotelCategoryId = dto.HotelCategoryId;
+                hotelResult.Slug = dto.Slug;
+                if (fileString != "") hotelResult.LogoLink = fileString;
+                await hotelRepository.updateAsync(hotelResult);
+                return new IUpdateHotelInteractor.Response("update hotel information success", true);
             }
-            var fileString = "";
-            if (dto.Logo != null)
+            catch(Exception ex)
             {
-                fileString = await uploadFileUtil.UploadAsync(dto.Logo);
+                return new IUpdateHotelInteractor.Response(ex.Message, false);
             }
-            var htBn = await hotelBenefitRepository.FindByIdAsync(dto.HotelBenefitId);
-            htBn.AirConditioner = dto.AirConditioner;
-            htBn.AllowPet = dto.AllowPet;
-            htBn.AllTimeFrontDesk = dto.AllTimeFrontDesk;
-            htBn.CarBorow = dto.CarBorow;
-            htBn.Elevator = dto.Elevator;
-            htBn.FreeBreakfast = dto.FreeBreakfast;
-            htBn.Parking = dto.Parking;
-            htBn.Pool = dto.Pool;
-            htBn.Resttaurant = dto.Resttaurant;
-            htBn.WifiFree = dto.WifiFree;
-            await hotelBenefitRepository.UpdateAsync(htBn);
-            var hotelResult = await hotelRepository.FindByIdAsync(dto.Id);
-            if (hotelResult == null)
-                return new IUpdateHotelInteractor.Response("update hotel information failed", false);
-            hotelResult.Name = dto.Name;
-            hotelResult.Address = dto.Address;
-            hotelResult.Description = dto.Description;
-            hotelResult.UpdateDate = DateTime.Now;
-            hotelResult.HomeletId = dto.HomeletId;
-            hotelResult.Star = dto.Star;
-            hotelResult.HotelCategoryId = dto.HotelCategoryId;
-            hotelResult.Slug = dto.Slug;
-            if (fileString != "") hotelResult.LogoLink = fileString;
-            await hotelRepository.updateAsync(hotelResult);
-            return new IUpdateHotelInteractor.Response("update hotel information success", true);
         }
         public async Task<IDeleteHotelInteractor.Response> Delete(IDeleteHotelInteractor.Request request)
         {

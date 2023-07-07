@@ -12,7 +12,14 @@ namespace hotel_management_api.Business.Interactor.Location
             public bool? Success { get; set; }
             public List<ProvineDto> Data { get; set; }
         }
+        public class DetailProvineResponse
+        {
+            public string? Message { get; set; }
+            public bool? Success { get; set; }
+            public ProvineDto? Provine { get; set; }
+        }
         Task<IGetProvineInteractor.Response> GetAsync();
+        Task<IGetProvineInteractor.DetailProvineResponse> GetDetailProvineAsync(string provineId);
     }
     public class GetProvineInteractor : IGetProvineInteractor
     {
@@ -24,6 +31,10 @@ namespace hotel_management_api.Business.Interactor.Location
         public async Task<IGetProvineInteractor.Response> GetAsync()
         {
             return await locationService.GetProvine();
+        }
+        public async Task<IGetProvineInteractor.DetailProvineResponse> GetDetailProvineAsync(string provineId)
+        {
+            return await locationService.GetDetailProvineAsync(provineId);
         }
     }
 }

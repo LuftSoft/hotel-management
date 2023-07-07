@@ -62,6 +62,19 @@ namespace hotel_management_api.APIs.Hotel
                 return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("all")]
+        public async Task<IActionResult> getAll(int pageIndex, int pageSize)
+        {
+            if (pageSize == 0) pageSize = 10;
+            var result = await getListHotelInteractor.GetAllAsync(new IGetListHotelInteractor.Request()
+            {
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            });
+            if (result.Success == true)
+                return Ok(result);
+            return BadRequest(result);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> getDetail(int id)
         {

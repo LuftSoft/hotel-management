@@ -14,7 +14,15 @@ namespace hotel_management_api.Business.Interactor.Location
             public string DistrictId { get; set; }
             public List<HomeletDto> Data { get; set; }
         }
+        public class DetailHomeletResponse
+        {
+            public string? Message { get; set; }
+            public bool? Success { get; set; }
+            public HomeletDto? Homelet { get; set; }
+        }
         Task<IGetHomeletInteractor.Response> GetAsync(string districtId);
+        Task<IGetHomeletInteractor.DetailHomeletResponse> GetDetailHomeletAsync(string homeletId);
+
     }
     public class GetHomeletInteractor: IGetHomeletInteractor
     {
@@ -26,6 +34,10 @@ namespace hotel_management_api.Business.Interactor.Location
         public async Task<IGetHomeletInteractor.Response> GetAsync(string districtId)
         {
             return await locationService.GetHomelet(districtId);
+        }
+        public async Task<IGetHomeletInteractor.DetailHomeletResponse> GetDetailHomeletAsync(string homeletId)
+        {
+            return await locationService.GetDetailHomeletAsync(homeletId);
         }
     }
 }

@@ -13,7 +13,14 @@ namespace hotel_management_api.Business.Interactor.Location
             public string ProvineId { get; set; }
             public List<DistrictDto> Data { get; set; }
         }
+        public class DetailDistrictResponse
+        {
+            public string? Message { get; set; }
+            public bool? Success { get; set; }
+            public DistrictDto? District { get; set; }
+        }
         Task<IGetDistrictInteractor.Response> GetAsync(string provineId);
+        Task<IGetDistrictInteractor.DetailDistrictResponse> GetDetailDistrictAsync(string districtId);
     }
     public class GetDistrictInteractor: IGetDistrictInteractor
     {
@@ -25,6 +32,10 @@ namespace hotel_management_api.Business.Interactor.Location
         public async Task<IGetDistrictInteractor.Response> GetAsync(string provineId)
         {
             return await locationService.GetDistrict(provineId);
+        }
+        public async Task<IGetDistrictInteractor.DetailDistrictResponse> GetDetailDistrictAsync(string districtId)
+        {
+            return await locationService.GetDetailDistrictAsync(districtId);
         }
     }
 }
