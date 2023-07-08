@@ -44,7 +44,6 @@ export default function PasswordTab() {
 
 		if (Object.keys(errors).length) {
 			setErrors(errors);
-			console.log(errors);
 		} else {
 			setErrors({
 				...initErrorState,
@@ -69,7 +68,6 @@ export default function PasswordTab() {
 					},
 				},
 			);
-			console.log(res);
 			if (res.data.success) {
 				oldPwRef.current.value = "";
 				newPwRef.current.value = "";

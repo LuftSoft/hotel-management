@@ -60,7 +60,6 @@ export default function SignUpPage() {
 						password,
 						role: ["user"],
 					});
-					console.log(res);
 					toast.update(toastId, {
 						render: "Đăng ký thành công!",
 						type: "success",

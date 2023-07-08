@@ -25,7 +25,12 @@ export default function DefaultLayout({ children }) {
 			{/* open mobile menu */}
 			{/* mobile menu */}
 			<Header />
-			<div>{children}</div>
+			<div
+				style={{
+					minHeight: "100vh",
+				}}>
+				{children}
+			</div>
 			{/* Footer */}
 			<Footer />
 			{/* Search Modal */}

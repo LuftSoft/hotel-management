@@ -17,7 +17,6 @@ export default function DetailHotelPage() {
 		queryFn: async () => {
 			try {
 				const res = await axiosGet(url.detailHotel + id);
-				console.log(res);
 				return res;
 			} catch (error) {
 				return Promise.reject(error);
@@ -75,7 +74,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -86,7 +85,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100 mb-2"
+										className="w-100 h-100 rounded mb-2"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -95,7 +94,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100 mb-2"
+										className="w-100 h-100 rounded mb-2"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -104,7 +103,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100 mb-2"
+										className="w-100 h-100 rounded mb-2"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";
@@ -113,7 +112,7 @@ export default function DetailHotelPage() {
 									<img
 										src={hotel.logoLink}
 										alt="room"
-										className="w-100 h-100"
+										className="w-100 h-100 rounded"
 										style={{ maxHeight: 118, objectFit: "cover" }}
 										onError={(e) => {
 											e.target.src = "/img/hotel-room.webp";

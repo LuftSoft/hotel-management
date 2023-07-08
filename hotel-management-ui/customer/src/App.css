@@ -5,6 +5,10 @@
 	min-height: calc(100vh - 232px);
 }
 
+.active[data-bs-slide-to] {
+	border: 2px solid var(--primary-color);
+}
+
 .cursor-pointer {
 	cursor: pointer;
 }
