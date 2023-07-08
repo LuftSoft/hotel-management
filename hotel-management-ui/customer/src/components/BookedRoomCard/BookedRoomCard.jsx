@@ -132,7 +132,8 @@ export default function BookedRoomCard({ bookedRoom }) {
 						</div>
 					</div>
 				</div>
-				{hotelState.isSuccess && hotel.comments.length > 0 && (
+				{/* {hotelState.isSuccess && hotel.comments.length > 0 && ( */}
+				{hotelState.isSuccess && (
 					<div
 						// id="test"
 						onClick={(e) => {
