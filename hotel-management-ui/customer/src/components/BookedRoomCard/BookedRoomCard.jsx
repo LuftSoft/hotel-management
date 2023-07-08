@@ -1,16 +1,24 @@
 import { useSelector } from "react-redux";
 import { formatDate } from "../../utils/helpers";
 import { axiosDelete, axiosGet, url } from "../../utils/httpRequest";
-import { selectAccessToken } from "../../redux/selectors";
+import { selectAccessToken, selectUser } from "../../redux/selectors";
 import { useState } from "react";
 import PostComment from "../PostComment";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export default function BookedRoomCard({ bookedRoom }) {
+const defaultFn = () => {};
+
+/**
+ * Contains information of booked room
+ * @param {*} param0
+ * @returns
+ */
+export default function BookedRoomCard({ bookedRoom, onAbort = defaultFn }) {
 	const [showPostComment, setShowPostComment] = useState(false);
-	const [aborted, setAborted] = useState(false);
+	const [aborted, setAborted] = useState(bookedRoom.returned);
 
 	const accessToken = useSelector(selectAccessToken);
+	const currentUser = useSelector(selectUser);
 
 	const hotelState = useQuery({
 		queryKey: ["hotel", bookedRoom.hotelId],
@@ -60,22 +68,32 @@ export default function BookedRoomCard({ bookedRoom }) {
 		return null;
 	};
 
-	const handleAbort = async (e) => {
-		e.stopPropagation();
+	const handleAbort = async () => {
+		// e.stopPropagation();
 		try {
 			const res = await axiosDelete(url.cancelBooking + bookedRoom.id, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
 			});
+			console.log(res);
 			if (res.success) {
+				hotelState.refetch();
 				setAborted(true);
 				setShowPostComment(false);
+				// onAbort();
 			}
 		} catch (error) {
 			console.log(error);
 		}
 	};
+	const queryClient = useQueryClient();
+	const mutation = useMutation({
+		mutationFn: handleAbort,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["bookedRoom", currentUser.id] });
+		},
+	});
 	const handleClick = () => {
 		window.open("/hotel/" + bookedRoom.hotelId, "_blank");
 	};
@@ -118,13 +136,16 @@ export default function BookedRoomCard({ bookedRoom }) {
 									aria-expanded="false"
 									aria-controls="test"
 									className="btn btn-outline-primary mb-2">
-									Đánh giá
+									{showPostComment ? "Ẩn" : "Đánh giá"}
 								</button>
 							)}
 							{/* <div> */}
 							<button
 								type="button"
-								onClick={handleAbort}
+								onClick={(e) => {
+									e.stopPropagation();
+									mutation.mutate();
+								}}
 								className={`btn ${bookedRoom.returned || aborted ? "btn-secondary" : "btn-danger"}`}
 								disabled={bookedRoom.returned || aborted ? true : false}>
 								{bookedRoom.returned || aborted ? "Đã hủy" : "Hủy"}

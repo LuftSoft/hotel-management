@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { useState } from "react";
 import RoomView from "../RoomView/RoomView";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} }) {
 	const bookingDate = useSelector(selectBookingDate);
@@ -30,8 +31,6 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 						returned: false,
 						fromDate: new Date(bookingDate.FromDate).toISOString(),
 						toDate: new Date(bookingDate.ToDate).toISOString(),
-						// fromDate: "2023-06-19T15:52:09.895Z",
-						// toDate: "2023-06-20T15:52:09.895Z",
 					},
 					{
 						headers: {
@@ -66,6 +65,15 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 	const handleShowDetail = () => {
 		setShowDetail(!showDetail);
 	};
+
+	const queryClient = useQueryClient();
+	const mutation = useMutation({
+		mutationFn: handleBook,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["bookedRoom", currentUser.id] });
+		},
+	});
+
 	return (
 		<div className="bg-light rounded border p-3">
 			{true && (
@@ -267,8 +275,14 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 										<div className="text-primary">{"Giá cuối cùng"}</div>
 									</div>
 									<div>
-										<button type="button" onClick={handleBook} className="btn btn-primary">
-											Đặt ngay
+										<button
+											type="button"
+											disabled={room.emptyRoom === 0 ? true : false}
+											onClick={() => {
+												mutation.mutate();
+											}}
+											className={`btn ${room.emptyRoom === 0 ? " btn-sencondary " : " btn-primary "} `}>
+											{room.emptyRoom === 0 ? "Hết phòng" : "Đặt ngay"}
 										</button>
 									</div>
 								</div>

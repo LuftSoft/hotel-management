@@ -11,10 +11,15 @@ function usePagination(totalCount, totalPage = 0, pageSize, siblingCount = 1, cu
 		return Array.from({ length }, (_, index) => index + start);
 	};
 	const paginationRange = useMemo(() => {
-		// const totalPageCount = Math.ceil(totalCount / pageSize);
-		const totalPageCount = totalPage;
+		let totalPageCount = Math.ceil(totalCount / pageSize);
+		if (totalPage) {
+			totalPageCount = totalPage;
+		}
 		// siblingCount + firstPage + lastPage + currentPage + 2*DOTS
 		const totalPageNumbers = siblingCount + 5; // UI
+		if (totalPageCount <= 0) {
+			return [];
+		}
 		/*
       Case 1:
       If the number of pages is less than the page numbers we want to show in our
