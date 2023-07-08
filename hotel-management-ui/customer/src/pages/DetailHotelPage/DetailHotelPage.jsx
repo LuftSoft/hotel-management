@@ -17,7 +17,6 @@ export default function DetailHotelPage() {
 		queryFn: async () => {
 			try {
 				const res = await axiosGet(url.detailHotel + id);
-				console.log(res);
 				return res;
 			} catch (error) {
 				return Promise.reject(error);

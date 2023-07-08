@@ -4,7 +4,6 @@ export default function FilterHotel({ handleFilter }) {
 	const minPriceRef = useRef();
 	const maxPriceRef = useRef();
 	const handleClick = () => {
-		console.log(minPriceRef.current.value);
 		const filter = {};
 		if (minPriceRef.current.value) {
 			filter.minPrice = minPriceRef.current.value;

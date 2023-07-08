@@ -18,7 +18,6 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 	const navigate = useNavigate();
 
 	const handleBook = async () => {
-		console.log(room.id);
 		if (currentUser) {
 			const toastId = toast.loading("Đang xử lý!");
 			try {
@@ -40,7 +39,6 @@ export default function RoomCard({ room, hotelBenefit, onCardClick = () => {} })
 						},
 					},
 				);
-				// console.log(res); //res.success
 				onCardClick();
 				if (res.success) {
 					toast.update(toastId, {

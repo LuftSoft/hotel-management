@@ -8,7 +8,6 @@ import { routes } from "../../routes";
 import { toast } from "react-toastify";
 
 function HeroSection(props, ref) {
-	console.log("render");
 	const navigate = useNavigate();
 	const checkInDateRef = useRef(null);
 	const checkOutDateRef = useRef(null);
@@ -109,14 +108,12 @@ function HeroSection(props, ref) {
 	const handleProvinceChange = (e) => {
 		const value = e.target.value;
 		if (value !== "undefined") {
-			console.log("test");
 			if (!getDistrict) {
 				setGetDistrict(true);
 			}
 			districtRef.current.disabled = false;
 			hotelDistrict.refetch();
 		} else {
-			console.log("vo");
 			if (getDistrict) {
 				setGetDistrict(false);
 			}
@@ -288,7 +285,7 @@ function HeroSection(props, ref) {
 					left: 0,
 				}}>
 				<div id="carouselExampleIndicators" className="carousel slide h-100" data-bs-ride="carousel">
-					<div className="carousel-indicators">
+					<div className="carousel-indicators align-items-center">
 						<button
 							type="button"
 							data-bs-target="#carouselExampleIndicators"

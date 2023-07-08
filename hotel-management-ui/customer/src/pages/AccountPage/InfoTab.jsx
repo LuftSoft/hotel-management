@@ -76,7 +76,6 @@ export default function InfoTab() {
 		formData.append("Email", emailRef.current.value);
 		formData.append("PhoneNumber", phoneRef.current.value);
 		formData.append("Avatar", newAvatar);
-		console.log(formData.get("Avatar"));
 		const axiosInstance = axiosJWT(accessToken, refreshToken, dispatch);
 		const toastId = toast.loading("Đang cập nhật!");
 		try {
@@ -86,7 +85,6 @@ export default function InfoTab() {
 					"Content-Type": "multipart/form-data",
 				},
 			});
-			// console.log(res);
 			if (res.data.success) {
 				toast.update(toastId, {
 					render: res.data.message,

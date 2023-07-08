@@ -12,8 +12,7 @@ import { useBookingDate } from "../../contexts/bookingDateContext";
 import { useDispatch } from "react-redux";
 import { setBookingDate } from "../../redux/bookingDateSlice";
 
-export default function HotelCard({ hotel, bookingDate, searchParams }) {
-	// console.log(bookingDate);
+export default function HotelCard({ hotel, category, bookingDate, searchParams }) {
 	const dispatch = useDispatch();
 	// const { setBookingDate } = useBookingDate();
 	const navigate = useNavigate();
@@ -56,7 +55,7 @@ export default function HotelCard({ hotel, bookingDate, searchParams }) {
 								</div>
 								<div className="d-flex my-2">
 									<div className="me-2">
-										<span className="badge rounded-pill bg-primary">Khách sạn</span>
+										<span className="badge rounded-pill bg-primary">{category.name}</span>
 									</div>
 									<div className="d-flex align-items-center">
 										<Stars numberOfStar={hotel.star} />

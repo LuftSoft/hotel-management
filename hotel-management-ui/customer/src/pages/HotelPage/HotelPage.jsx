@@ -16,8 +16,6 @@ import { useBookingDate } from "../../contexts/bookingDateContext";
 
 // const cx = classNames.bind(import("./HotelPage.scss"));
 
-// console.log(cx);
-
 const initFilters = {
 	priceSort: 0,
 	minPrice: null,
@@ -35,7 +33,6 @@ const initFilters = {
 };
 
 export default function HotelPage() {
-	console.log("redner");
 	const [currentPage, setCurrentPage] = useState(1);
 	const { bookingDate, setBookingDate } = useBookingDate();
 	const [filters, setFilters] = useState(initFilters);
@@ -45,7 +42,6 @@ export default function HotelPage() {
 	const bookingDateTest = {};
 	const params = {};
 	searchParams.forEach((value, key) => {
-		// console.log("test", key, "= ", value);
 		if (value) {
 			switch (key) {
 				case "pageIndex":
@@ -56,8 +52,6 @@ export default function HotelPage() {
 				case "pageSize":
 					if (!isNaN(value)) {
 						params[key] = value;
-					} else {
-						console.log("params", false);
 					}
 					break;
 				case "ProvineId":
@@ -113,7 +107,6 @@ export default function HotelPage() {
 	const listHotelState = useQuery({
 		queryKey: ["hotel", params, filtersDeferred, currentPage - 1],
 		queryFn: async () => {
-			console.log(filters);
 			try {
 				const res = await axiosPost(
 					url.hotel,
@@ -127,7 +120,6 @@ export default function HotelPage() {
 						},
 					},
 				);
-				// console.log(res);
 				return res;
 			} catch (error) {
 				console.log(error);
@@ -174,12 +166,21 @@ export default function HotelPage() {
 								</>
 							) : listHotel?.length > 0 ? (
 								listHotel?.map((hotel) => {
-									let category = [];
-									return (
-										<div key={hotel.id} className="col px-0">
-											<HotelCard hotel={hotel} bookingDate={bookingDateTest} searchParams={params} />
-										</div>
-									);
+									if (hotel.approval) {
+										let category = categories.find((value) => {
+											return hotel.hotelCategoryId === value.id;
+										});
+										return (
+											<div key={hotel.id} className="col px-0">
+												<HotelCard
+													hotel={hotel}
+													category={category}
+													bookingDate={bookingDateTest}
+													searchParams={params}
+												/>
+											</div>
+										);
+									}
 								})
 							) : (
 								<EmptyCard

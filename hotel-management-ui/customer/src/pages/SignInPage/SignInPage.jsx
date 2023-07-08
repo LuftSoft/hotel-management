@@ -50,21 +50,41 @@ export default function SignInPage() {
 						userName: username,
 						password,
 					});
-					toast.update(toastId, {
-						render: "Đăng nhập thành công!",
-						type: "success",
-						closeButton: true,
-						autoClose: 1000,
-						isLoading: false,
-					});
-					dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
-					getUser(res.accessToken, res.refreshToken, dispatch);
-					if (next) {
-						setTimeout(() => {
-							navigate(next);
-						}, 1000);
+					const userRes = await getUser(res.accessToken, res.refreshToken, dispatch);
+					if (userRes.isSuccess) {
+						toast.update(toastId, {
+							render: "Đăng nhập thành công!",
+							type: "success",
+							closeButton: true,
+							autoClose: 1000,
+							isLoading: false,
+						});
+						dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
+						if (next) {
+							setTimeout(() => {
+								navigate(next);
+							}, 1000);
+						} else {
+							navigate(routes.home);
+						}
 					} else {
-						navigate(routes.home);
+						if (userRes.isBlock) {
+							toast.update(toastId, {
+								render: "Tài khoản của bạn đã bị khóa!",
+								type: "error",
+								closeButton: true,
+								autoClose: 1000,
+								isLoading: false,
+							});
+						} else {
+							toast.update(toastId, {
+								render: "Bạn không có quyền đăng nhập!",
+								type: "error",
+								closeButton: true,
+								autoClose: 1000,
+								isLoading: false,
+							});
+						}
 					}
 				} catch (error) {
 					console.log(error);
