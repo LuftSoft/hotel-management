@@ -70,6 +70,7 @@ export default function BookedRoomCard({ bookedRoom }) {
 			});
 			if (res.success) {
 				setAborted(true);
+				setShowPostComment(false);
 			}
 		} catch (error) {
 			console.log(error);
