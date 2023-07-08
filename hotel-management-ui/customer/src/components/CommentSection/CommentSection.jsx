@@ -66,7 +66,7 @@ export default function CommentSection({ hotel }) {
 								</div>
 								<div className="d-flex flex-column justify-content-center">
 									<div className="fs-4 text-center fw-bold text-info">
-										<div className="d-flex align-items-center justify-content-between">
+										<div className="d-flex align-items-center justify-content-center">
 											<Stars numberOfStar={hotel.star} />
 										</div>
 									</div>
