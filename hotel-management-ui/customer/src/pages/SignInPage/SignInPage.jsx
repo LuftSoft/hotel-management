@@ -63,7 +63,7 @@ export default function SignInPage() {
 						if (next) {
 							setTimeout(() => {
 								navigate(next);
-							}, 1000);
+							}, 0);
 						} else {
 							navigate(routes.home);
 						}
