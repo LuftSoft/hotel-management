@@ -205,11 +205,11 @@ function HeroSection(props, ref) {
 										</div>
 										<div className="mb-3">
 											<label>Số người 1 phòng:</label>
-											<input ref={guestRef} type="number" className="form-control" defaultValue={1} min={0} />
+											<input ref={guestRef} type="number" className="form-control" required defaultValue={1} min={1} />
 										</div>
 										<div className="mb-3">
 											<label>Số phòng:</label>
-											<input ref={roomRef} type="number" className="form-control" defaultValue={1} min={0} />
+											<input ref={roomRef} type="number" className="form-control" required defaultValue={1} min={1} />
 										</div>
 									</div>
 									<div className="col">

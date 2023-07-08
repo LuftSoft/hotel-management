@@ -212,7 +212,7 @@ export default function InfoTab() {
 									ref={ageRef}
 									type="number"
 									defaultValue={currentUser.age}
-									min={0}
+									min={14}
 									className={`form-control ${errors.age ? "is-invalid" : ""}`}
 								/>
 								<div className="invalid-feedback">{errors.age}</div>
