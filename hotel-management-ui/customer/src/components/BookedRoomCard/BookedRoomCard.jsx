@@ -7,7 +7,6 @@ import PostComment from "../PostComment";
 import { useQuery } from "@tanstack/react-query";
 
 export default function BookedRoomCard({ bookedRoom }) {
-	console.log("bookedRoom", bookedRoom);
 	const [showPostComment, setShowPostComment] = useState(false);
 	const [aborted, setAborted] = useState(false);
 
@@ -18,7 +17,6 @@ export default function BookedRoomCard({ bookedRoom }) {
 		queryFn: async () => {
 			try {
 				const res = await axiosGet(url.detailHotel + bookedRoom.hotelId);
-				// console.log(res);
 				return res;
 			} catch (error) {
 				return Promise.reject(error);
@@ -64,14 +62,12 @@ export default function BookedRoomCard({ bookedRoom }) {
 
 	const handleAbort = async (e) => {
 		e.stopPropagation();
-		// console.log(bookedRoom.id);
 		try {
 			const res = await axiosDelete(url.cancelBooking + bookedRoom.id, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
 			});
-			// console.log(res); // res.success
 			if (res.success) {
 				setAborted(true);
 			}
@@ -94,6 +90,7 @@ export default function BookedRoomCard({ bookedRoom }) {
 						<img
 							src={bookedRoom.hotelImage}
 							alt="avatar"
+							className="rounded"
 							onError={(e) => {
 								e.target.src = "/img/hotel.webp";
 							}}

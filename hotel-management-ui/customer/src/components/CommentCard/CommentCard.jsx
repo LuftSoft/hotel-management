@@ -17,7 +17,7 @@ export default function CommentCard({ comment }) {
 									width: 64,
 									height: 64,
 								}}>
-								<img className="w-100 h-100" src="/img/user-avatar.png" alt="avatar" />
+								<img className="w-100 h-100 rounded" src="/img/user-avatar.png" alt="avatar" />
 							</div>
 							<div className="d-flex flex-column flex-grow-1 fw-bold">{comment.userName}</div>
 						</div>

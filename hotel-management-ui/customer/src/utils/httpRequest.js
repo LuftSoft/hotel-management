@@ -18,7 +18,7 @@ export const url = {
 	hotel: "hotel/filter",
 	detailHotel: "hotel/",
 	bookedRooms: "booking",
-	refreshToken: "user/refresh_token",
+	refreshToken: "user/refresh-token",
 	cancelBooking: "booking/",
 	createBooking: "booking",
 	postComment: "comment",
@@ -44,7 +44,6 @@ const getNewAccessToken = async (refreshToken) => {
 				Authorization: refreshToken,
 			},
 		});
-		console.log(res);
 		return res.data;
 	} catch (error) {
 		console.log("refreshToken", error);

@@ -1,13 +1,13 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { useRef, useState } from "react";
 import { validateEmail, validatePassword } from "../../utils/helpers";
 import { toast } from "react-toastify";
-import { axiosJWT, axiosPost, url } from "../../utils/httpRequest";
-import { useDispatch } from "react-redux";
-import { updateUser } from "../../redux/userSlice";
+import { axiosPost, url } from "../../utils/httpRequest";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/authSlice";
 import { getUser } from "../../services/userServices";
+import { selectUser } from "../../redux/selectors";
 
 const initState = {
 	email: "",
@@ -20,10 +20,15 @@ export default function SignInPage() {
 	const next = searchParams.get("next");
 	const emailRef = useRef();
 	const passwordRef = useRef();
+	const currentUser = useSelector(selectUser);
 	const [showPw, setShowPw] = useState(false);
 	const [errors, setErrors] = useState(initState);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
+	if (currentUser) {
+		return <Navigate to={routes.home} />;
+	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -45,21 +50,41 @@ export default function SignInPage() {
 						userName: username,
 						password,
 					});
-					toast.update(toastId, {
-						render: "Đăng nhập thành công!",
-						type: "success",
-						closeButton: true,
-						autoClose: 1000,
-						isLoading: false,
-					});
-					dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
-					getUser(res.accessToken, res.refreshToken, dispatch);
-					if (next) {
-						setTimeout(() => {
-							navigate(next);
-						}, 1000);
+					const userRes = await getUser(res.accessToken, res.refreshToken, dispatch);
+					if (userRes.isSuccess) {
+						toast.update(toastId, {
+							render: "Đăng nhập thành công!",
+							type: "success",
+							closeButton: true,
+							autoClose: 1000,
+							isLoading: false,
+						});
+						dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
+						if (next) {
+							setTimeout(() => {
+								navigate(next);
+							}, 1000);
+						} else {
+							navigate(routes.home);
+						}
 					} else {
-						navigate(routes.home);
+						if (userRes.isBlock) {
+							toast.update(toastId, {
+								render: "Tài khoản của bạn đã bị khóa!",
+								type: "error",
+								closeButton: true,
+								autoClose: 1000,
+								isLoading: false,
+							});
+						} else {
+							toast.update(toastId, {
+								render: "Bạn không có quyền đăng nhập!",
+								type: "error",
+								closeButton: true,
+								autoClose: 1000,
+								isLoading: false,
+							});
+						}
 					}
 				} catch (error) {
 					console.log(error);

@@ -60,7 +60,7 @@ export default function CommentSection({ hotel }) {
 											height: "104px",
 										}}>
 										<div className="d-inline text-center text-white" style={{ lineHeight: "104px", fontSize: "48px" }}>
-											{hotel.star}
+											{hotel.star === "NaN" ? 0 : hotel.star}
 										</div>
 									</div>
 								</div>
