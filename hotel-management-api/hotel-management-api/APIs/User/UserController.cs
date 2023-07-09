@@ -2,6 +2,7 @@
 using hotel_management_api.APIs.User.UserDTOs;
 using hotel_management_api.Business.Boudaries.User;
 using hotel_management_api.Business.Interactor.User;
+using hotel_management_api.Business.Services;
 using hotel_management_api.Database.Model;
 using hotel_management_api.Utils;
 using Humanizer;
@@ -24,6 +25,7 @@ namespace hotel_management_api.APIs.User
     public class UserController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;
+        private readonly IUserService userService;
         private readonly IConfiguration configuration;
         private readonly UserManager<AppUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
@@ -41,6 +43,7 @@ namespace hotel_management_api.APIs.User
         private readonly IBlockAndUnlockUserInteractor blockAndUnlockUserInteractor;
         public UserController(
             IJwtUtil jwtUtil,
+            IUserService userService,
             IConfiguration configuration,
             UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -59,6 +62,7 @@ namespace hotel_management_api.APIs.User
             )
         {
             this.jwtUtil = jwtUtil;
+            this.userService = userService;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.configuration = configuration;
@@ -84,15 +88,35 @@ namespace hotel_management_api.APIs.User
             var result = await getAllUserInteractor.GetAllUser();
             return Ok(result);
         }
-        [HttpPost("add-role")]
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetByUserId(string id)
+        {
+            try
+            {
+                var result = await userService.GetByUserIdAsync(id);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [Authorize("owner")]
+        [HttpPost("add-role")]
         public async Task<IActionResult> AddRoleToUser(AddRoleDto dto)
         {
             var result = await addRoleToUserInteractor.AddRoleToUser(dto.UserId, dto.RoleName);
             return Ok(result);
         }
+        [Authorize("owner")]
+        [HttpPost("remove-role")]
+        public async Task<IActionResult> RemoveRoleToUser(AddRoleDto dto)
+        {
+            var result = await userService.RemoveRoleFromUser(dto.UserId, dto.RoleName);
+            return Ok(result);
+        }
         [HttpGet("detail")]
-        [Authorize("user")]
         public async Task<IActionResult> Get()
         {
             var result = await getDetailUserInteractor.Get(HttpContext);
@@ -159,7 +183,6 @@ namespace hotel_management_api.APIs.User
             return BadRequest(result);
         }
         //PATCH
-        [Authorize("user")]
         [HttpPatch("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
@@ -175,6 +198,7 @@ namespace hotel_management_api.APIs.User
             if (result.Success == false) return BadRequest(result);
             return Ok(result);
         }
+        [Authorize("owner")]
         [HttpPatch("block/{userId}")]
         public async Task<IActionResult> blockUser(string userId)
         {
@@ -187,6 +211,7 @@ namespace hotel_management_api.APIs.User
             if(result.Success == true) return Ok(result);
             return BadRequest(result);
         }
+        [Authorize("owner")]
         [HttpPatch("unlock/{userId}")]
         public async Task<IActionResult> unlockUser(string userId)
         {

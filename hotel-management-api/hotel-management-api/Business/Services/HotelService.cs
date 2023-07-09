@@ -10,6 +10,7 @@ namespace hotel_management_api.Business.Services
     public class HotelService : IHotelService
     {
         private readonly IJwtUtil jwtUtil;
+        private readonly ISendMailUtil sendMailUtil;
         private readonly IUploadFileUtil uploadFileUtil;
         private readonly IUserRepository userRepository;
         private readonly IRoomRepository roomRepository;
@@ -23,6 +24,7 @@ namespace hotel_management_api.Business.Services
         public HotelService
             (
             IJwtUtil jwtUtil,
+            ISendMailUtil sendMailUtil,
             IUserRepository userRepository,
             IUploadFileUtil uploadFileUtil,
             IRoomRepository roomRepository,
@@ -36,6 +38,7 @@ namespace hotel_management_api.Business.Services
             )
         {
             this.jwtUtil = jwtUtil;
+            this.sendMailUtil = sendMailUtil;
             this.uploadFileUtil = uploadFileUtil;
             this.userRepository = userRepository;
             this.roomRepository = roomRepository;
@@ -64,17 +67,18 @@ namespace hotel_management_api.Business.Services
                 Id = hotel.Id,
                 Name = hotel.Name,
                 Star = hotel.Star,
-                Description = hotel.Description,
+                Slug = hotel.Slug,
+                UserId = hotel.USerId,
                 Address = hotel.Address,
                 LogoLink = hotel.LogoLink,
-                Slug = hotel.Slug,
-                CreatedDate = hotel.CreatedDate,
-                UpdateDate = hotel.UpdateDate,
-                UserId = hotel.USerId,
-                HotelCategoryId = hotel.HotelCategoryId,
-                HotelCategory = hotel.HotelCategory,
-                HotelBenefit = hotel.HotelBenefit,
+                Approval = hotel.Approval,
                 HomeletId = hotel.HomeletId,
+                UpdateDate = hotel.UpdateDate,
+                CreatedDate = hotel.CreatedDate,
+                Description = hotel.Description,
+                HotelBenefit = hotel.HotelBenefit,
+                HotelCategory = hotel.HotelCategory,
+                HotelCategoryId = hotel.HotelCategoryId,
                 MinPrice = min,
                 MaxPrice = max
             };
@@ -100,22 +104,23 @@ namespace hotel_management_api.Business.Services
             HotelDetailDto hotelDetailDto = new HotelDetailDto()
             {
                 Id = hotel.Id,
-                Name = hotel.Name,
+                Rooms = rooms,
                 Star = avgRating,
                 Slug = hotel.Slug,
+                Name = hotel.Name,
+                Comments = comments,
+                ProvineId = provineId,
                 USerId = hotel.USerId,
+                HotelBenefit = benefit,
                 Address = hotel.Address,
+                DistrictId = districtId,
+                Approval = hotel.Approval,
                 LogoLink = hotel.LogoLink,
                 HomeletId = hotel.HomeletId,
                 HotelCategory = hotelCategory,
                 UpdateDate = hotel.UpdateDate,
                 CreatedDate = hotel.CreatedDate,
                 Description = hotel.Description,
-                Rooms = rooms,
-                HotelBenefit = benefit,
-                Comments = comments,
-                DistrictId = districtId,
-                ProvineId = provineId
 
             };
             return new IGetDetailHotelInteractor.Response("Get success", true, hotelDetailDto);
@@ -415,6 +420,7 @@ namespace hotel_management_api.Business.Services
                 HomeletId = dto.HomeletId,
                 LogoLink = fileString,
                 Star = 5.0,
+                Approval = false,
                 HotelCategoryId = dto.HotelCategoryId,
                 Slug = dto.Slug,
                 USerId = userId,
@@ -424,6 +430,74 @@ namespace hotel_management_api.Business.Services
             if (hotelResult == null)
                 return new ICreateHotelInteractor.Response("can't create hotel, error occur", false);
             return new ICreateHotelInteractor.Response("create hotel success", true);
+        }
+        public async Task<IAppovalHotelInteractor.Response> ApprovalHotel(int hotelId)
+        {
+            try
+            {
+                Hotel hotel = await hotelRepository.FindByIdAsync(hotelId);
+                if(hotel == null)
+                    return new IAppovalHotelInteractor.Response() { Success = false, 
+                        Message = $"Can't find hotel haas id {hotelId}" };
+                if (hotel.Approval == true)
+                    return new IAppovalHotelInteractor.Response() { Success = false, 
+                        Message = "Hotel already approval" };
+                hotel.Approval = true;
+                var success = await hotelRepository.updateAsync(hotel);
+                if (success)
+                {
+                    AppUser user = await userRepository.FindByIdAsync(hotel.USerId);
+                    try
+                    {
+                        await sendMailUtil.SendMailAsync(user.Email, @$"<h1>Congratulations, your hotel {hotel.Name} is approval!!!</h1>",
+                        "<h3>After checking, your hotel is approval.</h3><p>Hope your bussiness more and more successful when using our plaform ^^</p>");
+                    }
+                    catch
+                    {
+                        
+                    }
+                    return new IAppovalHotelInteractor.Response()
+                    {
+                        Success = true,
+                        Message = "Approval hotel success!",
+                        HotelDto = await ConvertHotelToHotelDto(hotel)
+                    };
+                }
+                return new IAppovalHotelInteractor.Response() { Success = false, 
+                    Message = "Unexpected error occur when approval hotel" };
+            }
+            catch(Exception ex)
+            {
+                return new IAppovalHotelInteractor.Response(){Success=false,
+                    Message="Unexpected error occur"};
+            }
+        }
+        public async Task<IAppovalHotelInteractor.ListApprovalHotelResponse> GetListApprovalHotel()
+        {
+            try
+            {
+                List<Hotel> hotels = await hotelRepository.GetAllAsync() as List<Hotel>;
+                hotels = hotels.Where(h => h.Approval == false).ToList();
+                List<HotelDto> hotelDtos = new List<HotelDto>();
+                if (hotels.Count > 0)
+                {
+                    hotels.ForEach(async h => hotelDtos.Add(await ConvertHotelToHotelDto(h)));
+                }
+                return new IAppovalHotelInteractor.ListApprovalHotelResponse()
+                {
+                    Success = true,
+                    Message = "Get list approval success",
+                    HotelDtos = hotelDtos
+                };
+            }
+            catch( Exception ex)
+            {
+                return new IAppovalHotelInteractor.ListApprovalHotelResponse()
+                {
+                    Success = false,
+                    Message = $"Unexpected error occur when get list approvalhotel: {ex.Message}"
+                };
+            }
         }
         public async Task<IUpdateHotelInteractor.Response> Update(IUpdateHotelInteractor.Request request)
         {

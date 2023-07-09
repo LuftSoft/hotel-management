@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Actions;
 using hotel_management_api.APIs.Hotel.DTOs;
 using hotel_management_api.Business.Interactor.Hotel;
+using hotel_management_api.Business.Services;
 using hotel_management_api.Utils;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,7 @@ namespace hotel_management_api.APIs.Hotel
     public class HotelController : ControllerBase
     {
         private readonly IJwtUtil jwtUtil;
+        private readonly IHotelService hotelService;
         private readonly IUploadFileUtil uploadFileUtil;
         private readonly ICreateHotelInteractor createHotelInteractor;
         private readonly IUpdateHotelInteractor updateHotelInteractor;
@@ -28,6 +30,7 @@ namespace hotel_management_api.APIs.Hotel
         private readonly IGetListHotelOfOwnerInteractor getListHotelOfOwnerInteractor;
         public HotelController(
             IJwtUtil jwtUtil,
+            IHotelService hotelService,
             IUploadFileUtil uploadFileUtil,
             ICreateHotelInteractor createHotelInteractor,
             IUpdateHotelInteractor updateHotelInteractor,
@@ -39,6 +42,7 @@ namespace hotel_management_api.APIs.Hotel
             )
         {
             this.jwtUtil = jwtUtil;
+            this.hotelService = hotelService;
             this.uploadFileUtil = uploadFileUtil;
             this.createHotelInteractor = createHotelInteractor;
             this.updateHotelInteractor = updateHotelInteractor;
@@ -128,6 +132,34 @@ namespace hotel_management_api.APIs.Hotel
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("approval")]
+        [Authorize("owner")]
+        public async Task<IActionResult> getListApprovalHotel()
+        {
+            try
+            {
+                var result = await hotelService.GetListApprovalHotel();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("approval/{id}")]
+        [Authorize("owner")]
+        public async Task<IActionResult> approval(int id) 
+        {
+            try
+            {
+                var result = await hotelService.ApprovalHotel(id);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);  
             }
         }
 

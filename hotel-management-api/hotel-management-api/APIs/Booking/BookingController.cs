@@ -135,7 +135,6 @@ namespace hotel_management_api.APIs.Booking
             return BadRequest(result);
         }
         [HttpDelete("{id}")]
-        [Authorize("user")]
         public async Task<IActionResult> Delete(int id) 
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);

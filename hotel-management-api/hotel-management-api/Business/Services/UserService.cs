@@ -11,6 +11,8 @@ using hotel_management_api.APIs.User.DTOs;
 using hotel_management_api.APIs.User.UserDTOs;
 using System.Security.Claims;
 using System.Reflection.Metadata.Ecma335;
+using hotel_management_api.APIs.Booking.DTOs;
+using hotel_management_api.Business.Interactor.Booking;
 
 namespace hotel_management_api.Business.Services
 {
@@ -64,6 +66,31 @@ namespace hotel_management_api.Business.Services
                 };
             }
             return null;
+        }
+        public async Task<UserDto> GetByUserIdAsync(string userId)
+        {
+            try
+            {
+                AppUser user = await userRepository.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    return new UserDto()
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Age = user.Age,
+                        Avatar = user.Avatar,
+                        PhoneNumber = user.PhoneNumber
+                    };
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         public async Task<AppUser> FindByIdAsync(string userId)
         {
@@ -224,6 +251,45 @@ namespace hotel_management_api.Business.Services
                 }
             };
         }
+        public async Task<IAddRoleToUserInteractor.Response> RemoveRoleFromUser(string userId, string role)
+        {
+            if (!(await userRepository.IsContainRole(userId, role)))
+            {
+                return new IAddRoleToUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = "User don't have this role"
+                };
+            }
+            var user = await userRepository.FindByIdAsync(userId);
+            var success = await userRepository.removeUserRoleAsync(user, role);
+            if (!success)
+            {
+                return new IAddRoleToUserInteractor.Response()
+                {
+                    Success = false,
+                    Message = "Remove role to user failed"
+                };
+            }
+            var tmpRoles = await userRepository.GetListRoleOfUser(userId);
+            return new IAddRoleToUserInteractor.Response()
+            {
+                Success = true,
+                Message = "Remove role to user success",
+                userDto = new UserDto()
+                {
+                    Age = user.Age,
+                    Avatar = user.Avatar,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    Id = user.Id,
+                    IsBlock = user.IsBlock,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = tmpRoles.ToList()
+                }
+            };
+        }
         public async Task<IUserSignupInteractor.Response> SignupService(IUserSignupInteractor.Request request)
         {
             var dto = request.dto;
@@ -253,10 +319,18 @@ namespace hotel_management_api.Business.Services
                 }
                 //role user is role default
                 await userRepository.addUserRoleAsync(user, DbUserRole.User);
+                if(!request.dto.Role.Contains(DbUserRole.User) && !request.dto.Role.Contains(DbUserRole.User)
+                    && !request.dto.Role.Contains(DbUserRole.User))
+                {
+                    return new IUserSignupInteractor.Response("User must has role (user, admin or owner)", false);
+                }
                 foreach (string userRole in request.dto.Role)
                 {
                     switch(userRole)
                     {
+                        case DbUserRole.User:
+                            await userRepository.addUserRoleAsync(user, DbUserRole.User);
+                            break;
                         case DbUserRole.Admin:
                             await userRepository.addUserRoleAsync(user, DbUserRole.Admin);
                             break;

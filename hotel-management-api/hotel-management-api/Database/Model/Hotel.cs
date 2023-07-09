@@ -26,5 +26,6 @@ namespace hotel_management_api.Database.Model
         public string? HomeletId { set; get; }
         public Homelet? Homelet { set; get; }
         public ICollection<Room>? Rooms { get; set; }
+        public bool? Approval { get; set; }
     }
 }
