@@ -85,7 +85,7 @@ function HeroSection(props, ref) {
 			return;
 		}
 		params += "pageIndex=0&";
-		params += "pageSize=2&";
+		params += "pageSize=10&";
 		if (provinceRef.current.value !== "undefined") {
 			params += "ProvineId=" + provinceRef.current.value + "&";
 		}
