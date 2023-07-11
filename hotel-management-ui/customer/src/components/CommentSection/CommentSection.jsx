@@ -8,31 +8,31 @@ import ServiceRating from "../ServiceRating";
 import { selectAccessToken, selectRefreshToken, selectUser } from "../../redux/selectors";
 
 export default function CommentSection({ hotel }) {
-	const accessToken = useSelector(selectAccessToken);
-	const refreshToken = useSelector(selectRefreshToken);
-	const currentUser = useSelector(selectUser);
-	const dispatch = useDispatch();
-	const bookedRoomState = useQuery({
-		queryKey: ["bookedRoom", currentUser.id],
-		queryFn: async () => {
-			const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
-			try {
-				const res = await axiosJwt.get(url.bookedRooms, {
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				});
-				return res.data;
-			} catch (error) {
-				return Promise.reject(error);
-			}
-		},
-		staleTime: 3 * 60 * 1000,
-	});
-	let bookedRooms = [];
-	if (bookedRoomState.isSuccess) {
-		bookedRooms = bookedRoomState.data.bookingList;
-	}
+	// const accessToken = useSelector(selectAccessToken);
+	// const refreshToken = useSelector(selectRefreshToken);
+	// const currentUser = useSelector(selectUser);
+	// const dispatch = useDispatch();
+	// const bookedRoomState = useQuery({
+	// 	queryKey: ["bookedRoom", currentUser.id],
+	// 	queryFn: async () => {
+	// 		const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
+	// 		try {
+	// 			const res = await axiosJwt.get(url.bookedRooms, {
+	// 				headers: {
+	// 					Authorization: `Bearer ${accessToken}`,
+	// 				},
+	// 			});
+	// 			return res.data;
+	// 		} catch (error) {
+	// 			return Promise.reject(error);
+	// 		}
+	// 	},
+	// 	staleTime: 3 * 60 * 1000,
+	// });
+	// let bookedRooms = [];
+	// if (bookedRoomState.isSuccess) {
+	// 	bookedRooms = bookedRoomState.data.bookingList;
+	// }
 
 	return (
 		<div className="d-flex flex-column bg-white rounded">
