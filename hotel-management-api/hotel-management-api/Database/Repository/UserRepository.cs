@@ -203,6 +203,10 @@ namespace hotel_management_api.Database.Repository
         {
             return await userManager.AddToRoleAsync(user, role);
         }
+        public async Task<bool> removeUserRoleAsync(AppUser user, string role)
+        {
+            return (await userManager.RemoveFromRoleAsync(user, role)).Succeeded;
+        }
         public async Task<IdentityResult> createUserAsync(AppUser user, string password)
         {
             return await userManager.CreateAsync(user, password);

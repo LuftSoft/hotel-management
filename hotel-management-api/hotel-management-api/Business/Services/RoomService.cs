@@ -90,12 +90,17 @@ namespace hotel_management_api.Business.Services
         {
             try
             {
-                var roomDto = request.dto;
+                CreateRoomDto roomDto = request.dto;
                 var useridIntoken = await userService.GetUserIdFromToken(request.token);
                 var userId = (await hotelRepository.getOne(request.dto.HotelId)).USerId;
                 if (userId != useridIntoken)
                 {
                     return new IAddNewRoomInteractor.Response("You don't have permission to create this room", false);
+                }
+                Hotel hotel = await hotelRepository.FindByIdAsync(roomDto.HotelId);
+                if (hotel.Approval == false)
+                {
+                    return new IAddNewRoomInteractor.Response("Hotel is not approval yet, please approval hotel first!", false);
                 }
                 Room room = new Room();
                 room.Name = roomDto.Name;

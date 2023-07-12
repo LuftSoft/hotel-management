@@ -24,5 +24,6 @@ namespace hotel_management_api.APIs.Hotel.DTOs
         public string? ProvineId { set; get; }
         public List<RoomDetailDto> Rooms { get; set; }
         public List<CommentDto> Comments { get; set; }
+        public bool? Approval { get; set; }
     }
 }

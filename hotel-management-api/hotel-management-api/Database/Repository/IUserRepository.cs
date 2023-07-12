@@ -23,6 +23,7 @@ namespace hotel_management_api.Database.Repository
         Task<IEnumerable<string>> GetListRoleOfUser(string userId);
         Task<bool> updatePassword(string userName, string newpassword);
         Task<IdentityResult> addUserRoleAsync(AppUser user, string role);
+        Task<bool> removeUserRoleAsync(AppUser user, string role);
         Task<IdentityResult> createUserAsync(AppUser user, string password);
         Task<bool> updateResetPasswordTokenAsync(string username, string token);
         Task<bool> ChangePassword(string userName, string oldPassword, string newpassword);

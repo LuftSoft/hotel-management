@@ -82,6 +82,7 @@ namespace hotel_management_api.APIs.Room
             }
             return BadRequest(result);
         }
+        [Authorize("admin")]
         [HttpPost("gallery")]
         public async Task<IActionResult> PostRoomImage([FromForm] CreateRoomGalleryDto dto)
         {
@@ -106,6 +107,7 @@ namespace hotel_management_api.APIs.Room
             }
             return BadRequest(result);
         }
+        [Authorize("admin")]
         [HttpDelete("gallery")]
         public async Task<IActionResult> DeleteRoomImage([FromBody] IDeleteRoomGalleryInteractor.Request request)
         {
@@ -154,8 +156,8 @@ namespace hotel_management_api.APIs.Room
         }
 
         // DELETE
-        [HttpDelete("{id}")]
         [Authorize("admin")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             string token = jwtUtil.getTokenFromHeader(HttpContext);
