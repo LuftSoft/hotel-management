@@ -61,9 +61,9 @@ export default function SignInPage() {
 						});
 						dispatch(loginSuccess({ accessToken: res.accessToken, refreshToken: res.refreshToken }));
 						if (next) {
-							setTimeout(() => {
-								navigate(next);
-							}, 1000);
+							navigate(next, {
+								replace: true,
+							});
 						} else {
 							navigate(routes.home);
 						}

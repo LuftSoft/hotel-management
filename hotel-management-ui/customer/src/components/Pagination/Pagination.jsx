@@ -5,7 +5,15 @@ import { usePagination } from "../../hooks";
 
 const cx = classNames.bind(styles);
 
-function Pagination({ onPageChange, totalCount, totalPage = 0, siblingCount = 1, currentPage, pageSize, className }) {
+function Pagination({
+	onPageChange,
+	totalCount,
+	totalPage = 0,
+	siblingCount = 1,
+	currentPage,
+	pageSize = 10,
+	className,
+}) {
 	const paginationRange = usePagination(totalCount, totalPage, pageSize, siblingCount, currentPage);
 	const onPrevious = () => {
 		onPageChange(currentPage - 1);
@@ -13,10 +21,10 @@ function Pagination({ onPageChange, totalCount, totalPage = 0, siblingCount = 1,
 	const onNext = () => {
 		onPageChange(currentPage + 1);
 	};
-	const lastPage = paginationRange[paginationRange.length - 1];
-	if (totalPage <= 0) {
+	if (paginationRange.length === 0) {
 		return null;
 	}
+	const lastPage = paginationRange[paginationRange.length - 1];
 	return (
 		<ul className={cx(className, "Container")}>
 			<li className={cx("Arrow", { disabled: currentPage === 1 })} onClick={onPrevious}>

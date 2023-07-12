@@ -5,33 +5,34 @@ import { axiosJWT, url } from "../../utils/httpRequest";
 import CommentCard from "../CommentCard/CommentCard";
 import Stars from "../Stars";
 import ServiceRating from "../ServiceRating";
-import { selectAccessToken, selectRefreshToken } from "../../redux/selectors";
+import { selectAccessToken, selectRefreshToken, selectUser } from "../../redux/selectors";
 
 export default function CommentSection({ hotel }) {
-	const accessToken = useSelector(selectAccessToken);
-	const refreshToken = useSelector(selectRefreshToken);
-	const dispatch = useDispatch();
-	const bookedRoomState = useQuery({
-		queryKey: ["bookedRoom", accessToken],
-		queryFn: async () => {
-			const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
-			try {
-				const res = await axiosJwt.get(url.bookedRooms, {
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				});
-				return res.data;
-			} catch (error) {
-				return Promise.reject(error);
-			}
-		},
-		staleTime: 3 * 60 * 1000,
-	});
-	let bookedRooms = [];
-	if (bookedRoomState.isSuccess) {
-		bookedRooms = bookedRoomState.data.bookingList;
-	}
+	// const accessToken = useSelector(selectAccessToken);
+	// const refreshToken = useSelector(selectRefreshToken);
+	// const currentUser = useSelector(selectUser);
+	// const dispatch = useDispatch();
+	// const bookedRoomState = useQuery({
+	// 	queryKey: ["bookedRoom", currentUser.id],
+	// 	queryFn: async () => {
+	// 		const axiosJwt = axiosJWT(accessToken, refreshToken, dispatch);
+	// 		try {
+	// 			const res = await axiosJwt.get(url.bookedRooms, {
+	// 				headers: {
+	// 					Authorization: `Bearer ${accessToken}`,
+	// 				},
+	// 			});
+	// 			return res.data;
+	// 		} catch (error) {
+	// 			return Promise.reject(error);
+	// 		}
+	// 	},
+	// 	staleTime: 3 * 60 * 1000,
+	// });
+	// let bookedRooms = [];
+	// if (bookedRoomState.isSuccess) {
+	// 	bookedRooms = bookedRoomState.data.bookingList;
+	// }
 
 	return (
 		<div className="d-flex flex-column bg-white rounded">
@@ -66,7 +67,7 @@ export default function CommentSection({ hotel }) {
 								</div>
 								<div className="d-flex flex-column justify-content-center">
 									<div className="fs-4 text-center fw-bold text-info">
-										<div className="d-flex align-items-center justify-content-between">
+										<div className="d-flex align-items-center justify-content-center">
 											<Stars numberOfStar={hotel.star} />
 										</div>
 									</div>
